@@ -192,7 +192,8 @@ def extract(file: Path, section: str):
 @click.option("--export-json/--no-export-json", default=True, help="Also export sumd.json per project")
 @click.option("--report", type=click.Path(path_type=Path), default=None, help="Save JSON summary report to file")
 @click.option("--fix/--no-fix", default=False, help="Overwrite existing SUMD.md even if already present")
-def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool):
+@click.option("--raw/--no-raw", default=True, help="Embed source files as raw code blocks (default). Use --no-raw for structured Markdown.")
+def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, raw: bool):
     """Scan a workspace directory and generate SUMD.md for every project found.
 
     Detects projects by presence of pyproject.toml. Extracts metadata from:
@@ -230,7 +231,7 @@ def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool):
             continue
 
         try:
-            content, sources = generate_sumd_content(proj_dir, return_sources=True)
+            content, sources = generate_sumd_content(proj_dir, return_sources=True, raw_sources=raw)
             sumd_path.write_text(content, encoding="utf-8")
 
             doc = parse_file(sumd_path)

@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-04-18
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update docs/USAGE.md
+
+### Other
+- Update sumd.json
+- Update sumd/cli.py
+- Update sumd/generator.py
+
+## [0.1.15] - 2026-04-18
+
+### Added
+- `sumd scan` command: auto-generates `SUMD.md` for every project in a workspace
+- `--raw/--no-raw` flag for `scan` (default: `--raw`): embed source files as fenced code blocks or convert to structured Markdown
+- Raw rendering for `app.doql.less/css`, `openapi.yaml`, `pyqual.yaml`, and testql scenario files
+
+### Fixed
+- Empty workflow steps caused by `{{.PWD}}`-style template vars in Taskfile (`_BLOCK` regex updated)
+- Quoted trigger values (`"manual"`) now unquoted in DOQL workflow parsing
+- Duplicate workflows when both `.less` and `.css` files are present (deduplication via `workflows_map`)
+- Inline comments in `.env.example` values now correctly stripped
+
+### Docs
+- Updated README.md with `scan` command examples
+- Updated docs/USAGE.md with `scan` section and `--raw/--no-raw` usage table
+
 ## [0.1.14] - 2026-04-18
 
 ### Docs

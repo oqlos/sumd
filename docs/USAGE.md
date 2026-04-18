@@ -17,7 +17,32 @@ SUMD jest częścią trójwarstwowego ekosystemu narzędzi:
 pip install sumd doql testql taskfile
 ```
 
-## Szybki start
+## Szybki start — `sumd scan`
+
+Komenda `scan` automatycznie generuje `SUMD.md` dla każdego projektu w workspace (wykrywa projekty po obecności `pyproject.toml`).
+
+```bash
+# Wygeneruj SUMD.md dla wszystkich projektów (pomija projekty z istniejącym plikiem)
+sumd scan /home/tom/github/oqlos
+
+# Nadpisz istniejące pliki
+sumd scan . --fix
+
+# Tryb strukturalny (konwersja źródeł do Markdown zamiast surowych code bloków)
+sumd scan . --fix --no-raw
+
+# Wygeneruj raport JSON
+sumd scan . --fix --report summary.json
+```
+
+### Tryby renderowania: `--raw` vs `--no-raw`
+
+| Opcja | Zachowanie |
+|-------|-----------|
+| `--raw` *(domyślnie)* | Pliki źródłowe (`app.doql.less`, `openapi.yaml`, `pyqual.yaml`, testql scenarios) są wklejone jako surowe fenced code blocki |
+| `--no-raw` | Pliki źródłowe są konwertowane do strukturalnego Markdown (tabele, listy, bullet points) |
+
+Surowy tryb jest zalecany dla LLM context injection — zachowuje oryginalną składnię bez strat.
 
 ### 1. Utwórz `SUMD.md` dla swojego projektu
 

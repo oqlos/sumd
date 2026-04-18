@@ -621,12 +621,16 @@ def extract_package_json(proj_dir: Path) -> dict[str, Any]:
 def generate_sumd_content(  # noqa: C901
     proj_dir: Path,
     return_sources: bool = False,
+    raw_sources: bool = True,
 ) -> str | tuple[str, list[str]]:
     """Generate SUMD.md content from a project directory.
 
     Args:
         proj_dir: Path to the project root.
         return_sources: If True, return (content, sources_list) instead of just content.
+        raw_sources: If True (default), embed source files as raw fenced code blocks
+            instead of converting them to Markdown lists/tables.
+            Set to False to get structured Markdown output (parsed tables, bullet lists).
 
     Returns:
         Rendered SUMD.md string, or (string, list[str]) when return_sources=True.
@@ -730,48 +734,55 @@ def generate_sumd_content(  # noqa: C901
     a("```")
     a("")
 
-    if doql.get("app") or doql.get("entities") or doql.get("interfaces"):
+    if doql.get("app") or doql.get("entities") or doql.get("interfaces") or doql.get("workflows"):
         doql_sources = ", ".join(f"`{s}`" for s in doql.get("sources", ["app.doql.less"]))
         a(f"### DOQL Application Declaration ({doql_sources})")
         a("")
-        if doql.get("app"):
-            a("```less")
-            a("app {")
-            for k, v in doql["app"].items():
-                a(f"  {k}: {v};")
-            a("}")
-            a("```")
-            a("")
-
-    if doql.get("entities"):
-        a("### DOQL Data Model (`entity`)")
-        a("")
-        for ent in doql["entities"]:
-            attrs_str = ""
-            if ent.get("attrs"):
-                attrs_str = " — " + ", ".join(f"`{k}: {v}`" for k, v in ent["attrs"].items())
-            page_str = f" page=`{ent['page']}`" if ent.get("page") else ""
-            a(f"- `entity[{ent['name']}]`{page_str}{attrs_str}")
-        a("")
-
-    if doql.get("interfaces"):
-        a("### DOQL Interfaces")
-        a("")
-        for iface in list(doql["interfaces"]):
-            sel = iface.get("selector", "")
-            attrs = ", ".join(f"{k}: {v}" for k, v in iface.items() if k not in ("selector", "page"))
-            page_str = f" page=`{iface['page']}`" if iface.get("page") else ""
-            a(f"- `interface[{sel}]`{page_str} — {attrs}")
-        a("")
-
-    if doql.get("integrations"):
-        a("### DOQL Integrations")
-        a("")
-        for intg in list(doql["integrations"]):
-            sel = intg.get("selector", "")
-            attrs = ", ".join(f"{k}: {v}" for k, v in intg.items() if k != "selector")
-            a(f"- `integration[{sel}]` — {attrs}")
-        a("")
+        if raw_sources:
+            for fname in doql.get("sources", ["app.doql.less"]):
+                fpath = proj_dir / fname
+                if fpath.exists():
+                    lang = "less" if fname.endswith(".less") else "css"
+                    a(f"```{lang}")
+                    a(fpath.read_text(encoding="utf-8").rstrip())
+                    a("```")
+                    a("")
+        else:
+            if doql.get("app"):
+                a("```less")
+                a("app {")
+                for k, v in doql["app"].items():
+                    a(f"  {k}: {v};")
+                a("}")
+                a("```")
+                a("")
+            if doql.get("entities"):
+                a("### DOQL Data Model (`entity`)")
+                a("")
+                for ent in doql["entities"]:
+                    attrs_str = ""
+                    if ent.get("attrs"):
+                        attrs_str = " — " + ", ".join(f"`{k}: {v}`" for k, v in ent["attrs"].items())
+                    page_str = f" page=`{ent['page']}`" if ent.get("page") else ""
+                    a(f"- `entity[{ent['name']}]`{page_str}{attrs_str}")
+                a("")
+            if doql.get("interfaces"):
+                a("### DOQL Interfaces")
+                a("")
+                for iface in list(doql["interfaces"]):
+                    sel = iface.get("selector", "")
+                    attrs = ", ".join(f"{k}: {v}" for k, v in iface.items() if k not in ("selector", "page"))
+                    page_str = f" page=`{iface['page']}`" if iface.get("page") else ""
+                    a(f"- `interface[{sel}]`{page_str} — {attrs}")
+                a("")
+            if doql.get("integrations"):
+                a("### DOQL Integrations")
+                a("")
+                for intg in list(doql["integrations"]):
+                    sel = intg.get("selector", "")
+                    attrs = ", ".join(f"{k}: {v}" for k, v in intg.items() if k != "selector")
+                    a(f"- `integration[{sel}]` — {attrs}")
+                a("")
 
     if modules:
         a("### Source Modules")
@@ -794,49 +805,72 @@ def generate_sumd_content(  # noqa: C901
     if openapi.get("endpoints"):
         a("### REST API (from `openapi.yaml`)")
         a("")
-        a("| Method | Path | OperationId | Summary |")
-        a("|--------|------|-------------|---------|")
-        for ep in openapi["endpoints"]:
-            summary = ep.get("summary", "").replace("|", "\\|")
-            a(f"| `{ep['method']}` | `{ep['path']}` | `{ep['operationId']}` | {summary} |")
-        a("")
-        if openapi.get("schemas"):
-            a("**Schemas**: " + ", ".join(f"`{s}`" for s in openapi["schemas"]))
+        if raw_sources:
+            op_path = proj_dir / "openapi.yaml"
+            if op_path.exists():
+                a("```yaml")
+                a(op_path.read_text(encoding="utf-8").rstrip())
+                a("```")
+                a("")
+        else:
+            a("| Method | Path | OperationId | Summary |")
+            a("|--------|------|-------------|---------|")
+            for ep in openapi["endpoints"]:
+                summary = ep.get("summary", "").replace("|", "\\|")
+                a(f"| `{ep['method']}` | `{ep['path']}` | `{ep['operationId']}` | {summary} |")
             a("")
+            if openapi.get("schemas"):
+                a("**Schemas**: " + ", ".join(f"`{s}`" for s in openapi["schemas"]))
+                a("")
 
     if scenarios:
         a("### testql Scenarios")
         a("")
-        for sc in scenarios:
-            a(f"#### `{sc['file']}`")
-            a("")
-            a(f"- **name**: {sc['name']}")
-            a(f"- **type**: `{sc['type']}`")
-            if sc["detectors"]:
-                a(f"- **detectors**: {sc['detectors']}")
-            for k, v in sc["config"].items():
-                a(f"- **{k}**: `{v}`")
-            if sc["endpoints"]:
-                a("- **endpoints**:")
-                for ep in sc["endpoints"]:
-                    op = f" — `{ep['operationId']}`" if ep.get("operationId") else ""
-                    sm = f": {ep['summary']}" if ep.get("summary") else ""
-                    a(f"  - `{ep['method']} {ep['path']}` → `{ep['status']}`{op}{sm}")
-            if sc["asserts"]:
-                a("- **asserts**:")
-                for ass in sc["asserts"]:
-                    a(f"  - `{ass['field']} {ass['op']} {ass['expected']}`")
-            if sc.get("performance"):
-                a("- **performance**:")
-                for p in sc["performance"]:
-                    a(f"  - `{p['metric']} < {p['threshold']}`")
-            if sc.get("navigate"):
-                a("- **navigate**: " + ", ".join(f"`{u}`" for u in sc["navigate"]))
-            if sc.get("gui"):
-                a("- **gui actions**:")
-                for g in sc["gui"]:
-                    a(f"  - `{g['action']} {g['selector']}`")
-            a("")
+        if raw_sources:
+            seen_scenario_files: set[str] = set()
+            for sc in scenarios:
+                rel = sc.get("rel_path", sc["file"])
+                fpath = proj_dir / rel
+                if not fpath.exists() or rel in seen_scenario_files:
+                    continue
+                seen_scenario_files.add(rel)
+                a(f"#### `{rel}`")
+                a("")
+                a("```toon")
+                a(fpath.read_text(encoding="utf-8").rstrip())
+                a("```")
+                a("")
+        else:
+            for sc in scenarios:
+                a(f"#### `{sc['file']}`")
+                a("")
+                a(f"- **name**: {sc['name']}")
+                a(f"- **type**: `{sc['type']}`")
+                if sc["detectors"]:
+                    a(f"- **detectors**: {sc['detectors']}")
+                for k, v in sc["config"].items():
+                    a(f"- **{k}**: `{v}`")
+                if sc["endpoints"]:
+                    a("- **endpoints**:")
+                    for ep in sc["endpoints"]:
+                        op = f" — `{ep['operationId']}`" if ep.get("operationId") else ""
+                        sm = f": {ep['summary']}" if ep.get("summary") else ""
+                        a(f"  - `{ep['method']} {ep['path']}` → `{ep['status']}`{op}{sm}")
+                if sc["asserts"]:
+                    a("- **asserts**:")
+                    for ass in sc["asserts"]:
+                        a(f"  - `{ass['field']} {ass['op']} {ass['expected']}`")
+                if sc.get("performance"):
+                    a("- **performance**:")
+                    for p in sc["performance"]:
+                        a(f"  - `{p['metric']} < {p['threshold']}`")
+                if sc.get("navigate"):
+                    a("- **navigate**: " + ", ".join(f"`{u}`" for u in sc["navigate"]))
+                if sc.get("gui"):
+                    a("- **gui actions**:")
+                    for g in sc["gui"]:
+                        a(f"  - `{g['action']} {g['selector']}`")
+                a("")
 
     # ── Workflows ────────────────────────────────────────────────────────
     a("## Workflows")
@@ -844,12 +878,13 @@ def generate_sumd_content(  # noqa: C901
 
     if doql.get("workflows"):
         doql_sources_wf = ", ".join(f"`{s}`" for s in doql.get("sources", ["app.doql.less"]))
-        a(f"### DOQL Workflows ({doql_sources_wf})")
-        a("")
-        for wf in doql["workflows"]:
-            steps = " → ".join(wf["steps"]) if wf["steps"] else "*(no steps)*"
-            a(f"- **{wf['name']}** `[{wf['trigger']}]`: `{steps}`")
-        a("")
+        if not raw_sources:
+            a(f"### DOQL Workflows ({doql_sources_wf})")
+            a("")
+            for wf in doql["workflows"]:
+                steps = " → ".join(wf["steps"]) if wf["steps"] else "*(no steps)*"
+                a(f"- **{wf['name']}** `[{wf['trigger']}]`: `{steps}`")
+            a("")
 
     if tasks:
         a("### Taskfile Tasks (`Taskfile.yml`)")
@@ -870,28 +905,36 @@ def generate_sumd_content(  # noqa: C901
     if pyqual:
         a("## Quality Pipeline (`pyqual.yaml`)")
         a("")
-        if pyqual.get("name"):
-            a(f"**Pipeline**: `{pyqual['name']}`")
-            a("")
-        if pyqual.get("metrics"):
-            a("### Metrics / Thresholds")
-            a("")
-            for k, v in pyqual["metrics"].items():
-                a(f"- `{k}`: `{v}`")
-            a("")
-        if pyqual.get("stages"):
-            a("### Stages")
-            a("")
-            for s in pyqual["stages"]:
-                opt = " *(optional)*" if s.get("optional") else ""
-                a(f"- **{s['name']}**: `{s['tool']}`{opt}")
-            a("")
-        if pyqual.get("loop"):
-            a("### Loop Behavior")
-            a("")
-            for k, v in pyqual["loop"].items():
-                a(f"- `{k}`: `{v}`")
-            a("")
+        if raw_sources:
+            pyqual_path = proj_dir / "pyqual.yaml"
+            if pyqual_path.exists():
+                a("```yaml")
+                a(pyqual_path.read_text(encoding="utf-8").rstrip())
+                a("```")
+                a("")
+        else:
+            if pyqual.get("name"):
+                a(f"**Pipeline**: `{pyqual['name']}`")
+                a("")
+            if pyqual.get("metrics"):
+                a("### Metrics / Thresholds")
+                a("")
+                for k, v in pyqual["metrics"].items():
+                    a(f"- `{k}`: `{v}`")
+                a("")
+            if pyqual.get("stages"):
+                a("### Stages")
+                a("")
+                for s in pyqual["stages"]:
+                    opt = " *(optional)*" if s.get("optional") else ""
+                    a(f"- **{s['name']}**: `{s['tool']}`{opt}")
+                a("")
+            if pyqual.get("loop"):
+                a("### Loop Behavior")
+                a("")
+                for k, v in pyqual["loop"].items():
+                    a(f"- `{k}`: `{v}`")
+                a("")
 
     # ── Configuration ────────────────────────────────────────────────────
     a("## Configuration")

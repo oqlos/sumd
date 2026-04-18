@@ -5,7 +5,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.1.13`
+- **version**: `0.1.14`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -25,15 +25,268 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 ### DOQL Application Declaration (`app.doql.less`, `app.doql.css`)
 
 ```less
+// LESS format — define @variables here as needed
+
 app {
   name: sumd;
   version: 0.1.11;
 }
+
+interface[type="cli"] {
+  framework: click;
+}
+interface[type="cli"] page[name="sumd"] {
+
+}
+
+workflow[name="install"] {
+  trigger: manual;
+  step-1: run cmd=pip install -e .[dev];
+}
+
+workflow[name="quality"] {
+  trigger: manual;
+  step-1: run cmd=pyqual run;
+}
+
+workflow[name="quality:fix"] {
+  trigger: manual;
+  step-1: run cmd=pyqual run --fix;
+}
+
+workflow[name="quality:report"] {
+  trigger: manual;
+  step-1: run cmd=pyqual report;
+}
+
+workflow[name="test"] {
+  trigger: manual;
+  step-1: run cmd=pytest -q;
+}
+
+workflow[name="lint"] {
+  trigger: manual;
+  step-1: run cmd=ruff check .;
+}
+
+workflow[name="fmt"] {
+  trigger: manual;
+  step-1: run cmd=ruff format .;
+}
+
+workflow[name="build"] {
+  trigger: manual;
+  step-1: run cmd=python -m build;
+}
+
+workflow[name="clean"] {
+  trigger: manual;
+  step-1: run cmd=rm -rf build/ dist/ *.egg-info;
+}
+
+workflow[name="structure"] {
+  trigger: manual;
+  step-1: run cmd=echo "📁 Analyzing sumd project structure..."
+{{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force
+echo "🎨 Exporting to LESS format..."
+{{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}}
+echo "✅ Structure generated: app.doql.css + {{.DOQL_OUTPUT}}";
+}
+
+workflow[name="doql:adopt"] {
+  trigger: manual;
+  step-1: run cmd={{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force;
+  step-2: run cmd=echo "✅ Captured in app.doql.css";
+}
+
+workflow[name="doql:export"] {
+  trigger: manual;
+  step-1: run cmd=if [ ! -f "app.doql.css" ]; then
+echo "❌ app.doql.css not found. Run: task structure"
+exit 1
+fi;
+  step-2: run cmd={{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}};
+  step-3: run cmd=echo "✅ Exported to {{.DOQL_OUTPUT}}";
+}
+
+workflow[name="doql:validate"] {
+  trigger: manual;
+  step-1: run cmd=if [ ! -f "{{.DOQL_OUTPUT}}" ]; then
+echo "❌ {{.DOQL_OUTPUT}} not found. Run: task structure"
+exit 1
+fi;
+  step-2: run cmd={{.DOQL_CMD}} validate;
+}
+
+workflow[name="doql:doctor"] {
+  trigger: manual;
+  step-1: run cmd={{.DOQL_CMD}} doctor;
+}
+
+workflow[name="doql:build"] {
+  trigger: manual;
+  step-1: run cmd=if [ ! -f "{{.DOQL_OUTPUT}}" ]; then
+echo "❌ {{.DOQL_OUTPUT}} not found. Run: task structure"
+exit 1
+fi;
+  step-2: run cmd=# Regenerate LESS from CSS if CSS exists
+if [ -f "app.doql.css" ]; then
+{{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}}
+fi;
+  step-3: run cmd={{.DOQL_CMD}} build app.doql.css --out build/;
+}
+
+workflow[name="docs:build"] {
+  trigger: manual;
+  step-1: run cmd=echo "Building SUMD documentation...";
+  step-2: run cmd=python -m sumd.cli docs/ docs/;
+}
+
+workflow[name="help"] {
+  trigger: manual;
+  step-1: run cmd=task --list;
+}
+
+deploy {
+  target: docker-compose;
+}
+
+environment[name="local"] {
+  runtime: docker-compose;
+  env_file: .env;
+}
 ```
 
-### DOQL Interfaces
+```css
+app {
+  name: "sumd";
+  version: "0.1.11";
+}
 
-- `interface[type="cli"]` page=`sumd` — 
+interface[type="cli"] {
+  framework: click;
+}
+interface[type="cli"] page[name="sumd"] {
+
+}
+
+workflow[name="install"] {
+  trigger: "manual";
+  step-1: run cmd=pip install -e .[dev];
+}
+
+workflow[name="quality"] {
+  trigger: "manual";
+  step-1: run cmd=pyqual run;
+}
+
+workflow[name="quality:fix"] {
+  trigger: "manual";
+  step-1: run cmd=pyqual run --fix;
+}
+
+workflow[name="quality:report"] {
+  trigger: "manual";
+  step-1: run cmd=pyqual report;
+}
+
+workflow[name="test"] {
+  trigger: "manual";
+  step-1: run cmd=pytest -q;
+}
+
+workflow[name="lint"] {
+  trigger: "manual";
+  step-1: run cmd=ruff check .;
+}
+
+workflow[name="fmt"] {
+  trigger: "manual";
+  step-1: run cmd=ruff format .;
+}
+
+workflow[name="build"] {
+  trigger: "manual";
+  step-1: run cmd=python -m build;
+}
+
+workflow[name="clean"] {
+  trigger: "manual";
+  step-1: run cmd=rm -rf build/ dist/ *.egg-info;
+}
+
+workflow[name="structure"] {
+  trigger: "manual";
+  step-1: run cmd=echo "📁 Analyzing sumd project structure..."
+{{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force
+echo "🎨 Exporting to LESS format..."
+{{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}}
+echo "✅ Structure generated: app.doql.css + {{.DOQL_OUTPUT}}";
+}
+
+workflow[name="doql:adopt"] {
+  trigger: "manual";
+  step-1: run cmd={{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force;
+  step-2: run cmd=echo "✅ Captured in app.doql.css";
+}
+
+workflow[name="doql:export"] {
+  trigger: "manual";
+  step-1: run cmd=if [ ! -f "app.doql.css" ]; then
+  echo "❌ app.doql.css not found. Run: task structure"
+  exit 1
+fi;
+  step-2: run cmd={{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}};
+  step-3: run cmd=echo "✅ Exported to {{.DOQL_OUTPUT}}";
+}
+
+workflow[name="doql:validate"] {
+  trigger: "manual";
+  step-1: run cmd=if [ ! -f "{{.DOQL_OUTPUT}}" ]; then
+  echo "❌ {{.DOQL_OUTPUT}} not found. Run: task structure"
+  exit 1
+fi;
+  step-2: run cmd={{.DOQL_CMD}} validate;
+}
+
+workflow[name="doql:doctor"] {
+  trigger: "manual";
+  step-1: run cmd={{.DOQL_CMD}} doctor;
+}
+
+workflow[name="doql:build"] {
+  trigger: "manual";
+  step-1: run cmd=if [ ! -f "{{.DOQL_OUTPUT}}" ]; then
+  echo "❌ {{.DOQL_OUTPUT}} not found. Run: task structure"
+  exit 1
+fi;
+  step-2: run cmd=# Regenerate LESS from CSS if CSS exists
+if [ -f "app.doql.css" ]; then
+  {{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}}
+fi;
+  step-3: run cmd={{.DOQL_CMD}} build app.doql.css --out build/;
+}
+
+workflow[name="docs:build"] {
+  trigger: "manual";
+  step-1: run cmd=echo "Building SUMD documentation...";
+  step-2: run cmd=python -m sumd.cli docs/ docs/;
+}
+
+workflow[name="help"] {
+  trigger: "manual";
+  step-1: run cmd=task --list;
+}
+
+deploy {
+  target: docker-compose;
+}
+
+environment[name="local"] {
+  runtime: docker-compose;
+  env_file: ".env";
+}
+```
 
 ### Source Modules
 
@@ -50,26 +303,6 @@ app {
 - `sumd-mcp`
 
 ## Workflows
-
-### DOQL Workflows (`app.doql.less`, `app.doql.css`)
-
-- **install** `[manual]`: `pip install -e .[dev]`
-- **quality** `[manual]`: `pyqual run`
-- **quality:fix** `[manual]`: `pyqual run --fix`
-- **quality:report** `[manual]`: `pyqual report`
-- **test** `[manual]`: `pytest -q`
-- **lint** `[manual]`: `ruff check .`
-- **fmt** `[manual]`: `ruff format .`
-- **build** `[manual]`: `python -m build`
-- **clean** `[manual]`: `rm -rf build/ dist/ *.egg-info`
-- **structure** `[manual]`: `echo "📁 Analyzing sumd project structure..."`
-- **doql:adopt** `[manual]`: `{{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force;`
-- **doql:export** `[manual]`: `if [ ! -f "app.doql.css" ]; then`
-- **doql:validate** `[manual]`: `if [ ! -f "{{.DOQL_OUTPUT}}" ]; then`
-- **doql:doctor** `[manual]`: `{{.DOQL_CMD}} doctor`
-- **doql:build** `[manual]`: `if [ ! -f "{{.DOQL_OUTPUT}}" ]; then`
-- **docs:build** `[manual]`: `echo "Building SUMD documentation...";`
-- **help** `[manual]`: `task --list`
 
 ### Taskfile Tasks (`Taskfile.yml`)
 
@@ -167,7 +400,7 @@ fi
 ```yaml
 project:
   name: sumd
-  version: 0.1.13
+  version: 0.1.14
   env: local
 ```
 
