@@ -509,20 +509,12 @@ def _try_radon_cc(src: str) -> dict[str, int]:
         return {}
 
 
-def _analyse_py_module(path: Path) -> dict[str, Any]:
-    """Extract exports, function signatures, class info from a Python file."""
-    src = path.read_text(encoding="utf-8", errors="replace")
-    try:
-        tree = ast.parse(src, filename=str(path))
-    except SyntaxError:
-        return {"exports": [], "funcs": [], "classes": [], "cc_map": {}}
-
-    radon_cc = _try_radon_cc(src)
-
+def _analyse_py_top_funcs(
+    tree: ast.AST, radon_cc: dict[str, int]
+) -> tuple[list[str], list[dict]]:
+    """Extract top-level function info. Returns (exports, funcs)."""
     exports: list[str] = []
     funcs: list[dict] = []
-    classes: list[dict] = []
-
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             name = node.name
@@ -531,23 +523,50 @@ def _analyse_py_module(path: Path) -> dict[str, Any]:
             cc = radon_cc.get(name) or _cc_estimate(node)
             fo = _fan_out(node)
             funcs.append({"name": name, "args": args, "cc": cc, "fan": fo})
+    return exports, funcs
 
-        elif isinstance(node, ast.ClassDef):
-            cname = node.name
-            exports.append(cname)
-            methods: list[dict] = []
-            for item in ast.iter_child_nodes(node):
-                if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    margs = [a.arg for a in item.args.args if a.arg != "self"]
-                    cc = radon_cc.get(item.name) or _cc_estimate(item)
-                    fo = _fan_out(item)
-                    methods.append({"name": item.name, "args": margs, "cc": cc, "fan": fo})
-            docline = ""
-            if (ast.get_docstring(node) or "").strip():
-                docline = "  # " + (ast.get_docstring(node) or "").splitlines()[0][:60]
-            classes.append({"name": cname, "methods": methods, "doc": docline})
 
-    return {"exports": exports, "funcs": funcs, "classes": classes, "cc_map": radon_cc}
+def _analyse_py_top_classes(
+    tree: ast.AST, radon_cc: dict[str, int]
+) -> tuple[list[str], list[dict]]:
+    """Extract top-level class info. Returns (exports, classes)."""
+    exports: list[str] = []
+    classes: list[dict] = []
+    for node in ast.iter_child_nodes(tree):
+        if not isinstance(node, ast.ClassDef):
+            continue
+        cname = node.name
+        exports.append(cname)
+        methods: list[dict] = []
+        for item in ast.iter_child_nodes(node):
+            if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                margs = [a.arg for a in item.args.args if a.arg != "self"]
+                cc = radon_cc.get(item.name) or _cc_estimate(item)
+                fo = _fan_out(item)
+                methods.append({"name": item.name, "args": margs, "cc": cc, "fan": fo})
+        docline = ""
+        if (ast.get_docstring(node) or "").strip():
+            docline = "  # " + (ast.get_docstring(node) or "").splitlines()[0][:60]
+        classes.append({"name": cname, "methods": methods, "doc": docline})
+    return exports, classes
+
+
+def _analyse_py_module(path: Path) -> dict[str, Any]:
+    """Extract exports, function signatures, class info from a Python file."""
+    src = path.read_text(encoding="utf-8", errors="replace")
+    try:
+        tree = ast.parse(src, filename=str(path))
+    except SyntaxError:
+        return {"exports": [], "funcs": [], "classes": [], "cc_map": {}}
+    radon_cc = _try_radon_cc(src)
+    func_exports, funcs = _analyse_py_top_funcs(tree, radon_cc)
+    class_exports, classes = _analyse_py_top_classes(tree, radon_cc)
+    return {
+        "exports": func_exports + class_exports,
+        "funcs": funcs,
+        "classes": classes,
+        "cc_map": radon_cc,
+    }
 
 
 def _collect_map_files(proj_dir: Path) -> tuple[dict[str, int], list[tuple[Path, int, str]]]:
@@ -601,6 +620,33 @@ def _render_map_detail(proj_dir: Path, modules: list[tuple[Path, int, str]]) -> 
     return py_modules, all_funcs, all_classes, total_cls
 
 
+def _map_cc_stats(
+    all_funcs: list[dict],
+) -> tuple[float, int, str, str]:
+    """Compute CC stats for map header. Returns (avg_cc, critical, alerts_str, hotspots_str)."""
+    cc_vals = [f["cc"] for f in all_funcs] or [1]
+    avg_cc = round(sum(cc_vals) / len(cc_vals), 1)
+    critical = sum(1 for c in cc_vals if c >= _CC_THRESHOLD)
+    by_cc = sorted(all_funcs, key=lambda x: -x["cc"])[:5]
+    by_fan = sorted(all_funcs, key=lambda x: -x["fan"])[:5]
+    seen: set[str] = set()
+    alert_items: list[str] = []
+    for f in by_cc:
+        k = f"CC {f['name']}={f['cc']}"
+        if k not in seen:
+            alert_items.append(k)
+            seen.add(k)
+    for f in by_fan:
+        k = f"fan-out {f['name']}={f['fan']}"
+        if k not in seen:
+            alert_items.append(k)
+            seen.add(k)
+    hotspot_items = [f"{f['name']} fan={f['fan']}" for f in by_fan[:5]]
+    alerts = "; ".join(alert_items[:5]) if alert_items else "none"
+    hotspots = "; ".join(hotspot_items) if hotspot_items else "none"
+    return avg_cc, critical, alerts, hotspots
+
+
 def generate_map_toon(proj_dir: Path) -> str:
     """Generate project/map.toon.yaml content for proj_dir."""
     proj_dir = proj_dir.resolve()
@@ -616,29 +662,7 @@ def generate_map_toon(proj_dir: Path) -> str:
     total_func = len(all_funcs)
     total_mod = len(modules)
 
-    # CC stats
-    cc_vals = [f["cc"] for f in all_funcs] or [1]
-    avg_cc = round(sum(cc_vals) / len(cc_vals), 1)
-    critical = sum(1 for c in cc_vals if c >= _CC_THRESHOLD)
-
-    # Alert candidates: top CC and fan-out functions
-    by_cc = sorted(all_funcs, key=lambda x: -x["cc"])[:5]
-    by_fan = sorted(all_funcs, key=lambda x: -x["fan"])[:5]
-    alert_items: list[str] = []
-    seen: set[str] = set()
-    for f in by_cc:
-        k = f"CC {f['name']}={f['cc']}"
-        if k not in seen:
-            alert_items.append(k)
-            seen.add(k)
-    for f in by_fan:
-        k = f"fan-out {f['name']}={f['fan']}"
-        if k not in seen:
-            alert_items.append(k)
-            seen.add(k)
-    alerts = "; ".join(alert_items[:5]) if alert_items else "none"
-    hotspot_items = [f"{f['name']} fan={f['fan']}" for f in by_fan[:5]]
-    hotspots = "; ".join(hotspot_items) if hotspot_items else "none"
+    avg_cc, critical, alerts, hotspots = _map_cc_stats(all_funcs)
 
     # ── Render ─────────────────────────────────────────────────────────────
     L: list[str] = []

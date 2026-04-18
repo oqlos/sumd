@@ -66,44 +66,67 @@ def _render_architecture(
     return L
 
 
+def _render_doql_app(doql: dict, L: list[str]) -> None:
+    if not doql.get("app"):
+        return
+    a = L.append
+    a("```less")
+    a("app {")
+    for k, v in doql["app"].items():
+        a(f"  {k}: {v};")
+    a("}")
+    a("```")
+    a("")
+
+
+def _render_doql_entities(doql: dict, L: list[str]) -> None:
+    if not doql.get("entities"):
+        return
+    a = L.append
+    a("### DOQL Data Model (`entity`)")
+    a("")
+    for ent in doql["entities"]:
+        attrs_str = ""
+        if ent.get("attrs"):
+            attrs_str = " — " + ", ".join(f"`{k}: {v}`" for k, v in ent["attrs"].items())
+        page_str = f" page=`{ent['page']}`" if ent.get("page") else ""
+        a(f"- `entity[{ent['name']}]`{page_str}{attrs_str}")
+    a("")
+
+
+def _render_doql_interfaces(doql: dict, L: list[str]) -> None:
+    if not doql.get("interfaces"):
+        return
+    a = L.append
+    a("### DOQL Interfaces")
+    a("")
+    for iface in list(doql["interfaces"]):
+        sel = iface.get("selector", "")
+        attrs = ", ".join(f"{k}: {v}" for k, v in iface.items() if k not in ("selector", "page"))
+        page_str = f" page=`{iface['page']}`" if iface.get("page") else ""
+        a(f"- `interface[{sel}]`{page_str} — {attrs}")
+    a("")
+
+
+def _render_doql_integrations(doql: dict, L: list[str]) -> None:
+    if not doql.get("integrations"):
+        return
+    a = L.append
+    a("### DOQL Integrations")
+    a("")
+    for intg in list(doql["integrations"]):
+        sel = intg.get("selector", "")
+        attrs = ", ".join(f"{k}: {v}" for k, v in intg.items() if k != "selector")
+        a(f"- `integration[{sel}]` — {attrs}")
+    a("")
+
+
 def _render_architecture_doql_parsed(doql: dict, L: list[str]) -> None:
     """Render parsed DOQL blocks into L (mutates in place)."""
-    a = L.append
-    if doql.get("app"):
-        a("```less")
-        a("app {")
-        for k, v in doql["app"].items():
-            a(f"  {k}: {v};")
-        a("}")
-        a("```")
-        a("")
-    if doql.get("entities"):
-        a("### DOQL Data Model (`entity`)")
-        a("")
-        for ent in doql["entities"]:
-            attrs_str = ""
-            if ent.get("attrs"):
-                attrs_str = " — " + ", ".join(f"`{k}: {v}`" for k, v in ent["attrs"].items())
-            page_str = f" page=`{ent['page']}`" if ent.get("page") else ""
-            a(f"- `entity[{ent['name']}]`{page_str}{attrs_str}")
-        a("")
-    if doql.get("interfaces"):
-        a("### DOQL Interfaces")
-        a("")
-        for iface in list(doql["interfaces"]):
-            sel = iface.get("selector", "")
-            attrs = ", ".join(f"{k}: {v}" for k, v in iface.items() if k not in ("selector", "page"))
-            page_str = f" page=`{iface['page']}`" if iface.get("page") else ""
-            a(f"- `interface[{sel}]`{page_str} — {attrs}")
-        a("")
-    if doql.get("integrations"):
-        a("### DOQL Integrations")
-        a("")
-        for intg in list(doql["integrations"]):
-            sel = intg.get("selector", "")
-            attrs = ", ".join(f"{k}: {v}" for k, v in intg.items() if k != "selector")
-            a(f"- `integration[{sel}]` — {attrs}")
-        a("")
+    _render_doql_app(doql, L)
+    _render_doql_entities(doql, L)
+    _render_doql_interfaces(doql, L)
+    _render_doql_integrations(doql, L)
 
 
 def _render_interfaces(
@@ -152,6 +175,58 @@ def _render_interfaces_openapi(
             a("")
 
 
+def _render_testql_raw(
+    scenarios: list, proj_dir: Path, L: list[str]
+) -> None:
+    a = L.append
+    seen_scenario_files: set[str] = set()
+    for sc in scenarios:
+        rel = sc.get("rel_path", sc["file"])
+        fpath = proj_dir / rel
+        if not fpath.exists() or rel in seen_scenario_files:
+            continue
+        seen_scenario_files.add(rel)
+        a(f"#### `{rel}`")
+        a("")
+        a(f"```toon markpact:file path={rel}")
+        a(fpath.read_text(encoding="utf-8").rstrip())
+        a("```")
+        a("")
+
+
+def _render_testql_one_structured(sc: dict, L: list[str]) -> None:
+    a = L.append
+    a(f"#### `{sc['file']}`")
+    a("")
+    a(f"- **name**: {sc['name']}")
+    a(f"- **type**: `{sc['type']}`")
+    if sc["detectors"]:
+        a(f"- **detectors**: {sc['detectors']}")
+    for k, v in sc["config"].items():
+        a(f"- **{k}**: `{v}`")
+    if sc["endpoints"]:
+        a("- **endpoints**:")
+        for ep in sc["endpoints"]:
+            op = f" — `{ep['operationId']}`" if ep.get("operationId") else ""
+            sm = f": {ep['summary']}" if ep.get("summary") else ""
+            a(f"  - `{ep['method']} {ep['path']}` → `{ep['status']}`{op}{sm}")
+    if sc["asserts"]:
+        a("- **asserts**:")
+        for ass in sc["asserts"]:
+            a(f"  - `{ass['field']} {ass['op']} {ass['expected']}`")
+    if sc.get("performance"):
+        a("- **performance**:")
+        for p in sc["performance"]:
+            a(f"  - `{p['metric']} < {p['threshold']}`")
+    if sc.get("navigate"):
+        a("- **navigate**: " + ", ".join(f"`{u}`" for u in sc["navigate"]))
+    if sc.get("gui"):
+        a("- **gui actions**:")
+        for g in sc["gui"]:
+            a(f"  - `{g['action']} {g['selector']}`")
+    a("")
+
+
 def _render_interfaces_testql(
     scenarios: list, proj_dir: Path, raw_sources: bool, L: list[str]
 ) -> None:
@@ -160,50 +235,10 @@ def _render_interfaces_testql(
     a("### testql Scenarios")
     a("")
     if raw_sources:
-        seen_scenario_files: set[str] = set()
-        for sc in scenarios:
-            rel = sc.get("rel_path", sc["file"])
-            fpath = proj_dir / rel
-            if not fpath.exists() or rel in seen_scenario_files:
-                continue
-            seen_scenario_files.add(rel)
-            a(f"#### `{rel}`")
-            a("")
-            a(f"```toon markpact:file path={rel}")
-            a(fpath.read_text(encoding="utf-8").rstrip())
-            a("```")
-            a("")
+        _render_testql_raw(scenarios, proj_dir, L)
     else:
         for sc in scenarios:
-            a(f"#### `{sc['file']}`")
-            a("")
-            a(f"- **name**: {sc['name']}")
-            a(f"- **type**: `{sc['type']}`")
-            if sc["detectors"]:
-                a(f"- **detectors**: {sc['detectors']}")
-            for k, v in sc["config"].items():
-                a(f"- **{k}**: `{v}`")
-            if sc["endpoints"]:
-                a("- **endpoints**:")
-                for ep in sc["endpoints"]:
-                    op = f" — `{ep['operationId']}`" if ep.get("operationId") else ""
-                    sm = f": {ep['summary']}" if ep.get("summary") else ""
-                    a(f"  - `{ep['method']} {ep['path']}` → `{ep['status']}`{op}{sm}")
-            if sc["asserts"]:
-                a("- **asserts**:")
-                for ass in sc["asserts"]:
-                    a(f"  - `{ass['field']} {ass['op']} {ass['expected']}`")
-            if sc.get("performance"):
-                a("- **performance**:")
-                for p in sc["performance"]:
-                    a(f"  - `{p['metric']} < {p['threshold']}`")
-            if sc.get("navigate"):
-                a("- **navigate**: " + ", ".join(f"`{u}`" for u in sc["navigate"]))
-            if sc.get("gui"):
-                a("- **gui actions**:")
-                for g in sc["gui"]:
-                    a(f"  - `{g['action']} {g['selector']}`")
-            a("")
+            _render_testql_one_structured(sc, L)
 
 
 def _render_workflows(doql: dict, tasks: list, proj_dir: Path, raw_sources: bool) -> list[str]:
@@ -310,18 +345,12 @@ def _render_dependencies(deps: list, dev_deps: list) -> list[str]:
     return L
 
 
-def _render_deployment(
-    pkg_json: dict, name: str, reqs: list, dockerfile: dict, compose: dict
-) -> list[str]:
-    L: list[str] = []
+def _render_deployment_install(pkg_json: dict, name: str, L: list[str]) -> None:
     a = L.append
-    a("## Deployment")
-    a("")
     if pkg_json.get("name"):
         a("```bash markpact:run")
         a(f"npm install {pkg_json['name']}")
         a("```")
-        a("")
     else:
         a("```bash markpact:run")
         a(f"pip install {name}")
@@ -329,18 +358,27 @@ def _render_deployment(
         a("# development install")
         a("pip install -e .[dev]")
         a("```")
+    a("")
+
+
+def _render_deployment_reqs(reqs: list, L: list[str]) -> None:
+    if not reqs:
+        return
+    a = L.append
+    a("### Requirements Files")
+    a("")
+    for r in reqs:
+        a(f"#### `{r['file']}`")
         a("")
-    if reqs:
-        a("### Requirements Files")
+        for dep in r["deps"][:20]:
+            a(f"- `{dep}`")
+        if len(r["deps"]) > 20:
+            a(f"- *(+{len(r['deps'])-20} more)*")
         a("")
-        for r in reqs:
-            a(f"#### `{r['file']}`")
-            a("")
-            for dep in r["deps"][:20]:
-                a(f"- `{dep}`")
-            if len(r["deps"]) > 20:
-                a(f"- *(+{len(r['deps'])-20} more)*")
-            a("")
+
+
+def _render_deployment_docker(dockerfile: dict, compose: dict, L: list[str]) -> None:
+    a = L.append
     if dockerfile:
         a("### Docker")
         a("")
@@ -361,6 +399,18 @@ def _render_deployment(
             image_str = f" image=`{svc['image']}`" if svc["image"] else ""
             a(f"- **{svc['name']}**{image_str}" + (f" ports: {ports_str}" if ports_str else ""))
         a("")
+
+
+def _render_deployment(
+    pkg_json: dict, name: str, reqs: list, dockerfile: dict, compose: dict
+) -> list[str]:
+    L: list[str] = []
+    a = L.append
+    a("## Deployment")
+    a("")
+    _render_deployment_install(pkg_json, name, L)
+    _render_deployment_reqs(reqs, L)
+    _render_deployment_docker(dockerfile, compose, L)
     return L
 
 
@@ -423,13 +473,11 @@ def _render_code_analysis(project_analysis: list) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def _collect_sources(
+def _collect_pkg_sources(
     pyproj: dict, reqs: list, tasks: list, makefile: list, scenarios: list,
     openapi: dict, doql: dict, pyqual: dict, goal: dict, env_vars: list,
-    dockerfile: dict, compose: dict, pkg_json: dict, modules: list,
-    project_analysis: list,
 ) -> list[str]:
-    """Build the list of source labels that contributed data to this SUMD."""
+    """Collect source labels for code/pipeline sources."""
     sources: list[str] = []
     if pyproj:
         sources.append("pyproject.toml")
@@ -451,6 +499,15 @@ def _collect_sources(
         sources.append("goal.yaml")
     if env_vars:
         sources.append(".env.example")
+    return sources
+
+
+def _collect_infra_sources(
+    dockerfile: dict, compose: dict, pkg_json: dict,
+    modules: list, project_analysis: list,
+) -> list[str]:
+    """Collect source labels for infra/module sources."""
+    sources: list[str] = []
     if dockerfile:
         sources.append("Dockerfile")
     if compose.get("services"):
@@ -462,6 +519,21 @@ def _collect_sources(
     if project_analysis:
         sources.append(f"project/({len(project_analysis)} analysis files)")
     return sources
+
+
+def _collect_sources(
+    pyproj: dict, reqs: list, tasks: list, makefile: list, scenarios: list,
+    openapi: dict, doql: dict, pyqual: dict, goal: dict, env_vars: list,
+    dockerfile: dict, compose: dict, pkg_json: dict, modules: list,
+    project_analysis: list,
+) -> list[str]:
+    """Build the list of source labels that contributed data to this SUMD."""
+    return (
+        _collect_pkg_sources(
+            pyproj, reqs, tasks, makefile, scenarios, openapi, doql, pyqual, goal, env_vars
+        )
+        + _collect_infra_sources(dockerfile, compose, pkg_json, modules, project_analysis)
+    )
 
 
 def _render_metadata_section(

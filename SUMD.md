@@ -19,7 +19,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.1.15`
+- **version**: `0.1.16`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -376,7 +376,7 @@ tasks:
 ```yaml
 project:
   name: sumd
-  version: 0.1.15
+  version: 0.1.16
   env: local
 ```
 
@@ -585,16 +585,16 @@ HUBS[20]:
     CC=20  in:1  out:37  total:38
   sumd.cli.analyze
     CC=11  in:0  out:33  total:33
-  sumd.parser.validate_codeblocks
-    CC=13  in:1  out:25  total:26
   sumd.cli._scan_one_project
     CC=16  in:1  out:25  total:26
-  sumd.cli._scaffold_from_openapi
-    CC=16  in:1  out:24  total:25
+  sumd.parser.validate_codeblocks
+    CC=13  in:1  out:25  total:26
   sumd.extractor.extract_openapi
     CC=12  in:1  out:24  total:25
   sumd.extractor._analyse_py_module
     CC=15  in:1  out:24  total:25
+  sumd.cli._scaffold_from_openapi
+    CC=16  in:1  out:24  total:25
   sumd.cli.map_cmd
     CC=7  in:0  out:20  total:20
   sumd.extractor._parse_doql_content
@@ -613,7 +613,7 @@ HUBS[20]:
     CC=10  in:1  out:13  total:14
   sumd.cli._setup_tools_venv
     CC=7  in:1  out:13  total:14
-  sumd.extractor.extract_makefile
+  sumd.toon_parser.extract_testql_scenarios
     CC=7  in:1  out:12  total:13
 
 MODULES:
@@ -675,21 +675,6 @@ EDGES:
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_performance
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_navigate
   sumd.toon_parser.extract_testql_scenarios → sumd.toon_parser._parse_toon_file
-  sumd.cli.validate → sumd.parser.SUMDParser.parse_file
-  sumd.cli.validate → sumd.parser.validate
-  sumd.cli.export → sumd.parser.SUMDParser.parse_file
-  sumd.cli.info → sumd.parser.SUMDParser.parse_file
-  sumd.cli.extract → sumd.parser.SUMDParser.parse_file
-  sumd.cli._scan_one_project → sumd.renderer.generate_sumd_content
-  sumd.cli._scan_one_project → sumd.parser.validate_sumd_file
-  sumd.cli._scan_one_project → sumd.parser.SUMDParser.parse_file
-  sumd.cli.analyze → sumd.cli._setup_tools_venv
-  sumd.cli._scaffold_from_openapi → sumd.cli._scaffold_write
-  sumd.cli._scaffold_from_openapi → sumd.cli._api_scenario_template
-  sumd.cli._scaffold_generic → sumd.cli._api_scenario_template
-  sumd.cli._scaffold_generic → sumd.cli._scaffold_write
-  sumd.cli.map_cmd → sumd.extractor.generate_map_toon
-  sumd.cli.main → sumd.cli.cli
   sumd.extractor.extract_pyproject → sumd.extractor._read_toml
   sumd.extractor._parse_doql_content → sumd.extractor._parse_doql_interfaces
   sumd.extractor._parse_doql_content → sumd.extractor._parse_doql_entities
@@ -717,6 +702,21 @@ EDGES:
   sumd.renderer.generate_sumd_content → sumd.extractor.extract_readme_title
   sumd.renderer.generate_sumd_content → sumd.extractor.extract_requirements
   sumd.renderer.generate_sumd_content → sumd.extractor.extract_makefile
+  sumd.cli.validate → sumd.parser.SUMDParser.parse_file
+  sumd.cli.validate → sumd.parser.validate
+  sumd.cli.export → sumd.parser.SUMDParser.parse_file
+  sumd.cli.info → sumd.parser.SUMDParser.parse_file
+  sumd.cli.extract → sumd.parser.SUMDParser.parse_file
+  sumd.cli._scan_one_project → sumd.renderer.generate_sumd_content
+  sumd.cli._scan_one_project → sumd.parser.validate_sumd_file
+  sumd.cli._scan_one_project → sumd.parser.SUMDParser.parse_file
+  sumd.cli.analyze → sumd.cli._setup_tools_venv
+  sumd.cli._scaffold_from_openapi → sumd.cli._scaffold_write
+  sumd.cli._scaffold_from_openapi → sumd.cli._api_scenario_template
+  sumd.cli._scaffold_generic → sumd.cli._api_scenario_template
+  sumd.cli._scaffold_generic → sumd.cli._scaffold_write
+  sumd.cli.map_cmd → sumd.extractor.generate_map_toon
+  sumd.cli.main → sumd.cli.cli
   sumd.parser.validate_markdown → sumd.parser._check_empty_links
   sumd.parser.validate_markdown → sumd.parser._check_unclosed_fences
 ```

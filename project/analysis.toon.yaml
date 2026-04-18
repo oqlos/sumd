@@ -1,22 +1,14 @@
-# code2llm | 10f 3151L | python:9,shell:1 | 2026-04-18
-# CC̄=6.5 | critical:10/104 | dups:0 | cycles:0
+# code2llm | 10f 3278L | python:9,shell:1 | 2026-04-18
+# CC̄=5.4 | critical:2/130 | dups:0 | cycles:0
 
-HEALTH[10]:
-  🟡 CC    _analyse_py_module CC=15 (limit:15)
-  🟡 CC    generate_map_toon CC=22 (limit:15)
-  🟡 CC    _scan_one_project CC=16 (limit:15)
-  🟡 CC    lint CC=19 (limit:15)
-  🟡 CC    _scaffold_from_openapi CC=16 (limit:15)
-  🟡 CC    _render_architecture_doql_parsed CC=17 (limit:15)
-  🟡 CC    _render_interfaces_testql CC=20 (limit:15)
-  🟡 CC    _render_deployment CC=18 (limit:15)
-  🟡 CC    _collect_sources CC=19 (limit:15)
-  🟡 CC    call_tool CC=24 (limit:15)
+HEALTH[2]:
+  🟡 CC    _scan_one_project CC=15 (limit:15)
+  🟡 CC    _render_testql_one_structured CC=15 (limit:15)
 
 REFACTOR[1]:
-  1. split 10 high-CC methods  (CC>15)
+  1. split 2 high-CC methods  (CC>15)
 
-PIPELINES[27]:
+PIPELINES[34]:
   [1] Src [validate]: validate → parse_file
       PURITY: 100% pure
   [2] Src [export]: export → parse_file
@@ -29,12 +21,12 @@ PIPELINES[27]:
       PURITY: 100% pure
 
 LAYERS:
-  sumd/                           CC̄=6.5    ←in:0  →out:0
-  │ !! cli                        742L  0C   22m  CC=19     ←0
-  │ !! extractor                  707L  0C   28m  CC=22     ←2
-  │ !! renderer                   634L  0C   18m  CC=20     ←1
+  sumd/                           CC̄=5.4    ←in:0  →out:0
+  │ !! cli                        772L  0C   27m  CC=15     ←0
+  │ !! extractor                  731L  0C   31m  CC=13     ←2
+  │ !! renderer                   706L  0C   29m  CC=15     ←1
   │ parser                     476L  5C   23m  CC=13     ←2
-  │ !! mcp_server                 321L  0C    5m  CC=24     ←0
+  │ mcp_server                 322L  0C   12m  CC=5      ←0
   │ toon_parser                166L  0C    8m  CC=9      ←1
   │ __init__                    33L  0C    0m  CC=0.0    ←0
   │ generator                   17L  0C    0m  CC=0.0    ←0

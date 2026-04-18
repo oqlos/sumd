@@ -243,6 +243,20 @@ def _run_analysis_tools(proj_dir: Path, tool_list: list[str]) -> None:
         )
 
 
+def _export_sumd_json(proj_dir: Path, doc) -> None:
+    """Write sumd.json for a project."""
+    json_path = proj_dir / "sumd.json"
+    data = {
+        "project_name": doc.project_name,
+        "description": doc.description,
+        "sections": [
+            {"name": s.name, "type": s.type.value, "content": s.content, "level": s.level}
+            for s in doc.sections
+        ],
+    }
+    json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
 def _scan_one_project(
     proj_dir: Path, fix: bool, raw: bool, export_json: bool,
     run_analyze: bool, tool_list: list[str], parser_inst: "SUMDParser",
@@ -276,16 +290,7 @@ def _scan_one_project(
         click.echo(f"  \u2705 {proj_dir.name:<18} {'ok':<10} {len(doc.sections):<10} {', '.join(sources)}{warn_str}")
 
         if export_json:
-            json_path = proj_dir / "sumd.json"
-            data = {
-                "project_name": doc.project_name,
-                "description": doc.description,
-                "sections": [
-                    {"name": s.name, "type": s.type.value, "content": s.content, "level": s.level}
-                    for s in doc.sections
-                ],
-            }
-            json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+            _export_sumd_json(proj_dir, doc)
 
         if run_analyze:
             click.echo("   \U0001f52c Running analysis...")
@@ -378,15 +383,7 @@ def lint(files: tuple[Path, ...], workspace: Optional[Path], as_json: bool):
       sumd lint SUMD.md
       sumd lint --workspace .
     """
-    paths: list[Path] = list(files)
-
-    if workspace:
-        ws = workspace.resolve()
-        paths += sorted(
-            d / "SUMD.md"
-            for d in ws.iterdir()
-            if d.is_dir() and not d.name.startswith(".") and (d / "SUMD.md").exists()
-        )
+    paths = _lint_collect_paths(files, workspace)
 
     if not paths:
         click.echo("⚠️  No SUMD.md files specified. Use sumd lint SUMD.md or --workspace .", err=True)
@@ -407,17 +404,7 @@ def lint(files: tuple[Path, ...], workspace: Optional[Path], as_json: bool):
         if as_json:
             continue
 
-        status = "✅" if r["ok"] else "❌"
-        cb_count = len(r["codeblocks"])
-        err_count = len(errors)
-        warn_count = len(warnings)
-        click.echo(f"{status} {path}  ({cb_count} blocks, {err_count} errors, {warn_count} warnings)")
-
-        for issue in r["markdown"]:
-            click.echo(f"    [markdown] ❌ {issue}")
-        for cb in r["codeblocks"]:
-            icon = "❌" if cb.kind == "error" else "⚠"
-            click.echo(f"    [codeblock L{cb.line} {cb.lang}] {icon} {cb.message}")
+        _lint_print_result(path, r)
 
     if as_json:
         import json as _json
@@ -426,6 +413,35 @@ def lint(files: tuple[Path, ...], workspace: Optional[Path], as_json: bool):
         click.echo(f"\n📊 {len(paths)} files | ❌ {total_errors} errors | ⚠ {total_warnings} warnings")
 
     sys.exit(0 if total_errors == 0 else 1)
+
+
+def _lint_collect_paths(
+    files: tuple[Path, ...], workspace: Optional[Path]
+) -> list[Path]:
+    """Collect SUMD.md paths from explicit files and/or workspace."""
+    paths: list[Path] = list(files)
+    if workspace:
+        ws = workspace.resolve()
+        paths += sorted(
+            d / "SUMD.md"
+            for d in ws.iterdir()
+            if d.is_dir() and not d.name.startswith(".") and (d / "SUMD.md").exists()
+        )
+    return paths
+
+
+def _lint_print_result(path: Path, r: dict) -> None:
+    """Print lint result for a single file."""
+    errors = r["markdown"] + [c.message for c in r["codeblocks"] if c.kind == "error"]
+    warnings = [c for c in r["codeblocks"] if c.kind == "warning"]
+    status = "✅" if r["ok"] else "❌"
+    cb_count = len(r["codeblocks"])
+    click.echo(f"{status} {path}  ({cb_count} blocks, {len(errors)} errors, {len(warnings)} warnings)")
+    for issue in r["markdown"]:
+        click.echo(f"    [markdown] ❌ {issue}")
+    for cb in r["codeblocks"]:
+        icon = "❌" if cb.kind == "error" else "⚠"
+        click.echo(f"    [codeblock L{cb.line} {cb.lang}] {icon} {cb.message}")
 
 
 def _setup_tools_venv(venv_dir: Path, tool_list: list[str], force: bool) -> Path:
@@ -580,6 +596,41 @@ def _scaffold_write(path: Path, content: str, force: bool,
         generated.append(path.name)
 
 
+def _scaffold_smoke_scenario(
+    paths: dict, base: str, out_dir: Path, force: bool,
+    generated: list[str], skipped: list[str],
+) -> None:
+    health_paths = [p for p in paths if any(k in p.lower() for k in ("health", "ping", "status"))]
+    ep_block = (
+        "\n".join(f"  GET,  {p},  200" for p in health_paths[:5])
+        if health_paths
+        else "  GET,  /health,  200  # TODO: adjust path"
+    )
+    _scaffold_write(
+        out_dir / "smoke-health.testql.toon.yaml",
+        _api_scenario_template("smoke-health", "smoke", ep_block, base),
+        force, generated, skipped,
+    )
+
+
+def _scaffold_crud_scenarios(
+    groups: dict, base: str, out_dir: Path, force: bool,
+    generated: list[str], skipped: list[str],
+) -> None:
+    for resource, eps in sorted(groups.items()):
+        if resource in ("health", "ping", "status"):
+            continue
+        safe_resource = re.sub(r"[^\w\-]", "_", resource).strip("_")
+        ep_lines = [f"  {method},  {path},  200" for method, path in eps[:8]]
+        if not ep_lines:
+            continue
+        _scaffold_write(
+            out_dir / f"api-{safe_resource}.testql.toon.yaml",
+            _api_scenario_template(f"api-{safe_resource}", "api", "\n".join(ep_lines), base),
+            force, generated, skipped,
+        )
+
+
 def _scaffold_from_openapi(
     spec: dict, out_dir: Path, scenario_type: str, force: bool,
     generated: list[str], skipped: list[str],
@@ -596,31 +647,10 @@ def _scaffold_from_openapi(
     base = spec.get("servers", [{}])[0].get("url", "/api/v1").rstrip("/")
 
     if scenario_type in ("smoke", "all"):
-        health_paths = [p for p in paths if any(k in p.lower() for k in ("health", "ping", "status"))]
-        ep_block = (
-            "\n".join(f"  GET,  {p},  200" for p in health_paths[:5])
-            if health_paths
-            else "  GET,  /health,  200  # TODO: adjust path"
-        )
-        _scaffold_write(
-            out_dir / "smoke-health.testql.toon.yaml",
-            _api_scenario_template("smoke-health", "smoke", ep_block, base),
-            force, generated, skipped,
-        )
+        _scaffold_smoke_scenario(paths, base, out_dir, force, generated, skipped)
 
     if scenario_type in ("crud", "api", "all"):
-        for resource, eps in sorted(groups.items()):
-            if resource in ("health", "ping", "status"):
-                continue
-            safe_resource = re.sub(r"[^\w\-]", "_", resource).strip("_")
-            ep_lines = [f"  {method},  {path},  200" for method, path in eps[:8]]
-            if not ep_lines:
-                continue
-            _scaffold_write(
-                out_dir / f"api-{safe_resource}.testql.toon.yaml",
-                _api_scenario_template(f"api-{safe_resource}", "api", "\n".join(ep_lines), base),
-                force, generated, skipped,
-            )
+        _scaffold_crud_scenarios(groups, base, out_dir, force, generated, skipped)
 
     return len(paths)
 

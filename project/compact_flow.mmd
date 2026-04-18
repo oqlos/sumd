@@ -8,6 +8,6 @@ flowchart TD
     sumd__renderer ==>|15| sumd__extractor
     sumd__cli ==>|8| sumd__parser
     sumd__mcp_server ==>|7| sumd__parser
+    sumd__renderer -->|1| sumd__toon_parser
     sumd__cli -->|1| sumd__renderer
     sumd__cli -->|1| sumd__extractor
-    sumd__renderer -->|1| sumd__toon_parser

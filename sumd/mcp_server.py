@@ -185,120 +185,121 @@ async def list_tools() -> list[types.Tool]:
 
 
 # ---------------------------------------------------------------------------
+# Tool handlers
+# ---------------------------------------------------------------------------
+
+async def _tool_parse_sumd(arguments: dict) -> list[types.TextContent]:
+    path = _resolve_path(arguments["file"])
+    doc = parse_file(path)
+    return [types.TextContent(type="text", text=json.dumps(_doc_to_dict(doc), indent=2, ensure_ascii=False))]
+
+
+async def _tool_validate_sumd(arguments: dict) -> list[types.TextContent]:
+    path = _resolve_path(arguments["file"])
+    doc = parse_file(path)
+    parser = SUMDParser()
+    errors = parser.validate(doc)
+    result = json.dumps({"valid": len(errors) == 0, "errors": errors}, indent=2)
+    return [types.TextContent(type="text", text=result)]
+
+
+async def _tool_export_sumd(arguments: dict) -> list[types.TextContent]:
+    path = _resolve_path(arguments["file"])
+    fmt = arguments.get("format", "json")
+    output_path = arguments.get("output")
+    doc = parse_file(path)
+    data = _doc_to_dict(doc)
+    if fmt == "markdown":
+        content = doc.raw_content
+    elif fmt == "yaml":
+        import yaml
+        content = yaml.dump(data, default_flow_style=False, allow_unicode=True)
+    elif fmt == "toml":
+        import toml
+        content = toml.dumps(data)
+    else:
+        content = json.dumps(data, indent=2, ensure_ascii=False)
+    if output_path:
+        out = _resolve_path(output_path)
+        out.write_text(content, encoding="utf-8")
+        return [types.TextContent(type="text", text=f"Exported to {out}")]
+    return [types.TextContent(type="text", text=content)]
+
+
+async def _tool_list_sections(arguments: dict) -> list[types.TextContent]:
+    path = _resolve_path(arguments["file"])
+    doc = parse_file(path)
+    sections = [{"name": s.name, "type": s.type.value, "level": s.level} for s in doc.sections]
+    return [types.TextContent(type="text", text=json.dumps(sections, indent=2, ensure_ascii=False))]
+
+
+async def _tool_get_section(arguments: dict) -> list[types.TextContent]:
+    path = _resolve_path(arguments["file"])
+    query = arguments["section"].lower()
+    doc = parse_file(path)
+    match = next(
+        (s for s in doc.sections if s.name.lower() == query or s.type.value == query),
+        None,
+    )
+    if match is None:
+        return [types.TextContent(type="text", text=f'Section "{arguments["section"]}" not found.')]
+    result = {"name": match.name, "type": match.type.value, "level": match.level, "content": match.content}
+    return [types.TextContent(type="text", text=json.dumps(result, indent=2, ensure_ascii=False))]
+
+
+async def _tool_info_sumd(arguments: dict) -> list[types.TextContent]:
+    path = _resolve_path(arguments["file"])
+    doc = parse_file(path)
+    info = {
+        "project_name": doc.project_name,
+        "description": doc.description,
+        "section_count": len(doc.sections),
+        "section_types": [s.type.value for s in doc.sections],
+    }
+    return [types.TextContent(type="text", text=json.dumps(info, indent=2, ensure_ascii=False))]
+
+
+async def _tool_generate_sumd(arguments: dict) -> list[types.TextContent]:
+    data = arguments["data"]
+    output_path = arguments.get("output")
+    lines: list[str] = [f"# {data.get('project_name', 'Project')}", ""]
+    if data.get("description"):
+        lines += [data["description"], ""]
+    for section in data.get("sections", []):
+        level = "#" * section.get("level", 2)
+        lines += [f"{level} {section['name']}", ""]
+        if section.get("content"):
+            lines += [section["content"], ""]
+    content = "\n".join(lines)
+    if output_path:
+        out = _resolve_path(output_path)
+        out.write_text(content, encoding="utf-8")
+        return [types.TextContent(type="text", text=f"Generated {out}")]
+    return [types.TextContent(type="text", text=content)]
+
+
+_TOOL_HANDLERS = {
+    "parse_sumd":    _tool_parse_sumd,
+    "validate_sumd": _tool_validate_sumd,
+    "export_sumd":   _tool_export_sumd,
+    "list_sections": _tool_list_sections,
+    "get_section":   _tool_get_section,
+    "info_sumd":     _tool_info_sumd,
+    "generate_sumd": _tool_generate_sumd,
+}
+
+
+# ---------------------------------------------------------------------------
 # Tool execution
 # ---------------------------------------------------------------------------
 
 @server.call_tool()
 async def call_tool(name: str, arguments: dict[str, Any]) -> list[types.TextContent]:
-
     try:
-        if name == "parse_sumd":
-            path = _resolve_path(arguments["file"])
-            doc = parse_file(path)
-            result = json.dumps(_doc_to_dict(doc), indent=2, ensure_ascii=False)
-            return [types.TextContent(type="text", text=result)]
-
-        elif name == "validate_sumd":
-            path = _resolve_path(arguments["file"])
-            doc = parse_file(path)
-            parser = SUMDParser()
-            errors = parser.validate(doc)
-            result = json.dumps({"valid": len(errors) == 0, "errors": errors}, indent=2)
-            return [types.TextContent(type="text", text=result)]
-
-        elif name == "export_sumd":
-            path = _resolve_path(arguments["file"])
-            fmt = arguments.get("format", "json")
-            output_path = arguments.get("output")
-
-            doc = parse_file(path)
-            data = _doc_to_dict(doc)
-
-            if fmt == "markdown":
-                content = doc.raw_content
-            elif fmt == "json":
-                content = json.dumps(data, indent=2, ensure_ascii=False)
-            elif fmt == "yaml":
-                import yaml
-                content = yaml.dump(data, default_flow_style=False, allow_unicode=True)
-            elif fmt == "toml":
-                import toml
-                content = toml.dumps(data)
-            else:
-                content = json.dumps(data, indent=2, ensure_ascii=False)
-
-            if output_path:
-                out = _resolve_path(output_path)
-                out.write_text(content, encoding="utf-8")
-                return [types.TextContent(type="text", text=f"Exported to {out}")]
-            return [types.TextContent(type="text", text=content)]
-
-        elif name == "list_sections":
-            path = _resolve_path(arguments["file"])
-            doc = parse_file(path)
-            sections = [
-                {"name": s.name, "type": s.type.value, "level": s.level}
-                for s in doc.sections
-            ]
-            return [types.TextContent(type="text", text=json.dumps(sections, indent=2, ensure_ascii=False))]
-
-        elif name == "get_section":
-            path = _resolve_path(arguments["file"])
-            query = arguments["section"].lower()
-            doc = parse_file(path)
-            match = next(
-                (s for s in doc.sections if s.name.lower() == query or s.type.value == query),
-                None,
-            )
-            if match is None:
-                return [types.TextContent(type="text", text=f'Section "{arguments["section"]}" not found.')]
-            result = {
-                "name": match.name,
-                "type": match.type.value,
-                "level": match.level,
-                "content": match.content,
-            }
-            return [types.TextContent(type="text", text=json.dumps(result, indent=2, ensure_ascii=False))]
-
-        elif name == "info_sumd":
-            path = _resolve_path(arguments["file"])
-            doc = parse_file(path)
-            info = {
-                "project_name": doc.project_name,
-                "description": doc.description,
-                "section_count": len(doc.sections),
-                "section_types": [s.type.value for s in doc.sections],
-            }
-            return [types.TextContent(type="text", text=json.dumps(info, indent=2, ensure_ascii=False))]
-
-        elif name == "generate_sumd":
-            data = arguments["data"]
-            output_path = arguments.get("output")
-
-            lines: list[str] = []
-            lines.append(f"# {data.get('project_name', 'Project')}")
-            lines.append("")
-            if data.get("description"):
-                lines.append(data["description"])
-                lines.append("")
-            for section in data.get("sections", []):
-                level = "#" * section.get("level", 2)
-                lines.append(f"{level} {section['name']}")
-                lines.append("")
-                if section.get("content"):
-                    lines.append(section["content"])
-                    lines.append("")
-
-            content = "\n".join(lines)
-            if output_path:
-                out = _resolve_path(output_path)
-                out.write_text(content, encoding="utf-8")
-                return [types.TextContent(type="text", text=f"Generated {out}")]
-            return [types.TextContent(type="text", text=content)]
-
-        else:
+        handler = _TOOL_HANDLERS.get(name)
+        if handler is None:
             return [types.TextContent(type="text", text=f"Unknown tool: {name}")]
-
+        return await handler(arguments)
     except Exception as exc:
         return [types.TextContent(type="text", text=f"Error: {exc}")]
 

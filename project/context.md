@@ -6,44 +6,41 @@
 - **Primary Language**: python
 - **Languages**: python: 9, shell: 1
 - **Analysis Mode**: static
-- **Total Functions**: 104
+- **Total Functions**: 130
 - **Total Classes**: 5
 - **Modules**: 10
-- **Entry Points**: 28
+- **Entry Points**: 35
 
 ## Architecture by Module
 
 ### sumd.extractor
-- **Functions**: 28
+- **Functions**: 31
 - **File**: `extractor.py`
+
+### sumd.renderer
+- **Functions**: 29
+- **File**: `renderer.py`
+
+### sumd.cli
+- **Functions**: 27
+- **File**: `cli.py`
 
 ### sumd.parser
 - **Functions**: 23
 - **Classes**: 5
 - **File**: `parser.py`
 
-### sumd.cli
-- **Functions**: 22
-- **File**: `cli.py`
-
-### sumd.renderer
-- **Functions**: 18
-- **File**: `renderer.py`
+### sumd.mcp_server
+- **Functions**: 12
+- **File**: `mcp_server.py`
 
 ### sumd.toon_parser
 - **Functions**: 8
 - **File**: `toon_parser.py`
 
-### sumd.mcp_server
-- **Functions**: 5
-- **File**: `mcp_server.py`
-
 ## Key Entry Points
 
 Main execution flows into the system:
-
-### sumd.mcp_server.call_tool
-- **Calls**: server.call_tool, sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, json.dumps, sumd.mcp_server._doc_to_dict, types.TextContent, sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file
 
 ### sumd.cli.analyze
 > Run analysis tools (code2llm, redup, vallm) on a project.
@@ -66,13 +63,6 @@ for e
 FILE: Path to the structured format file (json/yaml/toml)
 - **Calls**: cli.command, click.argument, click.option, click.option, file.read_text, lines.append, data.get, lines.append
 
-### sumd.cli.lint
-> Validate SUMD.md files — check markdown structure and codeblock formats.
-
-Validates:
-  - Markdown structure (H1, required H2 sections, metadata fields
-- **Calls**: cli.command, click.argument, click.option, click.option, list, sys.exit, workspace.resolve, sorted
-
 ### sumd.cli.scan
 > Scan a workspace directory and generate SUMD.md for every project found.
 
@@ -86,6 +76,13 @@ pypr
 Analyses all source files in the project and produces a map.toon.yaml
 with module in
 - **Calls**: cli.command, click.argument, click.option, click.option, click.option, project.resolve, click.echo, sumd.extractor.generate_map_toon
+
+### sumd.cli.lint
+> Validate SUMD.md files — check markdown structure and codeblock formats.
+
+Validates:
+  - Markdown structure (H1, required H2 sections, metadata fields
+- **Calls**: cli.command, click.argument, click.option, click.option, sumd.cli._lint_collect_paths, sys.exit, click.echo, sys.exit
 
 ### sumd.cli.export
 > Export a SUMD document to structured format.
@@ -112,6 +109,9 @@ FILE: Path to the SUMD markdown file
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, click.option, sumd.parser.SUMDParser.parse_file, click.Path, click.echo, sys.exit, click.echo
 
+### sumd.mcp_server._tool_export_sumd
+- **Calls**: sumd.mcp_server._resolve_path, arguments.get, arguments.get, sumd.parser.SUMDParser.parse_file, sumd.mcp_server._doc_to_dict, sumd.mcp_server._resolve_path, out.write_text, types.TextContent
+
 ### sumd.parser.SUMDParser._parse_sections
 > Parse all sections in the document.
 
@@ -125,16 +125,37 @@ Args:
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, sumd.parser.SUMDParser.parse_file, click.echo, click.echo, click.echo, click.Path, click.echo
 
+### sumd.mcp_server._tool_generate_sumd
+- **Calls**: arguments.get, data.get, data.get, None.join, section.get, sumd.mcp_server._resolve_path, out.write_text, types.TextContent
+
 ### sumd.mcp_server.list_tools
 - **Calls**: server.list_tools, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool
+
+### sumd.mcp_server._tool_get_section
+- **Calls**: sumd.mcp_server._resolve_path, None.lower, sumd.parser.SUMDParser.parse_file, next, types.TextContent, types.TextContent, json.dumps, s.name.lower
+
+### sumd.mcp_server._tool_validate_sumd
+- **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, SUMDParser, parser.validate, json.dumps, types.TextContent, len
 
 ### sumd.parser._validate_deps_body
 > Each line of a deps block should be a valid pip requirement or empty.
 - **Calls**: enumerate, body.splitlines, line.strip, line.startswith, re.match, issues.append
 
+### sumd.mcp_server._tool_parse_sumd
+- **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps, sumd.mcp_server._doc_to_dict
+
+### sumd.mcp_server._tool_info_sumd
+- **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, len, types.TextContent, json.dumps
+
+### sumd.mcp_server.call_tool
+- **Calls**: server.call_tool, _TOOL_HANDLERS.get, handler, types.TextContent, types.TextContent
+
 ### sumd.parser._validate_mermaid_body
 > Check mermaid block starts with a valid diagram type.
 - **Calls**: None.strip, any, None.split, first.startswith, body.strip
+
+### sumd.mcp_server._tool_list_sections
+- **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps
 
 ### sumd.parser.SUMDParser.parse
 > Parse a SUMD markdown document.
@@ -193,80 +214,61 @@ Returns:
 > Basic sanity: balanced braces.
 - **Calls**: body.count, body.count
 
-### sumd.cli.main
-> Main entry point for the CLI.
-- **Calls**: sumd.cli.cli
-
-### sumd.parser._validate_yaml_body
-> Check YAML body is parseable.
-- **Calls**: yaml.safe_load
-
-### sumd.parser._validate_toon_body
-> Check toon block has at least one recognised section header.
-- **Calls**: re.findall
-
-### sumd.parser._validate_bash_body
-> Check bash block is non-empty and doesn't contain obvious placeholders.
-- **Calls**: body.strip
-
-### sumd.parser.SUMDParser.__init__
-
 ## Process Flows
 
 Key execution flows identified:
 
-### Flow 1: call_tool
-```
-call_tool [sumd.mcp_server]
-  └─> _resolve_path
-  └─> _doc_to_dict
-  └─ →> parse_file
-```
-
-### Flow 2: analyze
+### Flow 1: analyze
 ```
 analyze [sumd.cli]
 ```
 
-### Flow 3: scaffold
+### Flow 2: scaffold
 ```
 scaffold [sumd.cli]
 ```
 
-### Flow 4: generate
+### Flow 3: generate
 ```
 generate [sumd.cli]
 ```
 
-### Flow 5: lint
-```
-lint [sumd.cli]
-```
-
-### Flow 6: scan
+### Flow 4: scan
 ```
 scan [sumd.cli]
 ```
 
-### Flow 7: map_cmd
+### Flow 5: map_cmd
 ```
 map_cmd [sumd.cli]
 ```
 
-### Flow 8: export
+### Flow 6: lint
+```
+lint [sumd.cli]
+  └─> _lint_collect_paths
+```
+
+### Flow 7: export
 ```
 export [sumd.cli]
   └─ →> parse_file
 ```
 
-### Flow 9: _parse_header
+### Flow 8: _parse_header
 ```
 _parse_header [sumd.parser.SUMDParser]
 ```
 
-### Flow 10: validate
+### Flow 9: validate
 ```
 validate [sumd.cli]
+  └─ →> parse_file
+```
+
+### Flow 10: extract
+```
+extract [sumd.cli]
   └─ →> parse_file
 ```
 
@@ -339,6 +341,16 @@ FILE: Path to the SUMD markdown file
 > Run a single analysis tool subprocess. Returns True on success.
 - **Output to**: subprocess.run, click.echo, exe.exists, click.echo, str
 
+### sumd.renderer._render_architecture_doql_parsed
+> Render parsed DOQL blocks into L (mutates in place).
+- **Output to**: sumd.renderer._render_doql_app, sumd.renderer._render_doql_entities, sumd.renderer._render_doql_interfaces, sumd.renderer._render_doql_integrations
+
+### sumd.mcp_server._tool_parse_sumd
+- **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps, sumd.mcp_server._doc_to_dict
+
+### sumd.mcp_server._tool_validate_sumd
+- **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, SUMDParser, parser.validate, json.dumps
+
 ### sumd.extractor._parse_doql_entities
 > Parse entity blocks from DOQL content.
 - **Output to**: re.finditer, dict, m.group, entities.append, re.findall
@@ -354,10 +366,6 @@ FILE: Path to the SUMD markdown file
 ### sumd.extractor._parse_doql_content
 > Parse DOQL content from .less or .css file into structured data.
 - **Output to**: re.search, re.finditer, sumd.extractor._parse_doql_interfaces, None.splitlines, dict
-
-### sumd.renderer._render_architecture_doql_parsed
-> Render parsed DOQL blocks into L (mutates in place).
-- **Output to**: doql.get, doql.get, doql.get, doql.get, a
 
 ### sumd.parser.SUMDParser.parse
 > Parse a SUMD markdown document.
@@ -431,25 +439,15 @@ Returns:
     List of va
 - **Output to**: SUMDParser, parser.validate
 
-### sumd.parser._validate_yaml_body
-> Check YAML body is parseable.
-- **Output to**: yaml.safe_load
-
-### sumd.parser._validate_less_css_body
-> Basic sanity: balanced braces.
-- **Output to**: body.count, body.count
-
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
-- `sumd.mcp_server.call_tool` - 64 calls
 - `sumd.renderer.generate_sumd_content` - 60 calls
-- `sumd.extractor.generate_map_toon` - 44 calls
 - `sumd.cli.analyze` - 33 calls
 - `sumd.cli.scaffold` - 33 calls
+- `sumd.extractor.generate_map_toon` - 32 calls
 - `sumd.cli.generate` - 30 calls
-- `sumd.cli.lint` - 30 calls
 - `sumd.cli.scan` - 29 calls
 - `sumd.parser.validate_codeblocks` - 25 calls
 - `sumd.extractor.extract_openapi` - 24 calls
@@ -457,6 +455,7 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_dockerfile` - 22 calls
 - `sumd.extractor.extract_docker_compose` - 22 calls
 - `sumd.cli.map_cmd` - 20 calls
+- `sumd.cli.lint` - 19 calls
 - `sumd.extractor.extract_pyproject` - 17 calls
 - `sumd.cli.export` - 16 calls
 - `sumd.extractor.extract_package_json` - 15 calls
@@ -471,6 +470,7 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_requirements` - 9 calls
 - `sumd.mcp_server.list_tools` - 8 calls
 - `sumd.parser.validate_markdown` - 6 calls
+- `sumd.mcp_server.call_tool` - 5 calls
 - `sumd.extractor.extract_readme_title` - 5 calls
 - `sumd.extractor.extract_project_analysis` - 5 calls
 - `sumd.parser.validate_sumd_file` - 5 calls
@@ -490,11 +490,6 @@ How components interact:
 
 ```mermaid
 graph TD
-    call_tool --> call_tool
-    call_tool --> _resolve_path
-    call_tool --> parse_file
-    call_tool --> dumps
-    call_tool --> _doc_to_dict
     analyze --> command
     analyze --> argument
     analyze --> option
@@ -506,20 +501,25 @@ graph TD
     generate --> argument
     generate --> option
     generate --> read_text
-    lint --> command
-    lint --> argument
-    lint --> option
-    lint --> list
     scan --> command
     scan --> argument
     scan --> option
     map_cmd --> command
     map_cmd --> argument
     map_cmd --> option
+    lint --> command
+    lint --> argument
+    lint --> option
+    lint --> _lint_collect_paths
     export --> command
     export --> argument
     export --> option
     export --> parse_file
+    _parse_header --> enumerate
+    _parse_header --> startswith
+    _parse_header --> strip
+    _parse_header --> split
+    validate --> command
 ```
 
 ## Reverse Engineering Guidelines

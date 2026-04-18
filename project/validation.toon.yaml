@@ -1,34 +1,33 @@
-# vallm batch | 38f | 11✓ 1⚠ 4✗ | 2026-04-18
+# vallm batch | 39f | 13✓ 1⚠ 4✗ | 2026-04-18
 
 SUMMARY:
-  scanned: 38  passed: 11 (28.9%)  warnings: 1  errors: 4  unsupported: 23
+  scanned: 39  passed: 13 (33.3%)  warnings: 1  errors: 4  unsupported: 22
 
 WARNINGS[1]{path,score}:
-  sumd/parser.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,validate_markdown has cyclomatic complexity 21 (max: 15),377
-      complexity.lizard_cc,warning,validate_markdown: CC=21 exceeds limit 15,377
+  /home/tom/github/oqlos/sumd/sumd/renderer.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 7.5 (threshold: 20),
 
 ERRORS[4]{path,score}:
-  sumd/mcp_server.py,0.86
+  /home/tom/github/oqlos/sumd/sumd/mcp_server.py,0.86
     issues[4]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'mcp.server.stdio' not found,20
       python.import.resolvable,error,Module 'mcp.types' not found,21
       python.import.resolvable,error,Module 'mcp.server' not found,22
-      python.import.resolvable,error,Module 'toml' not found,225
-  tests/test_parser.py,0.86
+      python.import.resolvable,error,Module 'toml' not found,218
+  /home/tom/github/oqlos/sumd/tests/test_parser.py,0.86
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,3
-  sumd/cli.py,0.95
+  /home/tom/github/oqlos/sumd/sumd/cli.py,0.95
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'toml' not found,141
       python.import.resolvable,error,Module 'toml' not found,87
-  sumd/generator.py,0.96
+  /home/tom/github/oqlos/sumd/sumd/extractor.py,0.96
     issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'toml' not found,60
+      python.import.resolvable,error,Module 'toml' not found,26
 
 UNSUPPORTED[4]{bucket,count}:
   *.md,12
   *.txt,1
   *.yml,1
-  other,9
+  other,8

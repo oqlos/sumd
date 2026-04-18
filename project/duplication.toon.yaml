@@ -1,21 +1,21 @@
-# redup/duplication | 2 groups | 6f 3006L | 2026-04-18
+# redup/duplication | 2 groups | 9f 3116L | 2026-04-18
 
 SUMMARY:
-  files_scanned: 6
-  total_lines:   3006
+  files_scanned: 9
+  total_lines:   3116
   dup_groups:    2
   dup_fragments: 4
   saved_lines:   25
-  scan_ms:       4649
+  scan_ms:       13527
 
 HOTSPOTS[2] (files with most duplication):
-  sumd/generator.py  dup=28L  groups=1  frags=2  (0.9%)
+  sumd/toon_parser.py  dup=28L  groups=1  frags=2  (0.9%)
   sumd/parser.py  dup=22L  groups=1  frags=2  (0.7%)
 
 DUPLICATES[2] (ranked by impact):
   [ec6388d8055c3e57]   STRU  _parse_toon_block_performance  L=14 N=2 saved=14 sim=1.00
-      sumd/generator.py:169-182  (_parse_toon_block_performance)
-      sumd/generator.py:201-214  (_parse_toon_block_gui)
+      sumd/toon_parser.py:63-76  (_parse_toon_block_performance)
+      sumd/toon_parser.py:95-108  (_parse_toon_block_gui)
   [d1ab1a804f1b435b]   STRU  parse  L=11 N=2 saved=11 sim=1.00
       sumd/parser.py:188-198  (parse)
       sumd/parser.py:201-211  (parse_file)
@@ -23,14 +23,14 @@ DUPLICATES[2] (ranked by impact):
 REFACTOR[2] (ranked by priority):
   [1] ○ extract_function   → sumd/utils/_parse_toon_block_performance.py
       WHY: 2 occurrences of 14-line block across 1 files — saves 14 lines
-      FILES: sumd/generator.py
+      FILES: sumd/toon_parser.py
   [2] ○ extract_function   → sumd/utils/parse.py
       WHY: 2 occurrences of 11-line block across 1 files — saves 11 lines
       FILES: sumd/parser.py
 
 QUICK_WINS[2] (low risk, high savings — do first):
   [1] extract_function   saved=14L  → sumd/utils/_parse_toon_block_performance.py
-      FILES: generator.py
+      FILES: toon_parser.py
   [2] extract_function   saved=11L  → sumd/utils/parse.py
       FILES: parser.py
 
