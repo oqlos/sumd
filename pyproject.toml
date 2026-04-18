@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "overview"
-version = "0.1.2"
-description = "OqlOS Statement - Python package for statement management"
+name = "sumd"
+version = "0.1.3"
+description = "OqlOS Overview - Python package for statement management"
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.10"
@@ -27,11 +27,11 @@ Homepage = "https://github.com/tom/statement"
 Repository = "https://github.com/tom/statement"
 
 [tool.hatch.build.targets.wheel]
-packages = ["overview"]
+packages = ["sumd"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "/overview",
+    "/sumd",
     "/README.md",
     "/LICENSE",
     "/CHANGELOG.md",
