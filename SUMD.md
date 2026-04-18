@@ -5,7 +5,6 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 ## Contents
 
 - [Metadata](#metadata)
-- [Intent](#intent)
 - [Architecture](#architecture)
 - [Interfaces](#interfaces)
 - [Workflows](#workflows)
@@ -15,20 +14,17 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 - [Environment Variables (`.env.example`)](#environment-variables-envexample)
 - [Release Management (`goal.yaml`)](#release-management-goalyaml)
 - [Code Analysis](#code-analysis)
+- [Intent](#intent)
 
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.1.17`
+- **version**: `0.1.18`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Taskfile.yml, testql(1), app.doql.css, goal.yaml, .env.example, src(7 mod), project/(2 analysis files)
-
-## Intent
-
-SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
+- **generated_from**: pyproject.toml, Taskfile.yml, testql(1), app.doql.css, goal.yaml, .env.example, src(8 mod), project/(2 analysis files)
 
 ## Architecture
 
@@ -176,6 +172,7 @@ environment[name="local"] {
 - `sumd.generator`
 - `sumd.mcp_server`
 - `sumd.parser`
+- `sumd.pipeline`
 - `sumd.renderer`
 - `sumd.toon_parser`
 
@@ -376,7 +373,7 @@ tasks:
 ```yaml
 project:
   name: sumd
-  version: 0.1.17
+  version: 0.1.18
   env: local
 ```
 
@@ -428,33 +425,60 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:file path=project/map.toon.yaml
-# sumd | 10f 3151L | shell:1,python:9 | 2026-04-18
-# stats: 104 func | 0 cls | 10 mod | CC̄=6.5 | critical:10 | cycles:0
-# alerts[5]: fan-out generate_sumd_content=34; fan-out _scaffold_from_openapi=20; fan-out call_tool=20; CC call_tool=24; CC generate_map_toon=22
-# hotspots[5]: generate_sumd_content fan=34; _scaffold_from_openapi fan=20; call_tool fan=20; scaffold fan=19; generate fan=17
-# evolution: CC̄ 6.5→6.5 (flat 0.0)
+# sumd | 13f 3531L | python:11,css:1,shell:1 | 2026-04-18
+# stats: 132 func | 5 cls | 13 mod | CC̄=5.3 | critical:20 | cycles:0
+# alerts[5]: CC _scan_one_project=15; CC _render_testql_one_structured=15; CC _collect_pkg_sources=14; CC extract_dockerfile=13; CC validate_codeblocks=13
+# hotspots[5]: generate_sumd_content fan=34; scaffold fan=18; analyze fan=17; generate fan=15; scan fan=15
+# evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[10]:
+M[13]:
+  app.doql.css,129
   project.sh,35
-  scripts/generate_all_sumd.py,20
-  sumd/__init__.py,33
-  sumd/cli.py,742
-  sumd/extractor.py,707
-  sumd/generator.py,17
-  sumd/mcp_server.py,321
-  sumd/parser.py,476
-  sumd/renderer.py,634
-  sumd/toon_parser.py,166
+  scripts/generate_all_sumd.py,21
+  sumd/__init__.py,34
+  sumd/cli.py,773
+  sumd/extractor.py,732
+  sumd/generator.py,18
+  sumd/mcp_server.py,323
+  sumd/parser.py,477
+  sumd/renderer.py,707
+  sumd/toon_parser.py,167
+  tests/test_parser.py,103
+  tests/test_statement.py,12
 D:
-  sumd/mcp_server.py:
-    e: _doc_to_dict,_resolve_path,list_tools,call_tool,main
-    _doc_to_dict(doc)
-    _resolve_path(path)
-    list_tools()
-    call_tool(name;arguments)
+  scripts/generate_all_sumd.py:
+  sumd/__init__.py:
+  sumd/cli.py:
+    e: cli,validate,export,info,generate,extract,_detect_projects,_run_analysis_tools,_export_sumd_json,_scan_one_project,scan,lint,_lint_collect_paths,_lint_print_result,_setup_tools_venv,_run_code2llm_formats,_run_tool_subprocess,analyze,_api_scenario_template,_scaffold_write,_scaffold_smoke_scenario,_scaffold_crud_scenarios,_scaffold_from_openapi,_scaffold_generic,scaffold,map_cmd,main
+    cli()
+    validate(file)
+    export(file;format;output)
+    info(file)
+    generate(file;format;output)
+    extract(file;section)
+    _detect_projects(workspace)
+    _run_analysis_tools(proj_dir;tool_list)
+    _export_sumd_json(proj_dir;doc)
+    _scan_one_project(proj_dir;fix;raw;export_json;run_analyze;tool_list;parser_inst)
+    scan(workspace;export_json;report;fix;raw;analyze;tools)
+    lint(files;workspace;as_json)
+    _lint_collect_paths(files;workspace)
+    _lint_print_result(path;r)
+    _setup_tools_venv(venv_dir;tool_list;force)
+    _run_code2llm_formats(bin_dir;project;project_output)
+    _run_tool_subprocess(bin_dir;tool;cmd_args)
+    analyze(project;tools;force)
+    _api_scenario_template(name;scenario_type;endpoints_block;base_path)
+    _scaffold_write(path;content;force;generated;skipped)
+    _scaffold_smoke_scenario(paths;base;out_dir;force;generated;skipped)
+    _scaffold_crud_scenarios(groups;base;out_dir;force;generated;skipped)
+    _scaffold_from_openapi(spec;out_dir;scenario_type;force;generated;skipped)
+    _scaffold_generic(out_dir;force;generated;skipped)
+    scaffold(project;output;force;scenario_type)
+    map_cmd(project;output;force;stdout)
     main()
   sumd/extractor.py:
-    e: _read_toml,extract_pyproject,extract_taskfile,extract_openapi,_parse_doql_entities,_parse_doql_interfaces,_parse_doql_workflows,_parse_doql_content,extract_doql,extract_pyqual,extract_python_modules,extract_readme_title,extract_requirements,extract_makefile,extract_goal,extract_env,extract_dockerfile,extract_docker_compose,extract_package_json,_lang_of,_fan_out,_cc_estimate,_try_radon_cc,_analyse_py_module,_collect_map_files,_render_map_detail,generate_map_toon,extract_project_analysis
+    e: _read_toml,extract_pyproject,extract_taskfile,extract_openapi,_parse_doql_entities,_parse_doql_interfaces,_parse_doql_workflows,_parse_doql_content,extract_doql,extract_pyqual,extract_python_modules,extract_readme_title,extract_requirements,extract_makefile,extract_goal,extract_env,extract_dockerfile,extract_docker_compose,extract_package_json,_lang_of,_fan_out,_cc_estimate,_try_radon_cc,_analyse_py_top_funcs,_analyse_py_top_classes,_analyse_py_module,_collect_map_files,_render_map_detail,_map_cc_stats,generate_map_toon,extract_project_analysis
     _read_toml(path)
     extract_pyproject(proj_dir)
     extract_taskfile(proj_dir)
@@ -478,61 +502,35 @@ D:
     _fan_out(func_node)
     _cc_estimate(func_node)
     _try_radon_cc(src)
+    _analyse_py_top_funcs(tree;radon_cc)
+    _analyse_py_top_classes(tree;radon_cc)
     _analyse_py_module(path)
     _collect_map_files(proj_dir)
     _render_map_detail(proj_dir;modules)
+    _map_cc_stats(all_funcs)
     generate_map_toon(proj_dir)
     extract_project_analysis(proj_dir)
-  sumd/renderer.py:
-    e: _render_architecture,_render_architecture_doql_parsed,_render_interfaces,_render_interfaces_openapi,_render_interfaces_testql,_render_workflows,_render_quality,_render_dependencies,_render_deployment,_render_extras,_render_code_analysis,_collect_sources,_render_metadata_section,_render_configuration_section,_render_env_section,_render_goal_section,_inject_toc,generate_sumd_content
-    _render_architecture(doql;modules;name;proj_dir;raw_sources)
-    _render_architecture_doql_parsed(doql;L)
-    _render_interfaces(scripts;openapi;scenarios;proj_dir;raw_sources)
-    _render_interfaces_openapi(openapi;proj_dir;raw_sources;L)
-    _render_interfaces_testql(scenarios;proj_dir;raw_sources;L)
-    _render_workflows(doql;tasks;proj_dir;raw_sources)
-    _render_quality(pyqual;proj_dir;raw_sources)
-    _render_dependencies(deps;dev_deps)
-    _render_deployment(pkg_json;name;reqs;dockerfile;compose)
-    _render_extras(makefile;pkg_json)
-    _render_code_analysis(project_analysis)
-    _collect_sources(pyproj;reqs;tasks;makefile;scenarios;openapi;doql;pyqual;goal;env_vars;dockerfile;compose;pkg_json;modules;project_analysis)
-    _render_metadata_section(name;version;py_req;license_;ai_model;openapi;sources_used)
-    _render_configuration_section(name;version)
-    _render_env_section(env_vars)
-    _render_goal_section(goal)
-    _inject_toc(content)
-    generate_sumd_content(proj_dir;return_sources;raw_sources)
-  sumd/cli.py:
-    e: cli,validate,export,info,generate,extract,_detect_projects,_run_analysis_tools,_scan_one_project,scan,lint,_setup_tools_venv,_run_code2llm_formats,_run_tool_subprocess,analyze,_api_scenario_template,_scaffold_write,_scaffold_from_openapi,_scaffold_generic,scaffold,map_cmd,main
-    cli()
-    validate(file)
-    export(file;format;output)
-    info(file)
-    generate(file;format;output)
-    extract(file;section)
-    _detect_projects(workspace)
-    _run_analysis_tools(proj_dir;tool_list)
-    _scan_one_project(proj_dir;fix;raw;export_json;run_analyze;tool_list;parser_inst)
-    scan(workspace;export_json;report;fix;raw;analyze;tools)
-    lint(files;workspace;as_json)
-    _setup_tools_venv(venv_dir;tool_list;force)
-    _run_code2llm_formats(bin_dir;project;project_output)
-    _run_tool_subprocess(bin_dir;tool;cmd_args)
-    analyze(project;tools;force)
-    _api_scenario_template(name;scenario_type;endpoints_block;base_path)
-    _scaffold_write(path;content;force;generated;skipped)
-    _scaffold_from_openapi(spec;out_dir;scenario_type;force;generated;skipped)
-    _scaffold_generic(out_dir;force;generated;skipped)
-    scaffold(project;output;force;scenario_type)
-    map_cmd(project;output;force;stdout)
+  sumd/generator.py:
+  sumd/mcp_server.py:
+    e: _doc_to_dict,_resolve_path,list_tools,_tool_parse_sumd,_tool_validate_sumd,_tool_export_sumd,_tool_list_sections,_tool_get_section,_tool_info_sumd,_tool_generate_sumd,call_tool,main
+    _doc_to_dict(doc)
+    _resolve_path(path)
+    list_tools()
+    _tool_parse_sumd(arguments)
+    _tool_validate_sumd(arguments)
+    _tool_export_sumd(arguments)
+    _tool_list_sections(arguments)
+    _tool_get_section(arguments)
+    _tool_info_sumd(arguments)
+    _tool_generate_sumd(arguments)
+    call_tool(name;arguments)
     main()
   sumd/parser.py:
-    e: SectionType,Section,SUMDDocument,SUMDParser,CodeBlockIssue,parse,parse_file,validate,_validate_yaml_body,_validate_less_css_body,_validate_mermaid_body,_validate_toon_body,_validate_bash_body,_validate_deps_body,validate_codeblocks,_check_h1,_check_required_sections,_check_metadata_fields,_check_unclosed_fences,_check_empty_links,validate_markdown,validate_sumd_file
-    SectionType(Enum):  # SUMD section types...
-    Section:  # Represents a SUMD section...
-    SUMDDocument:  # Represents a parsed SUMD document...
-    SUMDParser: __init__(0),parse(1),parse_file(1),_parse_header(1),_parse_sections(1),validate(1)  # Parser for SUMD markdown documents...
+    e: parse,parse_file,validate,_validate_yaml_body,_validate_less_css_body,_validate_mermaid_body,_validate_toon_body,_validate_bash_body,_validate_deps_body,validate_codeblocks,_check_h1,_check_required_sections,_check_metadata_fields,_check_unclosed_fences,_check_empty_links,validate_markdown,validate_sumd_file,SectionType,Section,SUMDDocument,SUMDParser,CodeBlockIssue
+    SectionType:  # SUMD section types.
+    Section:  # Represents a SUMD section.
+    SUMDDocument:  # Represents a parsed SUMD document.
+    SUMDParser: __init__(0),parse(1),parse_file(1),_parse_header(1),_parse_sections(1),validate(1)  # Parser for SUMD markdown documents.
     CodeBlockIssue:
     parse(content)
     parse_file(path)
@@ -551,6 +549,37 @@ D:
     _check_empty_links(content;source)
     validate_markdown(content;source)
     validate_sumd_file(path)
+  sumd/renderer.py:
+    e: _render_architecture,_render_doql_app,_render_doql_entities,_render_doql_interfaces,_render_doql_integrations,_render_architecture_doql_parsed,_render_interfaces,_render_interfaces_openapi,_render_testql_raw,_render_testql_one_structured,_render_interfaces_testql,_render_workflows,_render_quality,_render_dependencies,_render_deployment_install,_render_deployment_reqs,_render_deployment_docker,_render_deployment,_render_extras,_render_code_analysis,_collect_pkg_sources,_collect_infra_sources,_collect_sources,_render_metadata_section,_render_configuration_section,_render_env_section,_render_goal_section,_inject_toc,generate_sumd_content
+    _render_architecture(doql;modules;name;proj_dir;raw_sources)
+    _render_doql_app(doql;L)
+    _render_doql_entities(doql;L)
+    _render_doql_interfaces(doql;L)
+    _render_doql_integrations(doql;L)
+    _render_architecture_doql_parsed(doql;L)
+    _render_interfaces(scripts;openapi;scenarios;proj_dir;raw_sources)
+    _render_interfaces_openapi(openapi;proj_dir;raw_sources;L)
+    _render_testql_raw(scenarios;proj_dir;L)
+    _render_testql_one_structured(sc;L)
+    _render_interfaces_testql(scenarios;proj_dir;raw_sources;L)
+    _render_workflows(doql;tasks;proj_dir;raw_sources)
+    _render_quality(pyqual;proj_dir;raw_sources)
+    _render_dependencies(deps;dev_deps)
+    _render_deployment_install(pkg_json;name;L)
+    _render_deployment_reqs(reqs;L)
+    _render_deployment_docker(dockerfile;compose;L)
+    _render_deployment(pkg_json;name;reqs;dockerfile;compose)
+    _render_extras(makefile;pkg_json)
+    _render_code_analysis(project_analysis)
+    _collect_pkg_sources(pyproj;reqs;tasks;makefile;scenarios;openapi;doql;pyqual;goal;env_vars)
+    _collect_infra_sources(dockerfile;compose;pkg_json;modules;project_analysis)
+    _collect_sources(pyproj;reqs;tasks;makefile;scenarios;openapi;doql;pyqual;goal;env_vars;dockerfile;compose;pkg_json;modules;project_analysis)
+    _render_metadata_section(name;version;py_req;license_;ai_model;openapi;sources_used)
+    _render_configuration_section(name;version)
+    _render_env_section(env_vars)
+    _render_goal_section(goal)
+    _inject_toc(content)
+    generate_sumd_content(proj_dir;return_sources;raw_sources)
   sumd/toon_parser.py:
     e: _parse_toon_block_config,_parse_toon_block_api,_parse_toon_block_assert,_parse_toon_block_performance,_parse_toon_block_navigate,_parse_toon_block_gui,_parse_toon_file,extract_testql_scenarios
     _parse_toon_block_config(lines)
@@ -561,10 +590,18 @@ D:
     _parse_toon_block_gui(lines)
     _parse_toon_file(f)
     extract_testql_scenarios(proj_dir)
-  project.sh:
-  sumd/__init__.py:
-  sumd/generator.py:
-  scripts/generate_all_sumd.py:
+  tests/test_parser.py:
+    e: test_parse_basic,test_parse_sections,test_validate_valid_document,test_validate_missing_intent,test_parse_file,test_parser_class
+    test_parse_basic()
+    test_parse_sections()
+    test_validate_valid_document()
+    test_validate_missing_intent()
+    test_parse_file(tmp_path)
+    test_parser_class()
+  tests/test_statement.py:
+    e: test_placeholder,test_import
+    test_placeholder()
+    test_import()
 ```
 
 ### `project/calls.toon.yaml`
@@ -732,3 +769,7 @@ EDGES:
   sumd.mcp_server._tool_validate_sumd → sumd.parser.SUMDParser.parse_file
   sumd.mcp_server._tool_validate_sumd → sumd.parser.validate
 ```
+
+## Intent
+
+SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation

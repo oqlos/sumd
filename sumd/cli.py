@@ -12,6 +12,7 @@ import click
 from sumd.parser import SUMDParser, parse_file
 from sumd.parser import validate_sumd_file, CodeBlockIssue
 from sumd.generator import generate_sumd_content, generate_map_toon
+from sumd.pipeline import RenderPipeline
 
 __version__ = "0.1.15"
 
@@ -260,6 +261,7 @@ def _export_sumd_json(proj_dir: Path, doc) -> None:
 def _scan_one_project(
     proj_dir: Path, fix: bool, raw: bool, export_json: bool,
     run_analyze: bool, tool_list: list[str], parser_inst: "SUMDParser",
+    profile: str = "rich",
 ) -> dict:
     """Generate SUMD.md for one project and return a result dict."""
     sumd_path = proj_dir / "SUMD.md"
@@ -269,7 +271,7 @@ def _scan_one_project(
         return {"status": "SKIP", "path": str(sumd_path)}
 
     try:
-        content, sources = generate_sumd_content(proj_dir, return_sources=True, raw_sources=raw)
+        content, sources = RenderPipeline(proj_dir, raw_sources=raw).run(profile=profile, return_sources=True)
         sumd_path.write_text(content, encoding="utf-8")
 
         result = validate_sumd_file(sumd_path)
@@ -319,7 +321,8 @@ def _scan_one_project(
 @click.option("--raw/--no-raw", default=True, help="Embed source files as raw code blocks (default). Use --no-raw for structured Markdown.")
 @click.option("--analyze/--no-analyze", default=False, help="Run analysis tools (code2llm, redup, vallm) on each project after scan")
 @click.option("--tools", type=str, default="code2llm,redup,vallm", help="Tools to run with --analyze")
-def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, raw: bool, analyze: bool, tools: str):
+@click.option("--profile", type=click.Choice(["minimal", "light", "rich"]), default="rich", help="Section profile to use when rendering SUMD.md")
+def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, raw: bool, analyze: bool, tools: str, profile: str):
     """Scan a workspace directory and generate SUMD.md for every project found.
 
     Detects projects by presence of pyproject.toml. Extracts metadata from:
@@ -346,7 +349,7 @@ def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, 
 
     for proj_dir in project_dirs:
         total += 1
-        result = _scan_one_project(proj_dir, fix, raw, export_json, analyze, tool_list, parser_inst)
+        result = _scan_one_project(proj_dir, fix, raw, export_json, analyze, tool_list, parser_inst, profile)
         results[proj_dir.name] = result
         if result["status"] == "SKIP":
             skip_count += 1
