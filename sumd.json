@@ -5,7 +5,7 @@
     {
       "name": "metadata",
       "type": "metadata",
-      "content": "- **name**: `sumd`\n- **version**: `0.1.11`\n- **python_requires**: `>=3.10`\n- **license**: Apache-2.0\n- **ai_model**: `openrouter/qwen/qwen3-coder-next`\n- **ecosystem**: SUMD + DOQL + testql + taskfile\n- **generated_from**: pyproject.toml, Taskfile.yml, app.doql.less, app.doql.css, src(4 mod)",
+      "content": "- **name**: `sumd`\n- **version**: `0.1.12`\n- **python_requires**: `>=3.10`\n- **license**: Apache-2.0\n- **ai_model**: `openrouter/qwen/qwen3-coder-next`\n- **ecosystem**: SUMD + DOQL + testql + taskfile\n- **generated_from**: pyproject.toml, Taskfile.yml, app.doql.less, app.doql.css, goal.yaml, .env.example, src(4 mod)",
       "level": 2
     },
     {
@@ -71,7 +71,7 @@
     {
       "name": "configuration",
       "type": "configuration",
-      "content": "```yaml\nproject:\n  name: sumd\n  version: 0.1.11\n  env: local\n```",
+      "content": "```yaml\nproject:\n  name: sumd\n  version: 0.1.12\n  env: local\n```",
       "level": 2
     },
     {
@@ -90,6 +90,18 @@
       "name": "deployment",
       "type": "deployment",
       "content": "```bash\npip install sumd\n\n# development install\npip install -e .[dev]\n```",
+      "level": 2
+    },
+    {
+      "name": "environment variables (`.env.example`)",
+      "type": "unknown",
+      "content": "| Variable | Default | Description |\n|----------|---------|-------------|\n| `OPENROUTER_API_KEY` | `` | Required: OpenRouter API key (https://openrouter.ai/keys) |\n| `LLM_MODEL` | `openrouter/qwen/qwen3-coder-next` | Model (default: openrouter/qwen/qwen3-coder-next) |\n| `PFIX_AUTO_APPLY` | `true         # true = apply fixes without asking` | Behavior |\n| `PFIX_AUTO_INSTALL_DEPS` | `true   # true = auto pip/uv install` |  |\n| `PFIX_AUTO_RESTART` | `false        # true = os.execv restart after fix` |  |\n| `PFIX_MAX_RETRIES` | `3` |  |\n| `PFIX_DRY_RUN` | `false` |  |\n| `PFIX_ENABLED` | `true` |  |\n| `PFIX_GIT_COMMIT` | `false         # true = auto-commit fixes` | Git integration |\n| `PFIX_GIT_PREFIX` | `pfix:         # commit message prefix` |  |\n| `PFIX_CREATE_BACKUPS` | `false     # false = disable .pfix_backups/ directory` | Backup |",
+      "level": 2
+    },
+    {
+      "name": "release management (`goal.yaml`)",
+      "type": "unknown",
+      "content": "- **versioning**: `semver`\n- **commits**: `conventional` scope=`statement`\n- **changelog**: `keep-a-changelog`\n- **build strategies**: `python`, `nodejs`, `rust`\n- **version files**: `VERSION`, `pyproject.toml:version`, `sumd/__init__.py:__version__`",
       "level": 2
     }
   ]

@@ -5,12 +5,12 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.1.11`
+- **version**: `0.1.12`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Taskfile.yml, app.doql.less, app.doql.css, src(4 mod)
+- **generated_from**: pyproject.toml, Taskfile.yml, app.doql.less, app.doql.css, goal.yaml, .env.example, src(4 mod)
 
 ## Intent
 
@@ -187,7 +187,7 @@ fi
 ```yaml
 project:
   name: sumd
-  version: 0.1.11
+  version: 0.1.12
   env: local
 ```
 
@@ -207,3 +207,27 @@ pip install sumd
 # development install
 pip install -e .[dev]
 ```
+
+## Environment Variables (`.env.example`)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `OPENROUTER_API_KEY` | `` | Required: OpenRouter API key (https://openrouter.ai/keys) |
+| `LLM_MODEL` | `openrouter/qwen/qwen3-coder-next` | Model (default: openrouter/qwen/qwen3-coder-next) |
+| `PFIX_AUTO_APPLY` | `true         # true = apply fixes without asking` | Behavior |
+| `PFIX_AUTO_INSTALL_DEPS` | `true   # true = auto pip/uv install` |  |
+| `PFIX_AUTO_RESTART` | `false        # true = os.execv restart after fix` |  |
+| `PFIX_MAX_RETRIES` | `3` |  |
+| `PFIX_DRY_RUN` | `false` |  |
+| `PFIX_ENABLED` | `true` |  |
+| `PFIX_GIT_COMMIT` | `false         # true = auto-commit fixes` | Git integration |
+| `PFIX_GIT_PREFIX` | `pfix:         # commit message prefix` |  |
+| `PFIX_CREATE_BACKUPS` | `false     # false = disable .pfix_backups/ directory` | Backup |
+
+## Release Management (`goal.yaml`)
+
+- **versioning**: `semver`
+- **commits**: `conventional` scope=`statement`
+- **changelog**: `keep-a-changelog`
+- **build strategies**: `python`, `nodejs`, `rust`
+- **version files**: `VERSION`, `pyproject.toml:version`, `sumd/__init__.py:__version__`

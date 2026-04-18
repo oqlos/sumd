@@ -2,13 +2,35 @@
 
 Sources read per project:
   pyproject.toml          → name, version, description, dependencies, scripts, python_requires
+  requirements*.txt       → pip dependency lists
+  setup.cfg               → legacy Python packaging metadata
   Taskfile.yml            → tasks with descriptions and commands        (taskfile layer)
+  Makefile                → make targets with comments
   testql-scenarios/*.yaml → scenario names, types, endpoints, asserts   (testql layer)
+  *.testql.toon.yaml      → root-level and nested toon scenario files
   openapi.yaml            → full REST API surface with operationIds      (openapi layer)
   app.doql.less           → DOQL app block, interfaces, integrations, workflows  (doql layer)
+  app.doql.css            → DOQL compiled output, entities               (doql layer)
   pyqual.yaml             → quality pipeline stages and metrics
+  goal.yaml               → versioning strategy, git conventions, CI hooks
+  .env.example            → environment variable declarations (public)
+  Dockerfile              → base image, exposed ports, entrypoint
+  docker-compose*.yml     → services, ports, volumes, environment
+  package.json            → Node.js name, version, scripts, dependencies
   <pkg>/*.py              → Python source modules
   README.md               → project title
+
+Recommended companion libraries for parsing other languages/manifests:
+  ruamel.yaml     — YAML round-trip parser w/ comment support
+  tomli / tomllib — TOML parser (stdlib in Python 3.11+)
+  orjson          — fast JSON parser
+  libcst          — concrete syntax tree for Python source analysis
+  tree-sitter     — incremental parser for 100+ languages (C, JS, Rust, Go...)
+  semgrep         — semantic grep / pattern matching over code
+  myst-parser     — extended Markdown with directives (Sphinx/docutils)
+  toneformat      — token-optimised data format for LLMs
+  dockerfile-parse — structured Dockerfile parser
+  python-dotenv   — .env file parser
 """
 
 from __future__ import annotations
@@ -387,6 +409,183 @@ def extract_readme_title(proj_dir: Path) -> str:
     return ""
 
 
+def extract_requirements(proj_dir: Path) -> list[dict[str, str]]:
+    """Parse requirements*.txt files — return list of {file, deps[]}."""
+    results = []
+    for f in sorted(proj_dir.glob("requirements*.txt")):
+        deps = []
+        for line in f.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and not line.startswith("-"):
+                deps.append(line)
+        if deps:
+            results.append({"file": f.name, "deps": deps})
+    return results
+
+
+def extract_makefile(proj_dir: Path) -> list[dict[str, str]]:
+    """Parse Makefile — return list of {target, comment}."""
+    makefile = proj_dir / "Makefile"
+    if not makefile.exists():
+        return []
+    targets = []
+    pending_comment = ""
+    for line in makefile.read_text(encoding="utf-8").splitlines():
+        if line.startswith("##") or line.startswith("# "):
+            pending_comment = line.lstrip("#").strip()
+        elif re.match(r"^[a-zA-Z0-9_-]+\s*:", line) and not line.startswith("\t"):
+            target = re.match(r"^([a-zA-Z0-9_-]+)\s*:", line).group(1)
+            targets.append({"target": target, "desc": pending_comment})
+            pending_comment = ""
+        else:
+            pending_comment = ""
+    return targets
+
+
+def extract_goal(proj_dir: Path) -> dict[str, Any]:
+    """Parse goal.yaml — versioning strategy, git conventions, build strategies."""
+    goal_path = proj_dir / "goal.yaml"
+    if not goal_path.exists():
+        return {}
+    try:
+        data = yaml.safe_load(goal_path.read_text(encoding="utf-8"))
+        project = data.get("project", {})
+        versioning = data.get("versioning", {})
+        git = data.get("git", {})
+        strategies = data.get("strategies", {})
+        quality = data.get("quality", {})
+        return {
+            "name": project.get("name", ""),
+            "type": project.get("type", []),
+            "description": project.get("description", ""),
+            "versioning_strategy": versioning.get("strategy", ""),
+            "version_files": versioning.get("files", []),
+            "commit_strategy": git.get("commit", {}).get("strategy", ""),
+            "commit_scope": git.get("commit", {}).get("scope", ""),
+            "changelog_template": git.get("changelog", {}).get("template", ""),
+            "strategies": list(strategies.keys()),
+            "quality_gates": list(quality.get("gates", {}).items()),
+        }
+    except Exception:
+        return {}
+
+
+def extract_env(proj_dir: Path) -> list[dict[str, str]]:
+    """Parse .env.example — return list of {key, default, comment}."""
+    for fname in (".env.example", ".env.sample", ".env.template"):
+        env_path = proj_dir / fname
+        if env_path.exists():
+            break
+    else:
+        return []
+    vars_: list[dict[str, str]] = []
+    pending_comment = ""
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line_stripped = line.strip()
+        if line_stripped.startswith("#"):
+            pending_comment = line_stripped.lstrip("#").strip()
+        elif "=" in line_stripped and not line_stripped.startswith("#"):
+            key, _, val = line_stripped.partition("=")
+            vars_.append({"key": key.strip(), "default": val.strip(), "comment": pending_comment})
+            pending_comment = ""
+        else:
+            pending_comment = ""
+    return vars_
+
+
+def extract_dockerfile(proj_dir: Path) -> dict[str, Any]:
+    """Parse Dockerfile — base image, exposed ports, entrypoint, labels."""
+    for candidate in (proj_dir / "Dockerfile", proj_dir / "docker" / "Dockerfile"):
+        if candidate.exists():
+            dockerfile_path = candidate
+            break
+    else:
+        return {}
+    content = dockerfile_path.read_text(encoding="utf-8")
+    from_image = ""
+    ports: list[str] = []
+    entrypoint = ""
+    cmd = ""
+    labels: dict[str, str] = {}
+    for line in content.splitlines():
+        line = line.strip()
+        if line.upper().startswith("FROM ") and not from_image:
+            from_image = line[5:].strip()
+        elif line.upper().startswith("EXPOSE "):
+            ports.extend(line[7:].strip().split())
+        elif line.upper().startswith("ENTRYPOINT "):
+            entrypoint = line[11:].strip()
+        elif line.upper().startswith("CMD "):
+            cmd = line[4:].strip()
+        elif line.upper().startswith("LABEL "):
+            for kv in re.findall(r'(\w[\w.-]*)=("(?:[^"\\]|\\.)*"|\S+)', line[6:]):
+                labels[kv[0]] = kv[1].strip('"')
+    return {
+        "from": from_image,
+        "ports": ports,
+        "entrypoint": entrypoint or cmd,
+        "labels": labels,
+    }
+
+
+def extract_docker_compose(proj_dir: Path) -> dict[str, Any]:
+    """Parse docker-compose*.yml — services with images, ports, environment."""
+    candidates = sorted(
+        list(proj_dir.glob("docker-compose*.yml"))
+        + list((proj_dir / "docker").glob("docker-compose*.yml"))
+    )
+    if not candidates:
+        return {}
+    # prefer docker-compose.yml or docker-compose.dev.yml
+    path = candidates[0]
+    for c in candidates:
+        if c.name in ("docker-compose.yml", "docker-compose.yaml"):
+            path = c
+            break
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        services_raw = data.get("services", {}) or {}
+        services = []
+        for svc_name, svc in services_raw.items():
+            if not isinstance(svc, dict):
+                continue
+            ports = []
+            for p in svc.get("ports", []):
+                ports.append(str(p).strip())
+            env_vars = list(svc.get("environment", {}).keys()) if isinstance(svc.get("environment"), dict) else []
+            services.append({
+                "name": svc_name,
+                "image": svc.get("image", svc.get("build", "")),
+                "ports": ports,
+                "env_vars": env_vars,
+            })
+        return {"file": path.name, "services": services}
+    except Exception:
+        return {}
+
+
+def extract_package_json(proj_dir: Path) -> dict[str, Any]:
+    """Parse package.json — name, version, scripts, dependencies."""
+    pkg = proj_dir / "package.json"
+    if not pkg.exists():
+        return {}
+    try:
+        import json
+        data = json.loads(pkg.read_text(encoding="utf-8"))
+        return {
+            "name": data.get("name", ""),
+            "version": data.get("version", ""),
+            "description": data.get("description", ""),
+            "main": data.get("main", ""),
+            "scripts": data.get("scripts", {}),
+            "dependencies": list(data.get("dependencies", {}).keys()),
+            "dev_dependencies": list(data.get("devDependencies", {}).keys()),
+            "engines": data.get("engines", {}),
+        }
+    except Exception:
+        return {}
+
+
 # ---------------------------------------------------------------------------
 # Renderer
 # ---------------------------------------------------------------------------
@@ -416,12 +615,23 @@ def generate_sumd_content(  # noqa: C901
     pyqual   = extract_pyqual(proj_dir)
     modules  = extract_python_modules(proj_dir, pkg_name)
     title    = extract_readme_title(proj_dir)
+    reqs     = extract_requirements(proj_dir)
+    makefile = extract_makefile(proj_dir)
+    goal     = extract_goal(proj_dir)
+    env_vars = extract_env(proj_dir)
+    dockerfile = extract_dockerfile(proj_dir)
+    compose  = extract_docker_compose(proj_dir)
+    pkg_json = extract_package_json(proj_dir)
 
     # Track which source files contributed data
     if pyproj:
         sources_used.append("pyproject.toml")
+    if reqs:
+        sources_used.extend(r["file"] for r in reqs)
     if tasks:
         sources_used.append("Taskfile.yml")
+    if makefile:
+        sources_used.append("Makefile")
     if scenarios:
         sources_used.append(f"testql({len(scenarios)})")
     if openapi.get("endpoints"):
@@ -430,6 +640,16 @@ def generate_sumd_content(  # noqa: C901
         sources_used.extend(doql.get("sources", ["app.doql.less"]))
     if pyqual.get("stages"):
         sources_used.append("pyqual.yaml")
+    if goal.get("name"):
+        sources_used.append("goal.yaml")
+    if env_vars:
+        sources_used.append(".env.example")
+    if dockerfile:
+        sources_used.append("Dockerfile")
+    if compose.get("services"):
+        sources_used.append(compose.get("file", "docker-compose.yml"))
+    if pkg_json.get("name"):
+        sources_used.append("package.json")
     if modules:
         sources_used.append(f"src({len(modules)} mod)")
 
@@ -678,15 +898,110 @@ def generate_sumd_content(  # noqa: C901
     # ── Deployment ───────────────────────────────────────────────────────
     a("## Deployment")
     a("")
-    a("```bash")
-    a(f"pip install {name}")
-    a("")
-    a("# development install")
-    a("pip install -e .[dev]")
-    a("```")
-    a("")
+    if pkg_json.get("name"):
+        a(f"```bash")
+        a(f"npm install {pkg_json['name']}")
+        a("```")
+        a("")
+    else:
+        a("```bash")
+        a(f"pip install {name}")
+        a("")
+        a("# development install")
+        a("pip install -e .[dev]")
+        a("```")
+        a("")
+
+    if reqs:
+        a("### Requirements Files")
+        a("")
+        for r in reqs:
+            a(f"#### `{r['file']}`")
+            a("")
+            for dep in r["deps"][:20]:
+                a(f"- `{dep}`")
+            if len(r["deps"]) > 20:
+                a(f"- *(+{len(r['deps'])-20} more)*")
+            a("")
+
+    if dockerfile:
+        a("### Docker")
+        a("")
+        a(f"- **base image**: `{dockerfile['from']}`")
+        if dockerfile["ports"]:
+            a(f"- **expose**: {', '.join(f'`{p}`' for p in dockerfile['ports'])}")
+        if dockerfile["entrypoint"]:
+            a(f"- **entrypoint**: `{dockerfile['entrypoint']}`")
+        if dockerfile["labels"]:
+            for k, v in dockerfile["labels"].items():
+                a(f"- **label** `{k}`: {v}")
+        a("")
+
+    if compose.get("services"):
+        a(f"### Docker Compose (`{compose['file']}`)")
+        a("")
+        for svc in compose["services"]:
+            ports_str = ", ".join(f"`{p}`" for p in svc["ports"]) if svc["ports"] else ""
+            image_str = f" image=`{svc['image']}`" if svc["image"] else ""
+            a(f"- **{svc['name']}**{image_str}" + (f" ports: {ports_str}" if ports_str else ""))
+        a("")
+
+    # ── Environment ──────────────────────────────────────────────────────
+    if env_vars:
+        a("## Environment Variables (`.env.example`)")
+        a("")
+        a("| Variable | Default | Description |")
+        a("|----------|---------|-------------|")
+        for v in env_vars:
+            desc = v["comment"].replace("|", "\\|")
+            a(f"| `{v['key']}` | `{v['default']}` | {desc} |")
+        a("")
+
+    # ── Goal / Release ────────────────────────────────────────────────────
+    if goal.get("name"):
+        a("## Release Management (`goal.yaml`)")
+        a("")
+        if goal.get("versioning_strategy"):
+            a(f"- **versioning**: `{goal['versioning_strategy']}`")
+        if goal.get("commit_strategy"):
+            a(f"- **commits**: `{goal['commit_strategy']}` scope=`{goal.get('commit_scope','')}`")
+        if goal.get("changelog_template"):
+            a(f"- **changelog**: `{goal['changelog_template']}`")
+        if goal.get("strategies"):
+            a(f"- **build strategies**: {', '.join(f'`{s}`' for s in goal['strategies'])}")
+        if goal.get("version_files"):
+            a(f"- **version files**: {', '.join(f'`{f}`' for f in goal['version_files'])}")
+        a("")
+
+    # ── Makefile ─────────────────────────────────────────────────────────
+    if makefile:
+        a("## Makefile Targets")
+        a("")
+        for t in makefile:
+            desc = f" — {t['desc']}" if t["desc"] else ""
+            a(f"- `{t['target']}`{desc}")
+        a("")
+
+    # ── package.json ─────────────────────────────────────────────────────
+    if pkg_json.get("scripts"):
+        a("## Node.js Scripts (`package.json`)")
+        a("")
+        if pkg_json.get("description"):
+            a(pkg_json["description"])
+            a("")
+        for script, cmd in pkg_json["scripts"].items():
+            a(f"- `npm run {script}` — `{cmd}`")
+        a("")
+        if pkg_json.get("dependencies"):
+            a("**Runtime deps**: " + ", ".join(f"`{d}`" for d in pkg_json["dependencies"][:15]))
+            a("")
+        if pkg_json.get("engines"):
+            for eng, ver in pkg_json["engines"].items():
+                a(f"- **{eng}**: `{ver}`")
+            a("")
 
     content = "\n".join(L)
     if return_sources:
         return content, sources_used
     return content
+
