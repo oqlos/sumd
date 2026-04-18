@@ -44,12 +44,22 @@ pip install sumd
 ### CLI Commands
 
 ```bash
+# Shortcut: scan current directory (detects if workspace or single project)
+sumd .                          # equivalent to: sumd scan . --fix
+sumd /path/to/project           # scan a specific directory
+
 # Scan a workspace — auto-generate SUMD.md for every project found
 sumd scan .                     # skip projects that already have SUMD.md
 sumd scan . --fix               # overwrite existing SUMD.md
 sumd scan . --fix --no-raw      # convert sources to structured Markdown instead of raw code blocks
 sumd scan . --fix --analyze     # also run analysis tools (code2llm, redup, vallm)
 sumd scan . --fix --analyze --tools code2llm,redup  # only selected tools
+sumd scan . --fix --depth 2     # limit recursive search depth (default: unlimited)
+
+# Section profiles — control how much is rendered in SUMD.md
+sumd scan . --fix --profile minimal  # core sections only (metadata, architecture, workflows, dependencies, deployment)
+sumd scan . --fix --profile light    # + interfaces, quality, configuration, environment, extras
+sumd scan . --fix --profile rich     # + code analysis, source snippets, call graph, API stubs, test contracts (default)
 
 # Lint / validate SUMD files
 sumd lint SUMD.md               # validate a single file
@@ -72,6 +82,16 @@ sumd analyze ./my-project                    # run all tools
 sumd analyze ./my-project --tools code2llm   # only code2llm
 sumd analyze ./my-project --force            # reinstall tools
 ```
+
+### Section Profiles
+
+SUMD renders output in configurable **profiles** to trade off detail vs. token cost:
+
+| Profile | Sections | Use case |
+|---------|----------|----------|
+| `minimal` | Metadata, Architecture, Workflows, Dependencies, Deployment | Quick overview, CI badges |
+| `light` | + Interfaces, Quality, Configuration, Environment, Extras | Standard documentation |
+| `rich` | + Code Analysis, Source Snippets, Call Graph, API Stubs, Test Contracts | LLM context injection (default) |
 
 ### Python API
 
@@ -100,28 +120,30 @@ SUMD auto-embeds the following sources from a project (when present):
 | Source | Contents | markpact kind |
 |--------|----------|---------------|
 | `pyproject.toml` | metadata, deps, entry points | _parsed_ |
-| `Taskfile.yml` | all tasks as raw YAML | `markpact:file` |
-| `openapi.yaml` | full OpenAPI spec (endpoints as sections) | `markpact:file` |
-| `testql-scenarios/**` | all `.testql.toon.yaml` scenario files | `markpact:file` |
-| `app.doql.less` / `.css` | DOQL styling | `markpact:file` |
-| `pyqual.yaml` | quality pipeline config | `markpact:file` |
+| `Taskfile.yml` | all tasks as raw YAML | `markpact:taskfile` |
+| `openapi.yaml` | full OpenAPI spec (endpoints as sections) | `markpact:openapi` |
+| `testql-scenarios/**` | all `.testql.toon.yaml` scenario files | `markpact:testql` |
+| `app.doql.less` / `.css` | DOQL styling | `markpact:doql` |
+| `pyqual.yaml` | quality pipeline config | `markpact:pyqual` |
 | `goal.yaml` | project intent | _rendered_ |
 | `.env.example` | env variables list | _listed_ |
 | `Dockerfile` | containerisation | _listed_ |
 | `docker-compose.*.yml` | services | _listed_ |
 | `src/**/*.py` modules | module list | _listed_ |
-| `project/analysis.toon.yaml` | static code analysis (CC, pipelines) | `markpact:file` |
-| `project/project.toon.yaml` | project topology | `markpact:file` |
-| `project/evolution.toon.yaml` | commit evolution | `markpact:file` |
-| `project/map.toon.yaml` | module inventory, function signatures, CC metrics | `markpact:file` |
-| `project/duplication.toon.yaml` | code duplication report | `markpact:file` |
-| `project/validation.toon.yaml` | vallm validation results | `markpact:file` |
-| `project/compact_flow.mmd` | compact call flow diagram | `markpact:file` |
-| `project/calls.mmd` | full call graph | `markpact:file` |
-| `project/flow.mmd` | execution flow | `markpact:file` |
+| `package.json` | Node.js deps (dependencies + devDependencies) | _listed_ |
+| `project/analysis.toon.yaml` | static code analysis (CC, pipelines) | `markpact:analysis` |
+| `project/project.toon.yaml` | project topology | `markpact:analysis` |
+| `project/evolution.toon.yaml` | commit evolution | `markpact:analysis` |
+| `project/map.toon.yaml` | module inventory, function signatures, CC metrics | `markpact:analysis` |
+| `project/duplication.toon.yaml` | code duplication report | `markpact:analysis` |
+| `project/validation.toon.yaml` | vallm validation results | `markpact:analysis` |
+| `project/calls.toon.yaml` | call graph with hub metrics | `markpact:analysis` |
+| `project/compact_flow.mmd` | compact call flow diagram | `markpact:analysis` |
+| `project/calls.mmd` | full call graph | `markpact:analysis` |
+| `project/flow.mmd` | execution flow | `markpact:analysis` |
 | `project/context.md` | architecture analysis (code2llm) | _inline markdown_ |
 | `project/README.md` | analysis readme | _inline markdown_ |
-| `project/prompt.txt` | code2llm prompt used | `markpact:file` |
+| `project/prompt.txt` | code2llm prompt used | `markpact:analysis` |
 
 **Not embedded:** `*.png` (binary images), `index.html` (generated visualisation), `refactor-progress.txt`, `testql-scenarios/` inside project/.
 

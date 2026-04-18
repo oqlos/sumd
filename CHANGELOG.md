@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `sumd .` / `sumd <path>` shortcut: first non-command argument treated as `scan <path> --fix`
+- Recursive project discovery: `_detect_projects` now walks subdirectories at any depth (skips `.venv`, `node_modules`, `.git`, `build`, `dist`, `.sumd-tools`, etc.)
+- `--depth N` flag for `scan`: limit recursive search depth (default: unlimited)
+- Auto-detect workspace-as-project: if workspace root has `pyproject.toml` and no subdirectory projects are found, scans root as single project
+- Section profiles: `--profile minimal/light/rich` (default: `rich`) — 15 sections across 3 tiers
+- 5 new rich-profile sections: `SourceSnippets`, `ApiStubs`, `TestContracts`, `CallGraph`, `EnvironmentSection`
+- Semantic markpact kinds: `markpact:doql`, `markpact:openapi`, `markpact:testql`, `markpact:taskfile`, `markpact:pyqual`, `markpact:analysis` (replacing generic `markpact:file`)
+- Node.js project support: `DependenciesSection` now renders `package.json` deps (`markpact:deps node`)
+- `CallGraphSection`: HUBS table (top-8 by degree) with ⚠ flags for high-Fan-In hubs
+- `ApiStubsSection`: OpenAPI endpoints as Python-like stubs grouped by tag
+- `TestContractsSection`: testql scenarios as contract signatures grouped by type
+- `SourceSnippetsSection`: top-5 modules sorted by complexity with CC/fan annotations
+
+### Changed
+- `generate_sumd_content` refactored to 4-line shim delegating to `RenderPipeline` (fan-out: 34→2)
+- `_render_code_analysis` accepts `skip_files` param to avoid duplicating call graph data
+- Parser `_VALID_MARKPACT_KINDS` whitelist extended with 6 new semantic kinds
+
 ## [0.1.24] - 2026-04-18
 
 ### Docs

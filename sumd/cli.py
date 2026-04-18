@@ -14,7 +14,7 @@ from sumd.parser import validate_sumd_file
 from sumd.generator import generate_map_toon
 from sumd.pipeline import RenderPipeline
 
-__version__ = "0.1.15"
+__version__ = "0.1.24"
 
 
 @click.group()
@@ -193,12 +193,33 @@ def extract(file: Path, section: str):
         sys.exit(1)
 
 
-def _detect_projects(workspace: Path) -> list[Path]:
-    """Return sorted list of subdirectories containing pyproject.toml."""
-    return sorted(
-        d for d in workspace.iterdir()
-        if d.is_dir() and not d.name.startswith(".") and (d / "pyproject.toml").exists()
-    )
+_SKIP_DIRS = {
+    ".venv", "venv", "node_modules", ".git", "__pycache__",
+    ".sumd-tools", "site-packages", "dist", "build", ".tox", ".mypy_cache",
+}
+
+
+def _detect_projects(workspace: Path, max_depth: int | None = None) -> list[Path]:
+    """Return sorted list of subdirectories containing pyproject.toml (recursive)."""
+    projects: list[Path] = []
+
+    def _walk(path: Path, depth: int) -> None:
+        if max_depth is not None and depth > max_depth:
+            return
+        try:
+            entries = sorted(path.iterdir(), key=lambda p: p.name)
+        except PermissionError:
+            return
+        for d in entries:
+            if not d.is_dir() or d.name.startswith(".") or d.name in _SKIP_DIRS:
+                continue
+            if (d / "pyproject.toml").exists():
+                projects.append(d)
+            else:
+                _walk(d, depth + 1)
+
+    _walk(workspace, 0)
+    return projects
 
 
 def _run_analysis_tools(proj_dir: Path, tool_list: list[str]) -> None:
@@ -258,6 +279,20 @@ def _export_sumd_json(proj_dir: Path, doc) -> None:
     json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
+def _render_write_validate(
+    proj_dir: Path, sumd_path: Path, raw: bool, profile: str,
+) -> tuple:
+    """Render SUMD content, write file, validate. Returns (doc, md_issues, cb_errors, cb_warnings, sources)."""
+    content, sources = RenderPipeline(proj_dir, raw_sources=raw).run(profile=profile, return_sources=True)
+    sumd_path.write_text(content, encoding="utf-8")
+    result = validate_sumd_file(sumd_path)
+    md_issues = result["markdown"]
+    cb_errors = [c for c in result["codeblocks"] if c.kind == "error"]
+    cb_warnings = [c for c in result["codeblocks"] if c.kind == "warning"]
+    doc = parse_file(sumd_path)
+    return doc, md_issues, cb_errors, cb_warnings, sources
+
+
 def _scan_one_project(
     proj_dir: Path, fix: bool, raw: bool, export_json: bool,
     run_analyze: bool, tool_list: list[str], parser_inst: "SUMDParser",
@@ -272,16 +307,10 @@ def _scan_one_project(
         return {"status": "SKIP", "path": str(sumd_path)}
 
     try:
-        content, sources = RenderPipeline(proj_dir, raw_sources=raw).run(profile=profile, return_sources=True)
-        sumd_path.write_text(content, encoding="utf-8")
-
-        result = validate_sumd_file(sumd_path)
-        md_issues = result["markdown"]
-        cb_errors = [c for c in result["codeblocks"] if c.kind == "error"]
-        cb_warnings = [c for c in result["codeblocks"] if c.kind == "warning"]
+        doc, md_issues, cb_errors, cb_warnings, sources = _render_write_validate(
+            proj_dir, sumd_path, raw, profile
+        )
         all_errors = md_issues + [c.message for c in cb_errors]
-
-        doc = parse_file(sumd_path)
 
         if all_errors:
             click.echo(f"  \u274c {proj_dir.name:<18} {'invalid':<10} {len(doc.sections):<10} {', '.join(sources)}")
@@ -324,7 +353,8 @@ def _scan_one_project(
 @click.option("--analyze/--no-analyze", default=False, help="Run analysis tools (code2llm, redup, vallm) on each project after scan")
 @click.option("--tools", type=str, default="code2llm,redup,vallm", help="Tools to run with --analyze")
 @click.option("--profile", type=click.Choice(["minimal", "light", "rich"]), default="rich", help="Section profile to use when rendering SUMD.md")
-def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, raw: bool, analyze: bool, tools: str, profile: str):
+@click.option("--depth", type=int, default=None, help="Max directory depth to scan for projects (default: unlimited)")
+def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, raw: bool, analyze: bool, tools: str, profile: str, depth: Optional[int]):
     """Scan a workspace directory and generate SUMD.md for every project found.
 
     Detects projects by presence of pyproject.toml. Extracts metadata from:
@@ -339,7 +369,11 @@ def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, 
     total = ok_count = skip_count = fail_count = 0
     tool_list = [t.strip() for t in tools.split(",") if t.strip()]
 
-    project_dirs = _detect_projects(workspace)
+    project_dirs = _detect_projects(workspace, max_depth=depth)
+
+    # If workspace itself is a project (has pyproject.toml at root), scan it directly
+    if not project_dirs and (workspace / "pyproject.toml").exists():
+        project_dirs = [workspace]
 
     if not project_dirs:
         click.echo(f"⚠️  No projects found in {workspace} (looking for directories with pyproject.toml)")

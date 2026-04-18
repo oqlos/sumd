@@ -174,6 +174,28 @@ def _render_testql_raw(
         a("")
 
 
+def _render_testql_endpoint(ep: dict, L: list[str]) -> None:
+    """Render one endpoint line for a testql scenario."""
+    op = f" — `{ep['operationId']}`" if ep.get("operationId") else ""
+    sm = f": {ep['summary']}" if ep.get("summary") else ""
+    L.append(f"  - `{ep['method']} {ep['path']}` → `{ep['status']}`{op}{sm}")
+
+
+def _render_testql_extras(sc: dict, L: list[str]) -> None:
+    """Render performance / navigate / gui blocks for a testql scenario."""
+    a = L.append
+    if sc.get("performance"):
+        a("- **performance**:")
+        for p in sc["performance"]:
+            a(f"  - `{p['metric']} < {p['threshold']}`")
+    if sc.get("navigate"):
+        a("- **navigate**: " + ", ".join(f"`{u}`" for u in sc["navigate"]))
+    if sc.get("gui"):
+        a("- **gui actions**:")
+        for g in sc["gui"]:
+            a(f"  - `{g['action']} {g['selector']}`")
+
+
 def _render_testql_one_structured(sc: dict, L: list[str]) -> None:
     a = L.append
     a(f"#### `{sc['file']}`")
@@ -187,23 +209,12 @@ def _render_testql_one_structured(sc: dict, L: list[str]) -> None:
     if sc["endpoints"]:
         a("- **endpoints**:")
         for ep in sc["endpoints"]:
-            op = f" — `{ep['operationId']}`" if ep.get("operationId") else ""
-            sm = f": {ep['summary']}" if ep.get("summary") else ""
-            a(f"  - `{ep['method']} {ep['path']}` → `{ep['status']}`{op}{sm}")
+            _render_testql_endpoint(ep, L)
     if sc["asserts"]:
         a("- **asserts**:")
         for ass in sc["asserts"]:
             a(f"  - `{ass['field']} {ass['op']} {ass['expected']}`")
-    if sc.get("performance"):
-        a("- **performance**:")
-        for p in sc["performance"]:
-            a(f"  - `{p['metric']} < {p['threshold']}`")
-    if sc.get("navigate"):
-        a("- **navigate**: " + ", ".join(f"`{u}`" for u in sc["navigate"]))
-    if sc.get("gui"):
-        a("- **gui actions**:")
-        for g in sc["gui"]:
-            a(f"  - `{g['action']} {g['selector']}`")
+    _render_testql_extras(sc, L)
     a("")
 
 
@@ -586,26 +597,28 @@ def _render_test_contracts(scenarios: list) -> list[str]:
     return L
 
 
-def _parse_calls_toon(content: str) -> dict:
-    """Parse calls.toon.yaml text into structured dict for rendering."""
-    result: dict = {"nodes": 0, "edges": 0, "modules_count": 0, "cc_avg": 0.0, "hubs": [], "modules": []}
-    lines = content.splitlines()
-    # Parse header comments
+import re as _re_calls
+
+def _parse_calls_header(lines: list[str]) -> dict:
+    """Parse node/edge/module counts and CC average from header comments."""
+    result = {"nodes": 0, "edges": 0, "modules_count": 0, "cc_avg": 0.0}
     for line in lines[:5]:
         if line.startswith("# nodes:"):
-            import re as _re
-            m = _re.search(r"nodes:\s*(\d+).*edges:\s*(\d+).*modules:\s*(\d+)", line)
+            m = _re_calls.search(r"nodes:\s*(\d+).*edges:\s*(\d+).*modules:\s*(\d+)", line)
             if m:
                 result["nodes"] = int(m.group(1))
                 result["edges"] = int(m.group(2))
                 result["modules_count"] = int(m.group(3))
         if line.startswith("# CC"):
-            import re as _re
-            m = _re.search(r"CC[̄=\u0304]=?\s*([\d.]+)", line)
+            m = _re_calls.search(r"CC[̄=\u0304]=?\s*([\d.]+)", line)
             if m:
                 result["cc_avg"] = float(m.group(1))
+    return result
 
-    # Parse HUBS section
+
+def _parse_calls_hubs(lines: list[str]) -> list[dict]:
+    """Parse HUBS section into list of hub dicts."""
+    hubs: list[dict] = []
     in_hubs = False
     current_hub: dict = {}
     for line in lines:
@@ -616,19 +629,28 @@ def _parse_calls_toon(content: str) -> dict:
             in_hubs = False
         if in_hubs and line.startswith("  ") and not line.startswith("    "):
             if current_hub:
-                result["hubs"].append(current_hub)
+                hubs.append(current_hub)
             current_hub = {"name": line.strip()}
         elif in_hubs and line.startswith("    "):
-            import re as _re
-            m = _re.search(r"CC=(\d+)\s+in:(\d+)\s+out:(\d+)\s+total:(\d+)", line)
+            m = _re_calls.search(r"CC=(\d+)\s+in:(\d+)\s+out:(\d+)\s+total:(\d+)", line)
             if m and current_hub:
                 current_hub.update({
                     "cc": int(m.group(1)), "in": int(m.group(2)),
                     "out": int(m.group(3)), "total": int(m.group(4)),
                 })
     if current_hub:
-        result["hubs"].append(current_hub)
-    return result
+        hubs.append(current_hub)
+    return hubs
+
+
+def _parse_calls_toon(content: str) -> dict:
+    """Parse calls.toon.yaml text into structured dict for rendering."""
+    lines = content.splitlines()
+    return {
+        **_parse_calls_header(lines),
+        "hubs": _parse_calls_hubs(lines),
+        "modules": [],
+    }
 
 
 def _render_call_graph(project_analysis: list) -> list[str]:

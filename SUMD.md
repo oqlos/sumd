@@ -22,7 +22,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.1.23`
+- **version**: `0.1.24`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -376,7 +376,7 @@ tasks:
 ```yaml
 project:
   name: sumd
-  version: 0.1.23
+  version: 0.1.24
   env: local
 ```
 
@@ -623,7 +623,9 @@ def _render_architecture_doql_parsed(doql, L)  # CC=1, fan=4
 def _render_interfaces(scripts, openapi, scenarios, proj_dir, raw_sources)  # CC=5, fan=4
 def _render_interfaces_openapi(openapi, proj_dir, raw_sources, L)  # CC=6, fan=7
 def _render_testql_raw(scenarios, proj_dir, L)  # CC=4, fan=7
-def _render_testql_one_structured(sc, L)  # CC=15, fan=4 ⚠
+def _render_testql_endpoint(ep, L)  # CC=3, fan=2
+def _render_testql_extras(sc, L)  # CC=7, fan=3
+def _render_testql_one_structured(sc, L)  # CC=7, fan=4
 def _render_interfaces_testql(scenarios, proj_dir, raw_sources, L)  # CC=3, fan=3
 def _render_workflows(doql, tasks, proj_dir, raw_sources)  # CC=12, fan=6 ⚠
 def _render_quality(pyqual, proj_dir, raw_sources)  # CC=12, fan=6 ⚠
@@ -637,7 +639,9 @@ def _render_code_analysis(project_analysis, skip_files)  # CC=9, fan=4
 def _render_source_snippets(source_snippets, top_n)  # CC=8, fan=4
 def _render_api_stubs(openapi)  # CC=11, fan=9 ⚠
 def _render_test_contracts(scenarios)  # CC=13, fan=8 ⚠
-def _parse_calls_toon(content)  # CC=20, fan=9 ⚠
+def _parse_calls_header(lines)  # CC=6, fan=5
+def _parse_calls_hubs(lines)  # CC=15, fan=7 ⚠
+def _parse_calls_toon(content)  # CC=1, fan=3
 def _render_call_graph(project_analysis)  # CC=7, fan=8
 def _collect_pkg_sources(pyproj, reqs, tasks, makefile, scenarios, openapi, doql, pyqual, goal, env_vars)  # CC=14, fan=4 ⚠
 def _collect_infra_sources(dockerfile, compose, pkg_json, modules, project_analysis)  # CC=6, fan=3
@@ -696,11 +700,12 @@ def export(file, format, output)  # CC=8, fan=11
 def info(file)  # CC=3, fan=7
 def generate(file, format, output)  # CC=8, fan=15
 def extract(file, section)  # CC=5, fan=8
-def _detect_projects(workspace)  # CC=5, fan=5
+def _detect_projects(workspace, max_depth)  # CC=1, fan=7
 def _run_analysis_tools(proj_dir, tool_list)  # CC=11, fan=4 ⚠
 def _export_sumd_json(proj_dir, doc)  # CC=2, fan=2
-def _scan_one_project(proj_dir, fix, raw, export_json, run_analyze, tool_list, parser_inst, profile)  # CC=15, fan=12 ⚠
-def scan(workspace, export_json, report, fix, raw, analyze, tools, profile)  # CC=9, fan=16
+def _render_write_validate(proj_dir, sumd_path, raw, profile)  # CC=5, fan=5
+def _scan_one_project(proj_dir, fix, raw, export_json, run_analyze, tool_list, parser_inst, profile)  # CC=11, fan=8 ⚠
+def scan(workspace, export_json, report, fix, raw, analyze, tools, profile, depth)  # CC=11, fan=17 ⚠
 def lint(files, workspace, as_json)  # CC=10, fan=12 ⚠
 def _lint_collect_paths(files, workspace)  # CC=6, fan=7
 def _lint_print_result(path, r)  # CC=9, fan=2
