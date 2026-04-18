@@ -5,7 +5,7 @@
     {
       "name": "metadata",
       "type": "metadata",
-      "content": "- **name**: `sumd`\n- **version**: `0.1.10`\n- **python_requires**: `>=3.10`\n- **license**: Apache-2.0\n- **ai_model**: `openrouter/qwen/qwen3-coder-next`\n- **ecosystem**: SUMD + DOQL + testql + taskfile",
+      "content": "- **name**: `sumd`\n- **version**: `0.1.11`\n- **python_requires**: `>=3.10`\n- **license**: Apache-2.0\n- **ai_model**: `openrouter/qwen/qwen3-coder-next`\n- **ecosystem**: SUMD + DOQL + testql + taskfile\n- **generated_from**: pyproject.toml, Taskfile.yml, app.doql.less, app.doql.css, src(4 mod)",
       "level": 2
     },
     {
@@ -21,9 +21,21 @@
       "level": 2
     },
     {
+      "name": "# doql application declaration (`app.doql.less`, `app.doql.css`)",
+      "type": "unknown",
+      "content": "```less\napp {\n  name: sumd;\n  version: 0.1.11;\n}\n```",
+      "level": 2
+    },
+    {
+      "name": "# doql interfaces",
+      "type": "unknown",
+      "content": "- `interface[type=\"cli\"]` — framework: click\n- `interface[type=\"cli\"]` page=`sumd` — \n- `interface[type=\"cli\"]` — framework: click\n- `interface[type=\"cli\"]` page=`sumd` —",
+      "level": 2
+    },
+    {
       "name": "# source modules",
       "type": "unknown",
-      "content": "- `sumd.cli`\n- `sumd.mcp_server`\n- `sumd.parser`",
+      "content": "- `sumd.cli`\n- `sumd.generator`\n- `sumd.mcp_server`\n- `sumd.parser`",
       "level": 2
     },
     {
@@ -45,9 +57,21 @@
       "level": 2
     },
     {
+      "name": "# doql workflows (`app.doql.less`, `app.doql.css`)",
+      "type": "unknown",
+      "content": "- **install** `[manual]`: `pip install -e .[dev]`\n- **quality** `[manual]`: `pyqual run`\n- **quality:fix** `[manual]`: `pyqual run --fix`\n- **quality:report** `[manual]`: `pyqual report`\n- **test** `[manual]`: `pytest -q`\n- **lint** `[manual]`: `ruff check .`\n- **fmt** `[manual]`: `ruff format .`\n- **build** `[manual]`: `python -m build`\n- **clean** `[manual]`: `rm -rf build/ dist/ *.egg-info`\n- **structure** `[manual]`: `*(no steps)*`\n- **doql:adopt** `[manual]`: `*(no steps)*`\n- **doql:export** `[manual]`: `if [ ! -f \"app.doql.css\" ]`\n- **doql:validate** `[manual]`: `*(no steps)*`\n- **doql:doctor** `[manual]`: `*(no steps)*`\n- **doql:build** `[manual]`: `*(no steps)*`\n- **docs:build** `[manual]`: `echo \"Building SUMD documentation...\" → python -m sumd.cli docs/ docs/`\n- **help** `[manual]`: `task --list`\n- **install** `[\"manual\"]`: `pip install -e .[dev]`\n- **quality** `[\"manual\"]`: `pyqual run`\n- **quality:fix** `[\"manual\"]`: `pyqual run --fix`\n- **quality:report** `[\"manual\"]`: `pyqual report`\n- **test** `[\"manual\"]`: `pytest -q`\n- **lint** `[\"manual\"]`: `ruff check .`\n- **fmt** `[\"manual\"]`: `ruff format .`\n- **build** `[\"manual\"]`: `python -m build`\n- **clean** `[\"manual\"]`: `rm -rf build/ dist/ *.egg-info`\n- **structure** `[\"manual\"]`: `*(no steps)*`\n- **doql:adopt** `[\"manual\"]`: `*(no steps)*`\n- **doql:export** `[\"manual\"]`: `if [ ! -f \"app.doql.css\" ]`\n- **doql:validate** `[\"manual\"]`: `*(no steps)*`\n- **doql:doctor** `[\"manual\"]`: `*(no steps)*`\n- **doql:build** `[\"manual\"]`: `*(no steps)*`\n- **docs:build** `[\"manual\"]`: `echo \"Building SUMD documentation...\" → python -m sumd.cli docs/ docs/`\n- **help** `[\"manual\"]`: `task --list`",
+      "level": 2
+    },
+    {
+      "name": "# taskfile tasks (`taskfile.yml`)",
+      "type": "unknown",
+      "content": "```yaml\ntasks:\n  install:\n    desc: \"Install Python dependencies (editable)\"\n    cmds:\n      - pip install -e .[dev]\n  quality:\n    desc: \"Run pyqual quality pipeline\"\n    cmds:\n      - pyqual run\n  quality:fix:\n    desc: \"Run pyqual with auto-fix\"\n    cmds:\n      - pyqual run --fix\n  quality:report:\n    desc: \"Generate pyqual quality report\"\n    cmds:\n      - pyqual report\n  test:\n    desc: \"Run pytest suite\"\n    cmds:\n      - pytest -q\n  lint:\n    desc: \"Run ruff lint check\"\n    cmds:\n      - ruff check .\n  fmt:\n    desc: \"Auto-format with ruff\"\n    cmds:\n      - ruff format .\n  build:\n    desc: \"Build wheel + sdist\"\n    cmds:\n      - python -m build\n  clean:\n    desc: \"Remove build artefacts\"\n    cmds:\n      - rm -rf build/ dist/ *.egg-info\n  all:\n    desc: \"Run install, quality check\"\n  structure:\n    desc: \"Generate project structure (app.doql.css + app.doql.less)\"\n    cmds:\n      - echo \"📁 Analyzing sumd project structure...\"\n{{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force\necho \"🎨 Exporting to LESS format...\"\n{{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}}\necho \"✅ Structure generated: app.doql.css + {{.DOQL_OUTPUT}}\"\n  doql:adopt:\n    desc: \"Reverse-engineer sumd project structure (CSS only)\"\n    cmds:\n      - {{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force\n  doql:export:\n    desc: \"Export to LESS format\"\n    cmds:\n      - if [ ! -f \"app.doql.css\" ]; then\n  echo \"❌ app.doql.css not found. Run: task structure\"\n  exit 1\nfi\n  doql:validate:\n    desc: \"Validate app.doql.less syntax\"\n    cmds:\n      - if [ ! -f \"{{.DOQL_OUTPUT}}\" ]; then\n  echo \"❌ {{.DOQL_OUTPUT}} not found. Run: task structure\"\n  exit 1\nfi\n  doql:doctor:\n    desc: \"Run doql health checks\"\n    cmds:\n      - {{.DOQL_CMD}} doctor\n  doql:build:\n    desc: \"Generate code from app.doql.less\"\n    cmds:\n      - if [ ! -f \"{{.DOQL_OUTPUT}}\" ]; then\n  echo \"❌ {{.DOQL_OUTPUT}} not found. Run: task structure\"\n  exit 1\nfi\n  analyze:\n    desc: \"Full doql analysis (structure + validate + doctor)\"\n  docs:build:\n    desc: \"Build documentation\"\n    cmds:\n      - echo \"Building SUMD documentation...\"\n  help:\n    desc: \"Show available tasks\"\n    cmds:\n      - task --list\n```",
+      "level": 2
+    },
+    {
       "name": "configuration",
       "type": "configuration",
-      "content": "```yaml\nproject:\n  name: sumd\n  version: 0.1.10\n  env: local\n```",
+      "content": "```yaml\nproject:\n  name: sumd\n  version: 0.1.11\n  env: local\n```",
       "level": 2
     },
     {

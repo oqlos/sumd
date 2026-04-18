@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-04-18
+
+### Docs
+- Update README.md
+- Update SUMD.md
+
+### Other
+- Update Taskfile.yml
+- Update app.doql.css
+- Update app.doql.less
+- Update scripts/generate_all_sumd.py
+- Update sumd.json
+- Update sumd/__init__.py
+- Update sumd/generator.py
+
 ## [0.1.11] - 2026-04-18
 
 ### Docs
