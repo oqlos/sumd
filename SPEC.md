@@ -41,6 +41,45 @@ SUMD is part of a four-layer system:
 
 SUMD documents can reference DOQL queries, Taskfile workflows, and TESTQL scenarios to provide complete system documentation.
 
+### TESTQL Integration
+
+TESTQL provides the verification layer that bridges SUMD descriptions with executable test scenarios:
+
+| Feature | Purpose | Format |
+|---------|---------|--------|
+| **API Tests** | HTTP endpoint validation | `*.testql.toon.yaml` |
+| **GUI Tests** | Browser automation (Playwright) | `*.testql.toon.yaml` |
+| **Encoder Tests** | Hardware interface validation | `*.testql.toon.yaml` |
+| **Contract Tests** | OpenAPI schema validation | Auto-generated |
+| **Project Echo** | AI context generator | `testql echo --json` |
+
+#### Example TESTQL Reference in SUMD
+
+```markdown
+## Test Scenarios
+
+The system includes the following test suites defined in TESTQL:
+
+- Smoke Tests: `testql/test-api-health.testql.toon.yaml`
+- Integration Tests: `testql-scenarios/*.testql.toon.yaml`
+- Hardware Tests: `testql/test-hardware-*.testql.toon.yaml`
+
+Run with: `testql suite smoke` or `task test`
+```
+
+#### Project Echo - AI Context
+
+TESTQL can generate AI-friendly project metadata via `testql echo`:
+
+```bash
+testql echo --toon-path testql-scenarios/ --doql-path app.doql.less --format json
+```
+
+This produces:
+- **API Contract Layer**: Endpoints, methods, status codes, assertions
+- **System Model Layer**: Entities, workflows, interfaces from DOQL
+- **Unified Context**: Combined metadata for LLM consumption
+
 ## Format Conversion
 
 SUMD documents can be converted to and from multiple structured formats for interoperability:

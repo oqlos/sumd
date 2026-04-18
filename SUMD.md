@@ -1,78 +1,63 @@
-# SUMD — Structured Unified Markdown Descriptor
+# SUMD
 
-SUMD to semantyczny format opisu projektu w Markdown. Definiuje intencje, strukturę, punkty wejścia i model mentalny systemu zarówno dla ludzi jak i dla LLM.
+SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 
 ## Metadata
 
-- **version**: 0.1.7
-- **name**: sumd
-- **stack**: Python, Click, PyYAML, TOML, MCP
+- **name**: `sumd`
+- **version**: `0.1.10`
+- **python_requires**: `>=3.10`
+- **license**: Apache-2.0
+- **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
 
 ## Intent
 
-SUMD to semantyczny format opisu projektu w Markdown. Definiuje intencje, strukturę, punkty wejścia i model mentalny systemu zarówno dla ludzi jak i dla LLM.
+SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 
 ## Architecture
 
-Projekt jest częścią ekosystemu OQL:
+```
+SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (verification)
+```
 
-```
-SUMD (opis) → DOQL (dane) → taskfile (automatyzacja) → testql (weryfikacja)
-```
+### Source Modules
+
+- `sumd.cli`
+- `sumd.mcp_server`
+- `sumd.parser`
 
 ## Interfaces
 
-- CLI: `sumd validate SUMD.md` — waliduj dokument
-- CLI: `sumd export SUMD.md --format json` — eksportuj do JSON/YAML/TOML
-- CLI: `sumd generate sumd.json --output SUMD.md` — generuj z JSON
-- CLI: `sumd info SUMD.md` — informacje o dokumencie
-- MCP: `sumd-mcp` — serwer MCP do odpytywania projektu
-- Python API: `from sumd import parse_file, validate`
+### CLI Entry Points
+
+- `sumd`
+- `sumd-mcp`
 
 ## Workflows
-
-```yaml
-tasks:
-  build:
-    cmds:
-      - pip install -e .
-  test:
-    cmds:
-      - pytest tests/ -v
-  validate:
-    cmds:
-      - sumd validate SUMD.md
-  export:
-    cmds:
-      - sumd export SUMD.md --format json --output sumd.json
-  mcp:
-    cmds:
-      - sumd-mcp
-```
 
 ## Configuration
 
 ```yaml
 project:
   name: sumd
-  version: 0.1.7
+  version: 0.1.10
   env: local
 ```
 
 ## Dependencies
 
+### Runtime
+
 - `click>=8.0`
 - `pyyaml>=6.0`
 - `toml>=0.10.0`
-- `mcp>=1.0.0`
 
 ## Deployment
 
 ```bash
-# Instalacja
 pip install sumd
 
-# Instalacja deweloperska
-pip install -e .
+# development install
+pip install -e .[dev]
 ```

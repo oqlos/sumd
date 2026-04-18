@@ -1,53 +1,71 @@
 {
-  "project_name": "SUMD — Structured Unified Markdown Descriptor",
-  "description": "SUMD to semantyczny format opisu projektu w Markdown. Definiuje intencje, strukturę, punkty wejścia i model mentalny systemu zarówno dla ludzi jak i dla LLM.",
+  "project_name": "SUMD",
+  "description": "SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation",
   "sections": [
     {
       "name": "metadata",
       "type": "metadata",
-      "content": "- **version**: 0.1.7\n- **name**: sumd\n- **stack**: Python, Click, PyYAML, TOML, MCP\n- **ecosystem**: SUMD + DOQL + testql + taskfile",
+      "content": "- **name**: `sumd`\n- **version**: `0.1.10`\n- **python_requires**: `>=3.10`\n- **license**: Apache-2.0\n- **ai_model**: `openrouter/qwen/qwen3-coder-next`\n- **ecosystem**: SUMD + DOQL + testql + taskfile",
       "level": 2
     },
     {
       "name": "intent",
       "type": "intent",
-      "content": "SUMD to semantyczny format opisu projektu w Markdown. Definiuje intencje, strukturę, punkty wejścia i model mentalny systemu zarówno dla ludzi jak i dla LLM.",
+      "content": "SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation",
       "level": 2
     },
     {
       "name": "architecture",
       "type": "architecture",
-      "content": "Projekt jest częścią ekosystemu OQL:\n\n```\nSUMD (opis) → DOQL (dane) → taskfile (automatyzacja) → testql (weryfikacja)\n```",
+      "content": "```\nSUMD (description) → DOQL/source (code) → taskfile (automation) → testql (verification)\n```",
+      "level": 2
+    },
+    {
+      "name": "# source modules",
+      "type": "unknown",
+      "content": "- `sumd.cli`\n- `sumd.mcp_server`\n- `sumd.parser`",
       "level": 2
     },
     {
       "name": "interfaces",
       "type": "interfaces",
-      "content": "- CLI: `sumd validate SUMD.md` — waliduj dokument\n- CLI: `sumd export SUMD.md --format json` — eksportuj do JSON/YAML/TOML\n- CLI: `sumd generate sumd.json --output SUMD.md` — generuj z JSON\n- CLI: `sumd info SUMD.md` — informacje o dokumencie\n- MCP: `sumd-mcp` — serwer MCP do odpytywania projektu\n- Python API: `from sumd import parse_file, validate`",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# cli entry points",
+      "type": "unknown",
+      "content": "- `sumd`\n- `sumd-mcp`",
       "level": 2
     },
     {
       "name": "workflows",
       "type": "workflows",
-      "content": "```yaml\ntasks:\n  build:\n    cmds:\n      - pip install -e .\n  test:\n    cmds:\n      - pytest tests/ -v\n  validate:\n    cmds:\n      - sumd validate SUMD.md\n  export:\n    cmds:\n      - sumd export SUMD.md --format json --output sumd.json\n  mcp:\n    cmds:\n      - sumd-mcp\n```",
+      "content": "",
       "level": 2
     },
     {
       "name": "configuration",
       "type": "configuration",
-      "content": "```yaml\nproject:\n  name: sumd\n  version: 0.1.7\n  env: local\n```",
+      "content": "```yaml\nproject:\n  name: sumd\n  version: 0.1.10\n  env: local\n```",
       "level": 2
     },
     {
       "name": "dependencies",
       "type": "dependencies",
-      "content": "- `click>=8.0`\n- `pyyaml>=6.0`\n- `toml>=0.10.0`\n- `mcp>=1.0.0`",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# runtime",
+      "type": "unknown",
+      "content": "- `click>=8.0`\n- `pyyaml>=6.0`\n- `toml>=0.10.0`",
       "level": 2
     },
     {
       "name": "deployment",
       "type": "deployment",
-      "content": "```bash\n# Instalacja\npip install sumd\n\n# Instalacja deweloperska\npip install -e .\n```",
+      "content": "```bash\npip install sumd\n\n# development install\npip install -e .[dev]\n```",
       "level": 2
     }
   ]
