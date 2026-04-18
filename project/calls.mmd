@@ -1,74 +1,103 @@
 flowchart LR
     subgraph sumd__cli
-        sumd__cli___scaffold_generic["_scaffold_generic"]
-        sumd__cli__extract["extract"]
-        sumd__cli__export["export"]
-        sumd__cli__analyze["analyze"]
-        sumd__cli__map_cmd["map_cmd"]
-        sumd__cli__validate["validate"]
-        sumd__cli___scan_one_project["_scan_one_project"]
-        sumd__cli__cli["cli"]
-        sumd__cli___scaffold_write["_scaffold_write"]
-        sumd__cli___scaffold_from_openapi["_scaffold_from_openapi"]
-        sumd__cli___api_scenario_template["_api_scenario_template"]
         sumd__cli__info["info"]
-        sumd__cli__main["main"]
+        sumd__cli___api_scenario_template["_api_scenario_template"]
+        sumd__cli__extract["extract"]
         sumd__cli___setup_tools_venv["_setup_tools_venv"]
+        sumd__cli__export["export"]
+        sumd__cli___scaffold_from_openapi["_scaffold_from_openapi"]
+        sumd__cli__cli["cli"]
+        sumd__cli___export_sumd_json["_export_sumd_json"]
+        sumd__cli__validate["validate"]
+        sumd__cli__map_cmd["map_cmd"]
+        sumd__cli___scaffold_smoke_scenario["_scaffold_smoke_scenario"]
+        sumd__cli___scaffold_generic["_scaffold_generic"]
+        sumd__cli__analyze["analyze"]
+        sumd__cli___scaffold_crud_scenarios["_scaffold_crud_scenarios"]
+        sumd__cli___scan_one_project["_scan_one_project"]
+        sumd__cli__main["main"]
+        sumd__cli___scaffold_write["_scaffold_write"]
+        sumd__cli__lint["lint"]
+        sumd__cli___lint_collect_paths["_lint_collect_paths"]
     end
     subgraph sumd__extractor
-        sumd__extractor__extract_pyqual["extract_pyqual"]
+        sumd__extractor___cc_estimate["_cc_estimate"]
         sumd__extractor___try_radon_cc["_try_radon_cc"]
-        sumd__extractor__extract_makefile["extract_makefile"]
-        sumd__extractor___parse_doql_interfaces["_parse_doql_interfaces"]
-        sumd__extractor___fan_out["_fan_out"]
-        sumd__extractor___collect_map_files["_collect_map_files"]
-        sumd__extractor__generate_map_toon["generate_map_toon"]
-        sumd__extractor__extract_requirements["extract_requirements"]
-        sumd__extractor__extract_openapi["extract_openapi"]
-        sumd__extractor__extract_python_modules["extract_python_modules"]
-        sumd__extractor___parse_doql_content["_parse_doql_content"]
-        sumd__extractor__extract_doql["extract_doql"]
-        sumd__extractor___lang_of["_lang_of"]
-        sumd__extractor___parse_doql_entities["_parse_doql_entities"]
-        sumd__extractor___read_toml["_read_toml"]
         sumd__extractor___render_map_detail["_render_map_detail"]
-        sumd__extractor___analyse_py_module["_analyse_py_module"]
+        sumd__extractor___fan_out["_fan_out"]
+        sumd__extractor___parse_doql_content["_parse_doql_content"]
+        sumd__extractor__extract_python_modules["extract_python_modules"]
+        sumd__extractor__extract_makefile["extract_makefile"]
+        sumd__extractor__generate_map_toon["generate_map_toon"]
         sumd__extractor__extract_pyproject["extract_pyproject"]
-        sumd__extractor__extract_taskfile["extract_taskfile"]
         sumd__extractor___parse_doql_workflows["_parse_doql_workflows"]
+        sumd__extractor__extract_requirements["extract_requirements"]
+        sumd__extractor__extract_pyqual["extract_pyqual"]
+        sumd__extractor___collect_map_files["_collect_map_files"]
+        sumd__extractor___analyse_py_module["_analyse_py_module"]
+        sumd__extractor___lang_of["_lang_of"]
+        sumd__extractor__extract_doql["extract_doql"]
+        sumd__extractor___read_toml["_read_toml"]
+        sumd__extractor__extract_openapi["extract_openapi"]
+        sumd__extractor___analyse_py_top_funcs["_analyse_py_top_funcs"]
         sumd__extractor__extract_readme_title["extract_readme_title"]
+        sumd__extractor__extract_taskfile["extract_taskfile"]
+        sumd__extractor___analyse_py_top_classes["_analyse_py_top_classes"]
+        sumd__extractor___parse_doql_interfaces["_parse_doql_interfaces"]
+        sumd__extractor___map_cc_stats["_map_cc_stats"]
+        sumd__extractor___parse_doql_entities["_parse_doql_entities"]
     end
     subgraph sumd__mcp_server
+        sumd__mcp_server___tool_info_sumd["_tool_info_sumd"]
+        sumd__mcp_server___tool_export_sumd["_tool_export_sumd"]
+        sumd__mcp_server___tool_generate_sumd["_tool_generate_sumd"]
         sumd__mcp_server___resolve_path["_resolve_path"]
+        sumd__mcp_server___tool_validate_sumd["_tool_validate_sumd"]
         sumd__mcp_server___doc_to_dict["_doc_to_dict"]
-        sumd__mcp_server__call_tool["call_tool"]
+        sumd__mcp_server___tool_parse_sumd["_tool_parse_sumd"]
+        sumd__mcp_server___tool_get_section["_tool_get_section"]
+        sumd__mcp_server___tool_list_sections["_tool_list_sections"]
     end
     subgraph sumd__parser
-        sumd__parser___check_metadata_fields["_check_metadata_fields"]
-        sumd__parser__validate_sumd_file["validate_sumd_file"]
-        sumd__parser__validate_markdown["validate_markdown"]
-        sumd__parser___check_h1["_check_h1"]
-        sumd__parser___check_required_sections["_check_required_sections"]
         sumd__parser__validate_codeblocks["validate_codeblocks"]
-        sumd__parser___check_empty_links["_check_empty_links"]
-        sumd__parser__validate["validate"]
+        sumd__parser__validate_markdown["validate_markdown"]
         sumd__parser__SUMDParser__parse_file["parse_file"]
+        sumd__parser__validate_sumd_file["validate_sumd_file"]
+        sumd__parser__validate["validate"]
         sumd__parser___check_unclosed_fences["_check_unclosed_fences"]
+        sumd__parser___check_required_sections["_check_required_sections"]
+        sumd__parser___check_metadata_fields["_check_metadata_fields"]
+        sumd__parser___check_empty_links["_check_empty_links"]
+        sumd__parser___check_h1["_check_h1"]
     end
     subgraph sumd__renderer
+        sumd__renderer___render_doql_integrations["_render_doql_integrations"]
+        sumd__renderer___render_deployment_docker["_render_deployment_docker"]
+        sumd__renderer___render_deployment_install["_render_deployment_install"]
+        sumd__renderer___render_doql_entities["_render_doql_entities"]
+        sumd__renderer___render_deployment_reqs["_render_deployment_reqs"]
+        sumd__renderer___collect_pkg_sources["_collect_pkg_sources"]
         sumd__renderer___render_interfaces_testql["_render_interfaces_testql"]
-        sumd__renderer___render_interfaces["_render_interfaces"]
-        sumd__renderer___render_interfaces_openapi["_render_interfaces_openapi"]
+        sumd__renderer___render_doql_interfaces["_render_doql_interfaces"]
+        sumd__renderer___collect_infra_sources["_collect_infra_sources"]
+        sumd__renderer___render_testql_raw["_render_testql_raw"]
+        sumd__renderer___render_doql_app["_render_doql_app"]
         sumd__renderer__generate_sumd_content["generate_sumd_content"]
+        sumd__renderer___render_interfaces["_render_interfaces"]
+        sumd__renderer___collect_sources["_collect_sources"]
+        sumd__renderer___render_testql_one_structured["_render_testql_one_structured"]
+        sumd__renderer___render_deployment["_render_deployment"]
+        sumd__renderer___render_architecture_doql_parsed["_render_architecture_doql_pars"]
+        sumd__renderer___render_interfaces_openapi["_render_interfaces_openapi"]
     end
     subgraph sumd__toon_parser
-        sumd__toon_parser__extract_testql_scenarios["extract_testql_scenarios"]
+        sumd__toon_parser___parse_toon_block_navigate["_parse_toon_block_navigate"]
         sumd__toon_parser___parse_toon_block_assert["_parse_toon_block_assert"]
+        sumd__toon_parser__extract_testql_scenarios["extract_testql_scenarios"]
+        sumd__toon_parser___parse_toon_file["_parse_toon_file"]
+        sumd__toon_parser___parse_toon_block_api["_parse_toon_block_api"]
         sumd__toon_parser___parse_toon_block_config["_parse_toon_block_config"]
         sumd__toon_parser___parse_toon_block_performance["_parse_toon_block_performance"]
-        sumd__toon_parser___parse_toon_block_navigate["_parse_toon_block_navigate"]
-        sumd__toon_parser___parse_toon_block_api["_parse_toon_block_api"]
-        sumd__toon_parser___parse_toon_file["_parse_toon_file"]
     end
     sumd__toon_parser___parse_toon_file --> sumd__toon_parser___parse_toon_block_config
     sumd__toon_parser___parse_toon_file --> sumd__toon_parser___parse_toon_block_api
@@ -76,23 +105,73 @@ flowchart LR
     sumd__toon_parser___parse_toon_file --> sumd__toon_parser___parse_toon_block_performance
     sumd__toon_parser___parse_toon_file --> sumd__toon_parser___parse_toon_block_navigate
     sumd__toon_parser__extract_testql_scenarios --> sumd__toon_parser___parse_toon_file
+    sumd__cli__validate --> sumd__parser__SUMDParser__parse_file
+    sumd__cli__validate --> sumd__parser__validate
+    sumd__cli__export --> sumd__parser__SUMDParser__parse_file
+    sumd__cli__info --> sumd__parser__SUMDParser__parse_file
+    sumd__cli__extract --> sumd__parser__SUMDParser__parse_file
+    sumd__cli___scan_one_project --> sumd__renderer__generate_sumd_content
+    sumd__cli___scan_one_project --> sumd__parser__validate_sumd_file
+    sumd__cli___scan_one_project --> sumd__parser__SUMDParser__parse_file
+    sumd__cli___scan_one_project --> sumd__cli___export_sumd_json
+    sumd__cli__lint --> sumd__cli___lint_collect_paths
+    sumd__cli__lint --> sumd__parser__validate_sumd_file
+    sumd__cli__analyze --> sumd__cli___setup_tools_venv
+    sumd__cli___scaffold_smoke_scenario --> sumd__cli___scaffold_write
+    sumd__cli___scaffold_smoke_scenario --> sumd__cli___api_scenario_template
+    sumd__cli___scaffold_crud_scenarios --> sumd__cli___scaffold_write
+    sumd__cli___scaffold_crud_scenarios --> sumd__cli___api_scenario_template
+    sumd__cli___scaffold_from_openapi --> sumd__cli___scaffold_smoke_scenario
+    sumd__cli___scaffold_from_openapi --> sumd__cli___scaffold_crud_scenarios
+    sumd__cli___scaffold_generic --> sumd__cli___api_scenario_template
+    sumd__cli___scaffold_generic --> sumd__cli___scaffold_write
+    sumd__cli__map_cmd --> sumd__extractor__generate_map_toon
+    sumd__cli__main --> sumd__cli__cli
     sumd__extractor__extract_pyproject --> sumd__extractor___read_toml
     sumd__extractor___parse_doql_content --> sumd__extractor___parse_doql_interfaces
     sumd__extractor___parse_doql_content --> sumd__extractor___parse_doql_entities
     sumd__extractor___parse_doql_content --> sumd__extractor___parse_doql_workflows
     sumd__extractor__extract_doql --> sumd__extractor___parse_doql_content
+    sumd__extractor___analyse_py_top_funcs --> sumd__extractor___fan_out
+    sumd__extractor___analyse_py_top_funcs --> sumd__extractor___cc_estimate
+    sumd__extractor___analyse_py_top_classes --> sumd__extractor___fan_out
     sumd__extractor___analyse_py_module --> sumd__extractor___try_radon_cc
-    sumd__extractor___analyse_py_module --> sumd__extractor___fan_out
+    sumd__extractor___analyse_py_module --> sumd__extractor___analyse_py_top_funcs
+    sumd__extractor___analyse_py_module --> sumd__extractor___analyse_py_top_classes
     sumd__extractor___collect_map_files --> sumd__extractor___lang_of
     sumd__extractor___render_map_detail --> sumd__extractor___analyse_py_module
     sumd__extractor__generate_map_toon --> sumd__extractor___collect_map_files
     sumd__extractor__generate_map_toon --> sumd__extractor___render_map_detail
-    sumd__mcp_server__call_tool --> sumd__mcp_server___resolve_path
-    sumd__mcp_server__call_tool --> sumd__parser__SUMDParser__parse_file
-    sumd__mcp_server__call_tool --> sumd__mcp_server___doc_to_dict
-    sumd__mcp_server__call_tool --> sumd__parser__validate
+    sumd__extractor__generate_map_toon --> sumd__extractor___map_cc_stats
+    sumd__mcp_server___tool_parse_sumd --> sumd__mcp_server___resolve_path
+    sumd__mcp_server___tool_parse_sumd --> sumd__parser__SUMDParser__parse_file
+    sumd__mcp_server___tool_parse_sumd --> sumd__mcp_server___doc_to_dict
+    sumd__mcp_server___tool_validate_sumd --> sumd__mcp_server___resolve_path
+    sumd__mcp_server___tool_validate_sumd --> sumd__parser__SUMDParser__parse_file
+    sumd__mcp_server___tool_validate_sumd --> sumd__parser__validate
+    sumd__mcp_server___tool_export_sumd --> sumd__mcp_server___resolve_path
+    sumd__mcp_server___tool_export_sumd --> sumd__parser__SUMDParser__parse_file
+    sumd__mcp_server___tool_export_sumd --> sumd__mcp_server___doc_to_dict
+    sumd__mcp_server___tool_list_sections --> sumd__mcp_server___resolve_path
+    sumd__mcp_server___tool_list_sections --> sumd__parser__SUMDParser__parse_file
+    sumd__mcp_server___tool_get_section --> sumd__mcp_server___resolve_path
+    sumd__mcp_server___tool_get_section --> sumd__parser__SUMDParser__parse_file
+    sumd__mcp_server___tool_info_sumd --> sumd__mcp_server___resolve_path
+    sumd__mcp_server___tool_info_sumd --> sumd__parser__SUMDParser__parse_file
+    sumd__mcp_server___tool_generate_sumd --> sumd__mcp_server___resolve_path
+    sumd__renderer___render_architecture_doql_parsed --> sumd__renderer___render_doql_app
+    sumd__renderer___render_architecture_doql_parsed --> sumd__renderer___render_doql_entities
+    sumd__renderer___render_architecture_doql_parsed --> sumd__renderer___render_doql_interfaces
+    sumd__renderer___render_architecture_doql_parsed --> sumd__renderer___render_doql_integrations
     sumd__renderer___render_interfaces --> sumd__renderer___render_interfaces_openapi
     sumd__renderer___render_interfaces --> sumd__renderer___render_interfaces_testql
+    sumd__renderer___render_interfaces_testql --> sumd__renderer___render_testql_raw
+    sumd__renderer___render_interfaces_testql --> sumd__renderer___render_testql_one_structured
+    sumd__renderer___render_deployment --> sumd__renderer___render_deployment_install
+    sumd__renderer___render_deployment --> sumd__renderer___render_deployment_reqs
+    sumd__renderer___render_deployment --> sumd__renderer___render_deployment_docker
+    sumd__renderer___collect_sources --> sumd__renderer___collect_pkg_sources
+    sumd__renderer___collect_sources --> sumd__renderer___collect_infra_sources
     sumd__renderer__generate_sumd_content --> sumd__extractor__extract_pyproject
     sumd__renderer__generate_sumd_content --> sumd__extractor__extract_taskfile
     sumd__renderer__generate_sumd_content --> sumd__toon_parser__extract_testql_scenarios
@@ -103,21 +182,6 @@ flowchart LR
     sumd__renderer__generate_sumd_content --> sumd__extractor__extract_readme_title
     sumd__renderer__generate_sumd_content --> sumd__extractor__extract_requirements
     sumd__renderer__generate_sumd_content --> sumd__extractor__extract_makefile
-    sumd__cli__validate --> sumd__parser__SUMDParser__parse_file
-    sumd__cli__validate --> sumd__parser__validate
-    sumd__cli__export --> sumd__parser__SUMDParser__parse_file
-    sumd__cli__info --> sumd__parser__SUMDParser__parse_file
-    sumd__cli__extract --> sumd__parser__SUMDParser__parse_file
-    sumd__cli___scan_one_project --> sumd__renderer__generate_sumd_content
-    sumd__cli___scan_one_project --> sumd__parser__validate_sumd_file
-    sumd__cli___scan_one_project --> sumd__parser__SUMDParser__parse_file
-    sumd__cli__analyze --> sumd__cli___setup_tools_venv
-    sumd__cli___scaffold_from_openapi --> sumd__cli___scaffold_write
-    sumd__cli___scaffold_from_openapi --> sumd__cli___api_scenario_template
-    sumd__cli___scaffold_generic --> sumd__cli___api_scenario_template
-    sumd__cli___scaffold_generic --> sumd__cli___scaffold_write
-    sumd__cli__map_cmd --> sumd__extractor__generate_map_toon
-    sumd__cli__main --> sumd__cli__cli
     sumd__parser__validate_markdown --> sumd__parser___check_empty_links
     sumd__parser__validate_markdown --> sumd__parser___check_unclosed_fences
     sumd__parser__validate_markdown --> sumd__parser___check_metadata_fields

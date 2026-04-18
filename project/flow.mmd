@@ -12,33 +12,37 @@ flowchart TD
         sumd__cli__extract["extract"]
         sumd__cli___detect_projects["_detect_projects"]
         sumd__cli___run_analysis_tools["_run_analysis_tools"]
+        sumd__cli___export_sumd_json["_export_sumd_json"]
         sumd__cli___scan_one_project["_scan_one_project"]
         sumd__cli__scan["scan"]
         sumd__cli__lint["lint"]
+        sumd__cli___lint_collect_paths["_lint_collect_paths"]
+        sumd__cli___lint_print_result["_lint_print_result"]
         sumd__cli___setup_tools_venv["_setup_tools_venv"]
-        sumd__cli___run_code2llm_formats["_run_code2llm_formats"]
-        sumd__cli___run_tool_subprocess["_run_tool_subprocess"]
-        sumd__cli__analyze["analyze"]
-        ...["+7 more"]
+        ...["+12 more"]
     end
 
     subgraph Core
         sumd__toon_parser___parse_toon_block_config("_parse_toon_block_config CC=9")
         sumd__toon_parser___parse_toon_file["_parse_toon_file"]
         sumd__toon_parser__extract_testql_scenarios["extract_testql_scenarios"]
-        sumd__extractor___analyse_py_module{{_analyse_py_module CC=15}}
-        sumd__extractor__generate_map_toon{{generate_map_toon CC=22}}
         sumd__mcp_server__list_tools["list_tools"]
+        sumd__mcp_server___tool_parse_sumd["_tool_parse_sumd"]
+        sumd__mcp_server___tool_validate_sumd["_tool_validate_sumd"]
+        sumd__mcp_server___tool_list_sections["_tool_list_sections"]
+        sumd__mcp_server___tool_get_section["_tool_get_section"]
+        sumd__mcp_server___tool_info_sumd["_tool_info_sumd"]
+        sumd__mcp_server___tool_generate_sumd["_tool_generate_sumd"]
         sumd__mcp_server__call_tool["call_tool"]
         sumd__mcp_server__main["main"]
-        sumd__renderer___render_architecture_doql_parsed{{_render_architecture_doql_pars CC=17}}
-        sumd__renderer___render_interfaces_testql{{_render_interfaces_testql CC=20}}
-        sumd__renderer___render_deployment{{_render_deployment CC=18}}
-        sumd__renderer___collect_sources{{_collect_sources CC=19}}
+        sumd__renderer___render_testql_one_structured{{_render_testql_one_structured CC=15}}
         sumd__renderer__generate_sumd_content["generate_sumd_content"]
         sumd__parser__SUMDParser__parse["parse"]
-        sumd__parser__SUMDParser___parse_header["_parse_header"]
-        ...["+11 more"]
+        ...["+12 more"]
     end
 
-    class sumd__mcp_server__list_tools,sumd__mcp_server__call_tool,sumd__mcp_server__main,sumd__cli__cli,sumd__cli__validate,sumd__cli__export,sumd__cli__info,sumd__cli__generate,sumd__cli__extract,sumd__cli___detect_projects entry
+    subgraph Exporters
+        sumd__mcp_server___tool_export_sumd["_tool_export_sumd"]
+    end
+
+    class sumd__cli__cli,sumd__cli__validate,sumd__cli__export,sumd__cli__info,sumd__cli__generate,sumd__cli__extract,sumd__cli___detect_projects,sumd__cli___run_analysis_tools,sumd__cli___export_sumd_json,sumd__cli___scan_one_project entry

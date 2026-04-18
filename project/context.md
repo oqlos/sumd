@@ -341,16 +341,6 @@ FILE: Path to the SUMD markdown file
 > Run a single analysis tool subprocess. Returns True on success.
 - **Output to**: subprocess.run, click.echo, exe.exists, click.echo, str
 
-### sumd.renderer._render_architecture_doql_parsed
-> Render parsed DOQL blocks into L (mutates in place).
-- **Output to**: sumd.renderer._render_doql_app, sumd.renderer._render_doql_entities, sumd.renderer._render_doql_interfaces, sumd.renderer._render_doql_integrations
-
-### sumd.mcp_server._tool_parse_sumd
-- **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps, sumd.mcp_server._doc_to_dict
-
-### sumd.mcp_server._tool_validate_sumd
-- **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, SUMDParser, parser.validate, json.dumps
-
 ### sumd.extractor._parse_doql_entities
 > Parse entity blocks from DOQL content.
 - **Output to**: re.finditer, dict, m.group, entities.append, re.findall
@@ -366,6 +356,16 @@ FILE: Path to the SUMD markdown file
 ### sumd.extractor._parse_doql_content
 > Parse DOQL content from .less or .css file into structured data.
 - **Output to**: re.search, re.finditer, sumd.extractor._parse_doql_interfaces, None.splitlines, dict
+
+### sumd.mcp_server._tool_parse_sumd
+- **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps, sumd.mcp_server._doc_to_dict
+
+### sumd.mcp_server._tool_validate_sumd
+- **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, SUMDParser, parser.validate, json.dumps
+
+### sumd.renderer._render_architecture_doql_parsed
+> Render parsed DOQL blocks into L (mutates in place).
+- **Output to**: sumd.renderer._render_doql_app, sumd.renderer._render_doql_entities, sumd.renderer._render_doql_interfaces, sumd.renderer._render_doql_integrations
 
 ### sumd.parser.SUMDParser.parse
 > Parse a SUMD markdown document.
@@ -470,15 +470,15 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_requirements` - 9 calls
 - `sumd.mcp_server.list_tools` - 8 calls
 - `sumd.parser.validate_markdown` - 6 calls
-- `sumd.mcp_server.call_tool` - 5 calls
 - `sumd.extractor.extract_readme_title` - 5 calls
 - `sumd.extractor.extract_project_analysis` - 5 calls
+- `sumd.mcp_server.call_tool` - 5 calls
 - `sumd.parser.validate_sumd_file` - 5 calls
 - `sumd.extractor.extract_python_modules` - 4 calls
 - `sumd.parser.SUMDParser.parse` - 4 calls
 - `sumd.parser.SUMDParser.validate` - 4 calls
-- `sumd.mcp_server.main` - 3 calls
 - `sumd.extractor.extract_doql` - 3 calls
+- `sumd.mcp_server.main` - 3 calls
 - `sumd.cli.cli` - 2 calls
 - `sumd.parser.SUMDParser.parse_file` - 2 calls
 - `sumd.parser.parse` - 2 calls

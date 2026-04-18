@@ -1,13 +1,13 @@
 flowchart TD
-    sumd__cli["sumd.cli<br/>22 funcs"]
-    sumd__extractor["sumd.extractor<br/>28 funcs"]
-    sumd__mcp_server["sumd.mcp_server<br/>5 funcs"]
+    sumd__cli["sumd.cli<br/>27 funcs"]
+    sumd__extractor["sumd.extractor<br/>31 funcs"]
+    sumd__mcp_server["sumd.mcp_server<br/>12 funcs"]
     sumd__parser["sumd.parser<br/>23 funcs"]
-    sumd__renderer["sumd.renderer<br/>18 funcs"]
+    sumd__renderer["sumd.renderer<br/>29 funcs"]
     sumd__toon_parser["sumd.toon_parser<br/>8 funcs"]
     sumd__renderer ==>|15| sumd__extractor
     sumd__cli ==>|8| sumd__parser
     sumd__mcp_server ==>|7| sumd__parser
-    sumd__renderer -->|1| sumd__toon_parser
     sumd__cli -->|1| sumd__renderer
     sumd__cli -->|1| sumd__extractor
+    sumd__renderer -->|1| sumd__toon_parser
