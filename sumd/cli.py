@@ -769,7 +769,16 @@ def map_cmd(project: Path, output: Optional[Path], force: bool, stdout: bool):
 
 
 def main():
-    """Main entry point for the CLI."""
+    """Main entry point — if first arg is a path, run 'scan <path> --fix'."""
+    import sys as _sys
+    args = _sys.argv[1:]
+    # If first arg looks like a path (not a known command), treat as `scan <path> --fix`
+    known_commands = {
+        "scan", "lint", "analyze", "map", "scaffold", "generate",
+        "validate", "export", "extract", "info", "--help", "--version",
+    }
+    if args and args[0] not in known_commands and not args[0].startswith("-"):
+        _sys.argv = [_sys.argv[0], "scan", args[0], "--fix"] + args[1:]
     cli()
 
 
