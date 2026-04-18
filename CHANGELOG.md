@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-04-18
+
+### Docs
+- Update README.md
+- Update SPEC.md
+- Update docs/USAGE.md
+- Update examples/SUMD.md
+
+### Other
+- Update examples/sumd.json
+- Update mcp.json
+- Update sumd/mcp_server.py
+
 ## [0.1.8] - 2026-04-18
 
 ### Docs

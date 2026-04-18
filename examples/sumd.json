@@ -1,0 +1,54 @@
+{
+  "project_name": "MyApp",
+  "description": "Przykładowa aplikacja demonstrująca integrację SUMD z pakietami testql, doql i taskfile.",
+  "sections": [
+    {
+      "name": "Metadata",
+      "type": "metadata",
+      "content": "- **version**: 1.0.0\n- **author**: Tom Sapletta\n- **license**: Apache-2.0\n- **language**: Python 3.10+\n- **stack**: testql, doql, taskfile",
+      "level": 2
+    },
+    {
+      "name": "Intent",
+      "type": "intent",
+      "content": "Aplikacja zarządzająca katalogiem produktów z interfejsem REST API, testami GUI oraz automatycznym pipeline'em wdrożeniowym.\n\nTrójwarstwowa architektura ekosystemu:\n- SUMD opisuje projekt\n- DOQL wykonuje operacje na danych\n- taskfile zarządza automatyzacją\n- testql weryfikuje interfejsy",
+      "level": 2
+    },
+    {
+      "name": "Architecture",
+      "type": "architecture",
+      "content": "Trójwarstwowa architektura: API (FastAPI) → DOQL (dane) → taskfile (automatyzacja) → testql (weryfikacja)",
+      "level": 2
+    },
+    {
+      "name": "Interfaces",
+      "type": "interfaces",
+      "content": "REST API: GET/POST/PUT/DELETE /products\nCLI: myapp list-products, myapp add-product\nDOQL: SELECT * FROM products WHERE price > 10\ntestql: scenariusze w testql-scenarios/",
+      "level": 2
+    },
+    {
+      "name": "Workflows",
+      "type": "workflows",
+      "content": "Build: pip install -e .\nTest: testql run + pytest\nDeploy: taskfile deploy --env staging\nCI: taskfile cigen --target github",
+      "level": 2
+    },
+    {
+      "name": "Configuration",
+      "type": "configuration",
+      "content": "database.url: sqlite:///myapp.db\napi.port: 8080\ndoql.dialect: sqlite\ntestql.base_url: http://localhost:8080\ntaskfile.default_env: local",
+      "level": 2
+    },
+    {
+      "name": "Dependencies",
+      "type": "dependencies",
+      "content": "doql>=0.1.1, testql>=0.2.1, taskfile>=0.3.89, sumd>=0.1.7, fastapi>=0.100.0, uvicorn>=0.20.0",
+      "level": 2
+    },
+    {
+      "name": "Deployment",
+      "type": "deployment",
+      "content": "Local: taskfile run dev\nStaging: taskfile deploy --env staging\nProduction: taskfile deploy --env prod",
+      "level": 2
+    }
+  ]
+}

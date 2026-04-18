@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sumd"
-version = "0.1.8"
+version = "0.1.9"
 description = "SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation"
 readme = "README.md"
 license = "Apache-2.0"
@@ -17,6 +17,12 @@ dependencies = [
     "click>=8.0",
     "pyyaml>=6.0",
     "toml>=0.10.0",
+    "mcp>=1.0.0",
+]
+
+[project.optional-dependencies]
+mcp = [
+    "mcp>=1.0.0",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -29,6 +35,7 @@ classifiers = [
 
 [project.scripts]
 sumd = "sumd.cli:main"
+sumd-mcp = "sumd.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/tom/statement"

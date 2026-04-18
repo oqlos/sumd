@@ -2,9 +2,9 @@
 
 ## AI Cost Tracking
 
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.30-brightgreen) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fqwen%2Fqwen3-coder-next-lightgrey)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.45-brightgreen) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fqwen%2Fqwen3-coder-next-lightgrey)
 
-This project uses AI-generated code. Total cost: **$0.3000** with **2** AI commits.
+This project uses AI-generated code. Total cost: **$0.4500** with **3** AI commits.
 
 Generated on 2026-04-18 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/models/openrouter/qwen/qwen3-coder-next)
 
