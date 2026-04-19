@@ -1,0 +1,102 @@
+openapi: "3.1.0"
+info:
+  title: My API
+  version: "0.1.0"
+  description: Sample REST API for SUMD demo
+
+servers:
+  - url: http://localhost:8000
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: health_check
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+
+  /items:
+    get:
+      summary: List all items
+      operationId: list_items
+      responses:
+        "200":
+          description: List of items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+
+    post:
+      summary: Create an item
+      operationId: create_item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemCreate"
+      responses:
+        "201":
+          description: Created item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+
+  /items/{item_id}:
+    get:
+      summary: Get item by ID
+      operationId: get_item
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Item details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "404":
+          description: Item not found
+
+    delete:
+      summary: Delete an item
+      operationId: delete_item
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:    { type: integer }
+        name:  { type: string }
+        value: { type: number }
+      required: [id, name]
+
+    ItemCreate:
+      type: object
+      properties:
+        name:  { type: string }
+        value: { type: number }
+      required: [name]

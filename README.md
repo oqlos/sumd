@@ -1,40 +1,44 @@
 # SUMD
 
+
 ## AI Cost Tracking
 
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$5.10-yellow) ![AI Model](https://img.shields.io/badge/AI%20Model-openrouter%2Fqwen%2Fqwen3-coder-next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.3.5-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$5.25-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-12.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-This project uses AI-generated code. Total cost: **$5.1000** with **34** AI commits.
+- 🤖 **LLM usage:** $5.2500 (35 commits)
+- 👤 **Human dev:** ~$1256 (12.6h @ $100/h, 30min dedup)
 
-Generated on 2026-04-19 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/models/openrouter/qwen/qwen3-coder-next)
+Generated on 2026-04-19 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
+![Version](https://img.shields.io/badge/version-0.3.5-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
 
-
-![Version](https://img.shields.io/badge/version-0.3.4-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-
-
-
-SUMD is a semantic project descriptor format in Markdown that defines intent, structure, execution entry points, and mental model of a system for both humans and LLMs.
+**SUMD** (Structured Unified Markdown Descriptor) is a semantic project descriptor format in Markdown.  
+It defines intent, structure, execution entry points, and the mental model of a system for both humans and LLMs.
 
 ## What is SUMD?
 
-SUMD (Structured Unified Markdown Descriptor) is a lightweight structured markdown format for AI-aware project descriptions. It serves as a single source of truth for project documentation, optimized for both human readability and LLM context injection.
+SUMD is a lightweight structured markdown format that serves as a **single source of truth** for project documentation — optimised for both human readability and LLM context injection.
+
+Think of it as a machine-readable README: a file an AI agent can parse, reason over, and act upon.
 
 ### Purpose
 
-- **Project descriptor**: Defines API, CLI, workflows, endpoints, and system architecture
-- **AI-optimized**: Structured for LLM consumption and automation tools
-- **Lightweight manifest**: Bridges the gap between README, spec, and configuration files
-- **Context injection**: Provides structured context for AI agents and tools
+- **Project descriptor** — defines API, CLI, workflows, endpoints, and system architecture
+- **AI context feed** — structured for LLM consumption: inject `SUMD.md` into any prompt to give the model full project understanding
+- **Lightweight manifest** — bridges the gap between README, openapi spec, and configuration files
+- **Automation anchor** — drives `sumd scan`, `sumd lint`, `sumd scaffold`, CI pipelines
 
 ### Use Cases
 
-- Project documentation and specification
-- Input for LLM context injection
+- Generating structured documentation from source code
+- Single-file project context for ChatGPT, Claude, Gemini, or local LLMs
+- LLM agent memory and tool context (via MCP server)
+- Input for testql scenario scaffolding
+- API and CLI contract documentation
 - CI/CD workflow descriptions
-- API and CLI mapping
 - Structural project manifest
 
 ## Installation

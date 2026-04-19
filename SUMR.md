@@ -18,12 +18,12 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.3.3`
+- **version**: `0.3.4`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Taskfile.yml, testql(1), pyqual.yaml, goal.yaml, .env.example, src(8 mod), project/(6 analysis files)
+- **generated_from**: pyproject.toml, Taskfile.yml, testql(3), pyqual.yaml, goal.yaml, .env.example, src(8 mod), project/(6 analysis files)
 
 ## Architecture
 
@@ -71,6 +71,21 @@ tasks:
     desc: Install Python dependencies (editable)
     cmds:
       - "{{.VENV_PIP}} install -e .[dev]"
+
+  deps:update:
+    desc: Upgrade all outdated Python packages in the project venv
+    cmds:
+      - |
+        PIP="{{.VENV_PIP}}"
+        $PIP install --upgrade pip
+        OUTDATED=$($PIP list --outdated --format=columns 2>/dev/null | tail -n +3 | awk '{print $1}')
+        if [ -z "$OUTDATED" ]; then
+          echo "✅ All packages are up to date."
+        else
+          echo "📦 Upgrading: $OUTDATED"
+          echo "$OUTDATED" | xargs $PIP install --upgrade
+          echo "✅ Done."
+        fi
 
   quality:
     desc: Run pyqual quality pipeline (uses pyqual.yaml from cwd)
@@ -375,50 +390,50 @@ pfix>=0.1.60
 ### `sumd.renderer` (`sumd/renderer.py`)
 
 ```python
-def _render_architecture_doql_section(doql, proj_dir, raw_sources, L)  # CC=6, fan=8
+def _render_architecture_doql_section(doql, proj_dir, raw_sources, L)  # CC=4, fan=8
 def _render_architecture_modules(modules, name, L)  # CC=2, fan=1
 def _render_architecture(doql, modules, name, proj_dir, raw_sources)  # CC=6, fan=4
 def _render_doql_app(doql, L)  # CC=3, fan=3
-def _render_doql_entities(doql, L)  # CC=6, fan=4
-def _render_doql_interfaces(doql, L)  # CC=6, fan=5
-def _render_doql_integrations(doql, L)  # CC=5, fan=5
+def _render_doql_entities(doql, L)  # CC=4, fan=4
+def _render_doql_interfaces(doql, L)  # CC=3, fan=5
+def _render_doql_integrations(doql, L)  # CC=3, fan=5
 def _render_architecture_doql_parsed(doql, L)  # CC=1, fan=4
 def _render_interfaces(scripts, openapi, scenarios, proj_dir, raw_sources)  # CC=5, fan=4
-def _render_interfaces_openapi(openapi, proj_dir, raw_sources, L)  # CC=6, fan=7
+def _render_interfaces_openapi(openapi, proj_dir, raw_sources, L)  # CC=5, fan=7
 def _render_testql_raw(scenarios, proj_dir, L)  # CC=4, fan=7
-def _render_testql_endpoint(ep, L)  # CC=3, fan=2
-def _render_testql_extras(sc, L)  # CC=7, fan=3
+def _render_testql_endpoint(ep, L)  # CC=1, fan=2
+def _render_testql_extras(sc, L)  # CC=6, fan=3
 def _render_testql_one_structured(sc, L)  # CC=7, fan=4
 def _render_interfaces_testql(scenarios, proj_dir, raw_sources, L)  # CC=3, fan=3
-def _render_workflows_doql(doql, L)  # CC=4, fan=3
+def _render_workflows_doql(doql, L)  # CC=2, fan=3
 def _render_workflows_taskfile(tasks, proj_dir, raw_sources, L)  # CC=6, fan=4
 def _render_workflows(doql, tasks, proj_dir, raw_sources)  # CC=4, fan=4
 def _render_quality_raw(proj_dir, L)  # CC=2, fan=4
-def _render_quality_parsed(pyqual, L)  # CC=9, fan=3
+def _render_quality_parsed(pyqual, L)  # CC=8, fan=3
 def _render_quality(pyqual, proj_dir, raw_sources)  # CC=3, fan=3
 def _render_deps_runtime(deps, node_deps, L)  # CC=6, fan=2
 def _render_deps_dev(dev_deps, node_dev, L)  # CC=6, fan=2
 def _render_dependencies(deps, dev_deps, pkg_json)  # CC=2, fan=4
 def _render_deployment_install(pkg_json, name, L)  # CC=2, fan=2
 def _render_deployment_reqs(reqs, L)  # CC=5, fan=2
-def _render_deployment_docker(dockerfile, compose, L)  # CC=13, fan=4 ⚠
+def _render_deployment_docker(dockerfile, compose, L)  # CC=8, fan=4
 def _render_deployment(pkg_json, name, reqs, dockerfile, compose)  # CC=1, fan=4
-def _render_extras(makefile, pkg_json)  # CC=11, fan=4 ⚠
-def _render_code_analysis(project_analysis, skip_files)  # CC=9, fan=4
-def _render_source_snippets(source_snippets, top_n)  # CC=8, fan=4
-def _render_api_stubs(openapi)  # CC=11, fan=9 ⚠
-def _render_test_contracts(scenarios)  # CC=13, fan=8 ⚠
+def _render_extras(makefile, pkg_json)  # CC=9, fan=4
+def _render_code_analysis(project_analysis, skip_files)  # CC=6, fan=4
+def _render_source_snippets(source_snippets, top_n)  # CC=6, fan=4
+def _render_api_stubs(openapi)  # CC=8, fan=9
+def _render_test_contracts(scenarios)  # CC=12, fan=8 ⚠
 def _parse_calls_header(lines)  # CC=6, fan=5
 def _parse_calls_hubs(lines)  # CC=15, fan=7 ⚠
 def _parse_calls_toon(content)  # CC=1, fan=3
-def _render_call_graph(project_analysis)  # CC=7, fan=8
-def _collect_pkg_sources(pyproj, reqs, tasks, makefile, scenarios, openapi, doql, pyqual, goal, env_vars)  # CC=14, fan=4 ⚠
+def _render_call_graph(project_analysis)  # CC=4, fan=8
+def _collect_pkg_sources(pyproj, reqs, tasks, makefile, scenarios, openapi, doql, pyqual, goal, env_vars)  # CC=13, fan=4 ⚠
 def _collect_infra_sources(dockerfile, compose, pkg_json, modules, project_analysis)  # CC=6, fan=3
 def _collect_sources(pyproj, reqs, tasks, makefile, scenarios, openapi, doql, pyqual, goal, env_vars, dockerfile, compose, pkg_json, modules, project_analysis)  # CC=1, fan=2
 def _render_metadata_section(name, version, py_req, license_, ai_model, openapi, sources_used)  # CC=5, fan=3
 def _render_configuration_section(name, version)  # CC=1, fan=0
 def _render_env_section(env_vars)  # CC=3, fan=2
-def _render_goal_section(goal)  # CC=9, fan=3
+def _render_goal_section(goal)  # CC=7, fan=3
 def _inject_toc(content)  # CC=3, fan=6
 def generate_sumd_content(proj_dir, return_sources, raw_sources, profile)  # CC=1, fan=2
 ```
@@ -432,33 +447,33 @@ def extract_taskfile(proj_dir)  # CC=10, fan=7 ⚠
 def extract_openapi(proj_dir)  # CC=12, fan=12 ⚠
 def _parse_doql_entities(content)  # CC=4, fan=5
 def _parse_doql_interfaces(content)  # CC=3, fan=7
-def _parse_doql_workflows(content)  # CC=7, fan=10
-def _parse_doql_content(content)  # CC=6, fan=14
+def _parse_doql_workflows(content)  # CC=3, fan=10
+def _parse_doql_content(content)  # CC=5, fan=14
 def extract_doql(proj_dir)  # CC=3, fan=3
-def extract_pyqual(proj_dir)  # CC=5, fan=5
-def extract_python_modules(proj_dir, pkg_name)  # CC=4, fan=4
+def extract_pyqual(proj_dir)  # CC=3, fan=5
+def extract_python_modules(proj_dir, pkg_name)  # CC=2, fan=4
 def extract_readme_title(proj_dir)  # CC=4, fan=5
 def extract_requirements(proj_dir)  # CC=7, fan=7
 def extract_makefile(proj_dir)  # CC=7, fan=9
 def extract_goal(proj_dir)  # CC=3, fan=7
-def extract_env(proj_dir)  # CC=10, fan=9 ⚠
-def extract_dockerfile(proj_dir)  # CC=13, fan=9 ⚠
-def extract_docker_compose(proj_dir)  # CC=10, fan=12 ⚠
+def extract_env(proj_dir)  # CC=8, fan=9
+def extract_dockerfile(proj_dir)  # CC=12, fan=9 ⚠
+def extract_docker_compose(proj_dir)  # CC=9, fan=12
 def extract_package_json(proj_dir)  # CC=3, fan=6
 def _lang_of(path)  # CC=1, fan=2
 def _fan_out(func_node)  # CC=5, fan=5
 def _cc_estimate(func_node)  # CC=4, fan=4
-def _try_radon_cc(src)  # CC=3, fan=1
-def _analyse_py_top_funcs(tree, radon_cc)  # CC=5, fan=6
-def _analyse_py_top_classes(tree, radon_cc)  # CC=11, fan=9 ⚠
+def _try_radon_cc(src)  # CC=2, fan=1
+def _analyse_py_top_funcs(tree, radon_cc)  # CC=4, fan=6
+def _analyse_py_top_classes(tree, radon_cc)  # CC=9, fan=9
 def _analyse_py_module(path)  # CC=2, fan=6
-def _collect_map_files(proj_dir)  # CC=7, fan=11
+def _collect_map_files(proj_dir)  # CC=10, fan=11 ⚠
 def _render_map_detail(proj_dir, modules)  # CC=5, fan=3
-def _map_cc_stats(all_funcs)  # CC=12, fan=8 ⚠
-def generate_map_toon(proj_dir)  # CC=11, fan=12 ⚠
-def required_tools_for_profile(profile)  # CC=4, fan=0
+def _map_cc_stats(all_funcs)  # CC=6, fan=8
+def generate_map_toon(proj_dir)  # CC=7, fan=12
+def required_tools_for_profile(profile)  # CC=1, fan=0
 def extract_source_snippets(proj_dir, pkg_name)  # CC=6, fan=11
-def extract_project_analysis(proj_dir, refactor)  # CC=6, fan=7
+def extract_project_analysis(proj_dir, refactor)  # CC=5, fan=7
 ```
 
 ### `sumd.cli` (`sumd/cli.py`)
@@ -466,31 +481,31 @@ def extract_project_analysis(proj_dir, refactor)  # CC=6, fan=7
 ```python
 def cli()  # CC=1, fan=2
 def validate(file)  # CC=4, fan=8
-def export(file, format, output)  # CC=8, fan=11
+def export(file, format, output)  # CC=7, fan=11
 def info(file)  # CC=3, fan=7
 def generate(file, format, output)  # CC=8, fan=15
 def extract(file, section)  # CC=5, fan=8
-def _detect_projects(workspace, max_depth)  # CC=1, fan=7
-def _run_analysis_tools(proj_dir, tool_list, skip_tools)  # CC=15, fan=5 ⚠
-def _export_sumd_json(proj_dir, doc)  # CC=2, fan=2
-def _render_write_validate(proj_dir, sumd_path, raw, profile)  # CC=5, fan=5
-def _scan_one_project(proj_dir, fix, raw, export_json, run_analyze, tool_list, parser_inst, profile)  # CC=12, fan=8 ⚠
-def scan(workspace, export_json, report, fix, raw, analyze, tools, profile, depth)  # CC=11, fan=17 ⚠
-def lint(files, workspace, as_json)  # CC=10, fan=12 ⚠
-def _lint_collect_paths(files, workspace)  # CC=6, fan=7
-def _lint_print_result(path, r)  # CC=9, fan=2
-def _setup_tools_venv(venv_dir, tool_list, force)  # CC=7, fan=6
-def _run_code2llm_formats(bin_dir, project, project_output)  # CC=5, fan=4
+def _detect_projects(workspace, max_depth)  # CC=9, fan=7
+def _run_analysis_tools(proj_dir, tool_list, skip_tools)  # CC=12, fan=5 ⚠
+def _export_sumd_json(proj_dir, doc)  # CC=1, fan=2
+def _render_write_validate(proj_dir, sumd_path, raw, profile)  # CC=1, fan=5
+def _scan_one_project(proj_dir, fix, raw, export_json, run_analyze, tool_list, parser_inst, profile)  # CC=8, fan=8
+def scan(workspace, export_json, report, fix, raw, analyze, tools, profile, depth)  # CC=8, fan=17
+def lint(files, workspace, as_json)  # CC=5, fan=12
+def _lint_collect_paths(files, workspace)  # CC=4, fan=7
+def _lint_print_result(path, r)  # CC=3, fan=2
+def _setup_tools_venv(venv_dir, tool_list, force)  # CC=6, fan=6
+def _run_code2llm_formats(bin_dir, project, project_output)  # CC=4, fan=4
 def _run_tool_subprocess(bin_dir, tool, cmd_args)  # CC=3, fan=4
-def analyze(project, tools, force)  # CC=11, fan=17 ⚠
+def analyze(project, tools, force)  # CC=8, fan=17
 def _api_scenario_template(name, scenario_type, endpoints_block, base_path)  # CC=1, fan=3
 def _scaffold_write(path, content, force, generated, skipped)  # CC=3, fan=3
-def _scaffold_smoke_scenario(paths, base, out_dir, force, generated, skipped)  # CC=6, fan=5
-def _scaffold_crud_scenarios(groups, base, out_dir, force, generated, skipped)  # CC=5, fan=7
+def _scaffold_smoke_scenario(paths, base, out_dir, force, generated, skipped)  # CC=1, fan=5
+def _scaffold_crud_scenarios(groups, base, out_dir, force, generated, skipped)  # CC=4, fan=7
 def _scaffold_from_openapi(spec, out_dir, scenario_type, force, generated, skipped)  # CC=7, fan=12
 def _scaffold_generic(out_dir, force, generated, skipped)  # CC=1, fan=3
-def scaffold(project, output, force, scenario_type)  # CC=9, fan=18
-def map_cmd(project, output, force, stdout)  # CC=7, fan=12
+def scaffold(project, output, force, scenario_type)  # CC=8, fan=18
+def map_cmd(project, output, force, stdout)  # CC=6, fan=12
 def main()  # CC=4, fan=2
 def main_sumr()  # CC=3, fan=2
 ```
@@ -500,21 +515,21 @@ def main_sumr()  # CC=3, fan=2
 ```python
 def parse(content)  # CC=1, fan=2
 def parse_file(path)  # CC=1, fan=2
-def validate(document)  # CC=6, fan=2
+def validate(document)  # CC=1, fan=2
 def _validate_yaml_body(body, path)  # CC=2, fan=1
 def _validate_less_css_body(body, path)  # CC=2, fan=1
-def _validate_mermaid_body(body, path)  # CC=3, fan=4
+def _validate_mermaid_body(body, path)  # CC=2, fan=4
 def _validate_toon_body(body, path)  # CC=2, fan=1
 def _validate_bash_body(body, path)  # CC=4, fan=1
 def _validate_deps_body(body, path)  # CC=5, fan=6
 def validate_codeblocks(content, source)  # CC=13, fan=12 ⚠
-def _check_h1(lines, source)  # CC=3, fan=2
-def _check_required_sections(lines, source, profile)  # CC=7, fan=6
-def _check_metadata_fields(lines, source)  # CC=9, fan=6
-def _check_unclosed_fences(lines, source)  # CC=4, fan=2
-def _check_empty_links(content, source)  # CC=2, fan=1
+def _check_h1(lines, source)  # CC=2, fan=2
+def _check_required_sections(lines, source, profile)  # CC=1, fan=6
+def _check_metadata_fields(lines, source)  # CC=7, fan=6
+def _check_unclosed_fences(lines, source)  # CC=2, fan=2
+def _check_empty_links(content, source)  # CC=1, fan=1
 def validate_markdown(content, source, profile)  # CC=1, fan=6
-def validate_sumd_file(path, profile)  # CC=3, fan=5
+def validate_sumd_file(path, profile)  # CC=2, fan=5
 class SectionType:  # SUMD section types.
 class Section:  # Represents a SUMD section.
 class SUMDDocument:  # Represents a parsed SUMD document.
@@ -524,25 +539,25 @@ class SUMDParser:  # Parser for SUMD markdown documents.
     def parse_file(path)  # CC=1
     def _parse_header(lines)  # CC=9
     def _parse_sections(lines)  # CC=6
-    def validate(document)  # CC=6
+    def validate(document)  # CC=5
 class CodeBlockIssue:
 ```
 
 ### `sumd.mcp_server` (`sumd/mcp_server.py`)
 
 ```python
-def _doc_to_dict(doc)  # CC=2, fan=0
+def _doc_to_dict(doc)  # CC=1, fan=0
 def _resolve_path(path)  # CC=2, fan=3
 def list_tools()  # CC=1, fan=2
 def _tool_parse_sumd(arguments)  # CC=1, fan=5
 def _tool_validate_sumd(arguments)  # CC=1, fan=7
 def _tool_export_sumd(arguments)  # CC=5, fan=8
-def _tool_list_sections(arguments)  # CC=2, fan=4
-def _tool_get_section(arguments)  # CC=5, fan=6
-def _tool_info_sumd(arguments)  # CC=2, fan=5
+def _tool_list_sections(arguments)  # CC=1, fan=4
+def _tool_get_section(arguments)  # CC=3, fan=6
+def _tool_info_sumd(arguments)  # CC=1, fan=5
 def _tool_generate_sumd(arguments)  # CC=5, fan=5
 def call_tool(name, arguments)  # CC=3, fan=4
-def main()  # CC=1, fan=3
+def main()  # CC=2, fan=3
 ```
 
 ## Call Graph
@@ -761,6 +776,14 @@ EDGES:
 
 *Scenarios as contract signatures — what the system guarantees.*
 
+### Cli (1)
+
+**`CLI Command Tests`**
+
+### Integration (1)
+
+**`Auto-generated from Python Tests`**
+
 ### Smoke (1)
 
 **`smoke-generic.testql.toon.yaml — smoke tests for sumd CLI`**
@@ -972,7 +995,7 @@ EDGES:
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
 # code2llm | 28f 5130L | python:26,shell:2 | 2026-04-19
-# CC̄=4.6 | critical:2/191 | dups:0 | cycles:0
+# CC̄=4.6 | critical:2/198 | dups:0 | cycles:0
 
 HEALTH[3]:
   🔴 GOD   sumd/parser.py = 543L, 5 classes, 23m, max CC=13
@@ -983,16 +1006,16 @@ REFACTOR[2]:
   1. split sumd/parser.py  (god module)
   2. split 2 high-CC methods  (CC>15)
 
-PIPELINES[69]:
-  [1] Src [validate]: validate → parse_file
+PIPELINES[72]:
+  [1] Src [main]: main → ask → build_context → parse_file
       PURITY: 100% pure
-  [2] Src [export]: export → parse_file
+  [2] Src [main]: main → ask → parse_file
       PURITY: 100% pure
-  [3] Src [info]: info → parse_file
+  [3] Src [main]: main → run
       PURITY: 100% pure
-  [4] Src [generate]: generate
+  [4] Src [validate]: validate → parse_file
       PURITY: 100% pure
-  [5] Src [extract]: extract → parse_file
+  [5] Src [export]: export → parse_file
       PURITY: 100% pure
 
 LAYERS:
@@ -1000,7 +1023,7 @@ LAYERS:
   │ !! cli                       1090L  0C   29m  CC=15     ←0
   │ !! renderer                   989L  0C   46m  CC=15     ←14
   │ !! extractor                  886L  0C   33m  CC=13     ←2
-  │ !! parser                     543L  5C   23m  CC=13     ←2
+  │ !! parser                     543L  5C   23m  CC=13     ←4
   │ mcp_server                 358L  0C   12m  CC=5      ←0
   │ pipeline                   318L  1C    8m  CC=11     ←0
   │ toon_parser                173L  0C    8m  CC=9      ←1
@@ -1047,18 +1070,18 @@ EXTERNAL:
 ### Duplication (`project/duplication.toon.yaml`)
 
 ```toon markpact:analysis path=project/duplication.toon.yaml
-# redup/duplication | 2 groups | 25f 5002L | 2026-04-19
+# redup/duplication | 2 groups | 28f 5288L | 2026-04-19
 
 SUMMARY:
-  files_scanned: 25
-  total_lines:   5002
+  files_scanned: 28
+  total_lines:   5288
   dup_groups:    2
   dup_fragments: 4
   saved_lines:   25
-  scan_ms:       7658
+  scan_ms:       19151
 
 HOTSPOTS[2] (files with most duplication):
-  sumd/toon_parser.py  dup=28L  groups=1  frags=2  (0.6%)
+  sumd/toon_parser.py  dup=28L  groups=1  frags=2  (0.5%)
   sumd/parser.py  dup=22L  groups=1  frags=2  (0.4%)
 
 DUPLICATES[2] (ranked by impact):
@@ -1162,23 +1185,26 @@ HISTORY:
 ### Validation (`project/validation.toon.yaml`)
 
 ```toon markpact:analysis path=project/validation.toon.yaml
-# vallm batch | 64f | 39✓ 1⚠ 5✗ | 2026-04-19
+# vallm batch | 92f | 53✓ 1⚠ 7✗ | 2026-04-19
 
 SUMMARY:
-  scanned: 64  passed: 39 (60.9%)  warnings: 1  errors: 5  unsupported: 20
+  scanned: 92  passed: 53 (57.6%)  warnings: 1  errors: 7  unsupported: 32
 
 WARNINGS[1]{path,score}:
   /home/tom/github/oqlos/sumd/sumd/renderer.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 0.0 (threshold: 20),
 
-ERRORS[5]{path,score}:
+ERRORS[7]{path,score}:
   /home/tom/github/oqlos/sumd/sumd/mcp_server.py,0.86
     issues[4]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'mcp.server.stdio' not found,20
       python.import.resolvable,error,Module 'mcp.types' not found,21
       python.import.resolvable,error,Module 'mcp.server' not found,22
       python.import.resolvable,error,Module 'toml' not found,227
+  /home/tom/github/oqlos/sumd/tests/test_cli.py,0.93
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,7
   /home/tom/github/oqlos/sumd/tests/test_dogfood.py,0.93
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,17
@@ -1192,12 +1218,16 @@ ERRORS[5]{path,score}:
   /home/tom/github/oqlos/sumd/sumd/extractor.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'toml' not found,25
+  /home/tom/github/oqlos/sumd/tests/test_mcp_server.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,8
 
-UNSUPPORTED[4]{bucket,count}:
-  *.md,11
+UNSUPPORTED[5]{bucket,count}:
+  *.md,18
+  Dockerfile*,1
   *.txt,1
-  *.yml,2
-  other,6
+  *.yml,5
+  other,7
 ```
 
 ## Intent

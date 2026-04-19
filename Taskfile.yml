@@ -23,6 +23,21 @@ tasks:
     cmds:
       - "{{.VENV_PIP}} install -e .[dev]"
 
+  deps:update:
+    desc: Upgrade all outdated Python packages in the project venv
+    cmds:
+      - |
+        PIP="{{.VENV_PIP}}"
+        $PIP install --upgrade pip
+        OUTDATED=$($PIP list --outdated --format=columns 2>/dev/null | tail -n +3 | awk '{print $1}')
+        if [ -z "$OUTDATED" ]; then
+          echo "✅ All packages are up to date."
+        else
+          echo "📦 Upgrading: $OUTDATED"
+          echo "$OUTDATED" | xargs $PIP install --upgrade
+          echo "✅ Done."
+        fi
+
   quality:
     desc: Run pyqual quality pipeline (uses pyqual.yaml from cwd)
     cmds:

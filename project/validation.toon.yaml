@@ -1,20 +1,23 @@
-# vallm batch | 64f | 39✓ 1⚠ 5✗ | 2026-04-19
+# vallm batch | 92f | 53✓ 1⚠ 7✗ | 2026-04-19
 
 SUMMARY:
-  scanned: 64  passed: 39 (60.9%)  warnings: 1  errors: 5  unsupported: 20
+  scanned: 92  passed: 53 (57.6%)  warnings: 1  errors: 7  unsupported: 32
 
 WARNINGS[1]{path,score}:
   /home/tom/github/oqlos/sumd/sumd/renderer.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 0.0 (threshold: 20),
 
-ERRORS[5]{path,score}:
+ERRORS[7]{path,score}:
   /home/tom/github/oqlos/sumd/sumd/mcp_server.py,0.86
     issues[4]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'mcp.server.stdio' not found,20
       python.import.resolvable,error,Module 'mcp.types' not found,21
       python.import.resolvable,error,Module 'mcp.server' not found,22
       python.import.resolvable,error,Module 'toml' not found,227
+  /home/tom/github/oqlos/sumd/tests/test_cli.py,0.93
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,7
   /home/tom/github/oqlos/sumd/tests/test_dogfood.py,0.93
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,17
@@ -28,9 +31,13 @@ ERRORS[5]{path,score}:
   /home/tom/github/oqlos/sumd/sumd/extractor.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'toml' not found,25
+  /home/tom/github/oqlos/sumd/tests/test_mcp_server.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,8
 
-UNSUPPORTED[4]{bucket,count}:
-  *.md,11
+UNSUPPORTED[5]{bucket,count}:
+  *.md,18
+  Dockerfile*,1
   *.txt,1
-  *.yml,2
-  other,6
+  *.yml,5
+  other,7

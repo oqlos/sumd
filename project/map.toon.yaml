@@ -1,10 +1,16 @@
-# sumd | 35f 6235L | python:33,shell:2 | 2026-04-19
-# stats: 183 func | 44 cls | 35 mod | CC̄=4.9 | critical:21 | cycles:0
-# alerts[5]: CC _run_analysis_tools=15; CC _parse_calls_hubs=15; CC _collect_pkg_sources=14; CC extract_dockerfile=13; CC validate_codeblocks=13
+# sumd | 43f 7012L | python:38,shell:5 | 2026-04-19
+# stats: 193 func | 60 cls | 43 mod | CC̄=3.8 | critical:11 | cycles:0
+# alerts[5]: CC _parse_calls_hubs=15; CC validate_codeblocks=13; CC _collect_pkg_sources=13; CC run=12; CC _run_analysis_tools=12
 # hotspots[5]: scaffold fan=18; scan fan=17; analyze fan=17; generate fan=15; _parse_doql_content fan=14
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[35]:
+M[43]:
+  examples/basic/demo.sh,50
+  examples/llm/anthropic_example.py,61
+  examples/llm/llm_cli_example.sh,37
+  examples/llm/ollama_example.sh,38
+  examples/llm/openai_example.py,89
+  examples/mcp/mcp_client.py,139
   project.sh,35
   scripts/bootstrap.sh,70
   sumd/__init__.py,34
@@ -34,13 +40,28 @@ M[35]:
   sumd/sections/test_contracts.py,26
   sumd/sections/workflows.py,22
   sumd/toon_parser.py,174
+  tests/test_cli.py,129
   tests/test_dogfood.py,148
   tests/test_extractor.py,313
+  tests/test_mcp_server.py,234
   tests/test_parser.py,145
   tests/test_pipeline.py,136
   tests/test_sections.py,298
   tests/test_statement.py,12
 D:
+  examples/llm/anthropic_example.py:
+    e: ask,main
+    ask(sumd_path;question;model)
+    main()
+  examples/llm/openai_example.py:
+    e: build_context,ask,main
+    build_context(sumd_path)
+    ask(sumd_path;question;model)
+    main()
+  examples/mcp/mcp_client.py:
+    e: run,main
+    run(sumd_file;single_tool;tool_args)
+    main()
   sumd/__init__.py:
   sumd/cli.py:
     e: cli,validate,export,info,generate,extract,_detect_projects,_run_analysis_tools,_export_sumd_json,_render_write_validate,_scan_one_project,scan,lint,_lint_collect_paths,_lint_print_result,_setup_tools_venv,_run_code2llm_formats,_run_tool_subprocess,analyze,_api_scenario_template,_scaffold_write,_scaffold_smoke_scenario,_scaffold_crud_scenarios,_scaffold_from_openapi,_scaffold_generic,scaffold,map_cmd,main,main_sumr
@@ -263,6 +284,14 @@ D:
     _parse_toon_block_gui(lines)
     _parse_toon_file(f)
     extract_testql_scenarios(proj_dir)
+  tests/test_cli.py:
+    e: sumd_file,TestValidateCommand,TestInfoCommand,TestExportCommand,TestCliVersion,TestCliHelp
+    TestValidateCommand: test_valid_file_exits_zero(1),test_valid_file_prints_ok(1),test_missing_file_exits_nonzero(1)
+    TestInfoCommand: test_info_runs(1)
+    TestExportCommand: test_export_json(1),test_export_to_output_file(2),test_export_markdown(1)
+    TestCliVersion: test_version_option(0)
+    TestCliHelp: test_help(0),test_validate_help(0),test_export_help(0),test_scan_help(0)
+    sumd_file(tmp_path)
   tests/test_dogfood.py:
     e: _run,project_copy,test_sumd_scans_itself,test_sumd_scans_all_profiles,test_sumr_generates_sumr_md,test_sumd_lint_passes_on_generated_output,test_sumd_version_flag,test_sumd_scan_produces_no_unhandled_exceptions
     _run(cmd;cwd;timeout)
@@ -285,6 +314,21 @@ D:
     TestExtractProjectAnalysis: test_missing_project_dir_returns_empty(1),test_loads_calls_toon_yaml(1),test_refactor_mode_loads_extra_files(1),test_missing_files_skipped(1)
     TestExtractRequirements: test_no_requirements_returns_empty(1),test_parses_requirements_txt(1),test_ignores_comments_and_flags(1)
     TestExtractMakefile: test_missing_returns_empty(1),test_parses_targets(1),test_comment_captured(1)
+  tests/test_mcp_server.py:
+    e: sumd_file,run,TestDocToDict,TestResolvePath,TestListTools,TestParseSumd,TestValidateSumd,TestExportSumd,TestListSections,TestGetSection,TestInfoSumd,TestGenerateSumd,TestUnknownTool
+    TestDocToDict: test_has_required_keys(1),test_section_has_fields(1)
+    TestResolvePath: test_absolute_path_unchanged(1),test_relative_resolves_from_cwd(0)
+    TestListTools: test_returns_seven_tools(0),test_tool_names(0),test_each_tool_has_input_schema(0)
+    TestParseSumd: test_returns_json(1),test_missing_file_returns_error(1)
+    TestValidateSumd: test_valid_file(1),test_missing_file_returns_error(1)
+    TestExportSumd: test_export_json(1),test_export_markdown(1),test_export_to_file(2)
+    TestListSections: test_returns_list(1),test_section_has_name(1)
+    TestGetSection: test_found_section(1),test_missing_section(1)
+    TestInfoSumd: test_returns_info(1)
+    TestGenerateSumd: test_generate_content(0),test_generate_to_file(1)
+    TestUnknownTool: test_unknown_returns_error(0)
+    sumd_file(tmp_path)
+    run(coro)
   tests/test_parser.py:
     e: test_parse_basic,test_parse_sections,test_validate_valid_document,test_validate_missing_intent,test_parse_file,test_parser_class,test_markpact_semantic_kinds_valid,test_markpact_unknown_kind_error,test_markpact_missing_path_error
     test_parse_basic()

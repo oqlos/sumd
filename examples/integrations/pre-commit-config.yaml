@@ -1,0 +1,26 @@
+# .pre-commit-config.yaml — SUMD lint hook
+# Add this block to your existing .pre-commit-config.yaml,
+# or use this file directly as a starting point.
+#
+# Install: pre-commit install
+# Run:     pre-commit run --all-files
+
+repos:
+  - repo: local
+    hooks:
+      # Validate any SUMD.md file that was staged
+      - id: sumd-lint
+        name: Validate SUMD.md
+        entry: sumd lint
+        language: system
+        files: SUMD\.md$
+        pass_filenames: true
+
+      # Optionally regenerate SUMD.md before each commit
+      # (enable if you want SUMD.md always up to date)
+      # - id: sumd-scan
+      #   name: Regenerate SUMD.md
+      #   entry: sumd scan . --fix --profile light
+      #   language: system
+      #   pass_filenames: false
+      #   always_run: true

@@ -237,13 +237,55 @@ def _detect_projects(workspace: Path, max_depth: int | None = None) -> list[Path
         for d in entries:
             if not d.is_dir() or d.name.startswith(".") or d.name in _SKIP_DIRS:
                 continue
-            if (d / "pyproject.toml").exists():
-                projects.append(d)
-            else:
-                _walk(d, depth + 1)
+            try:
+                if (d / "pyproject.toml").exists():
+                    projects.append(d)
+                else:
+                    _walk(d, depth + 1)
+            except PermissionError:
+                continue
 
     _walk(workspace, 0)
     return projects
+
+
+def _ensure_venv(tools_dir: Path, venv_dir: Path, tool_list: list[str]) -> None:
+    """Create virtual env and install tools if not already present."""
+    if venv_dir.exists():
+        return
+    tools_dir.mkdir(exist_ok=True)
+    subprocess.run([sys.executable, "-m", "venv", str(venv_dir)], capture_output=True)
+    pip_path = venv_dir / "bin" / "pip"
+    if not pip_path.exists():
+        pip_path = venv_dir / "Scripts" / "pip.exe"
+    for pkg in tool_list:
+        subprocess.run([str(pip_path), "install", "-q", pkg], capture_output=True)
+
+
+def _tool_bin(bin_dir: Path, name: str) -> Path:
+    """Return path to *name* executable, preferring non-.exe variant."""
+    plain = bin_dir / name
+    return plain if plain.exists() else bin_dir / f"{name}.exe"
+
+
+# Tool-specific CLI argument templates
+_TOOL_ARGS: dict[str, list[str]] = {
+    "code2llm": ["{proj_dir}", "-f", "all", "-o", "{out}", "--no-chunk"],
+    "redup":    ["scan", "{proj_dir}", "--format", "toon", "--output", "{out}"],
+    "vallm":    ["batch", "{proj_dir}", "--recursive", "--format", "toon", "--output", "{out}"],
+}
+
+
+def _run_one_tool(tool: str, bin_dir: Path, proj_dir: Path, project_output: Path) -> None:
+    """Run a single analysis tool if its arg template is known."""
+    template = _TOOL_ARGS.get(tool)
+    if template is None:
+        return
+    args = [
+        a.replace("{proj_dir}", str(proj_dir)).replace("{out}", str(project_output))
+        for a in template
+    ]
+    subprocess.run([str(_tool_bin(bin_dir, tool))] + args, capture_output=True, cwd=str(proj_dir))
 
 
 def _run_analysis_tools(
@@ -261,16 +303,7 @@ def _run_analysis_tools(
     venv_dir = tools_dir / "venv"
     project_output = proj_dir / "project"
 
-    if not venv_dir.exists():
-        tools_dir.mkdir(exist_ok=True)
-        subprocess.run(
-            [sys.executable, "-m", "venv", str(venv_dir)], capture_output=True
-        )
-        pip_path = venv_dir / "bin" / "pip"
-        if not pip_path.exists():
-            pip_path = venv_dir / "Scripts" / "pip.exe"
-        for pkg in tool_list:
-            subprocess.run([str(pip_path), "install", "-q", pkg], capture_output=True)
+    _ensure_venv(tools_dir, venv_dir, tool_list)
 
     bin_dir = venv_dir / "bin"
     if not bin_dir.exists():
@@ -278,56 +311,9 @@ def _run_analysis_tools(
 
     project_output.mkdir(exist_ok=True)
 
-    if "code2llm" in tool_list and "code2llm" not in skip_tools:
-        code2llm = bin_dir / (
-            "code2llm.exe" if not (bin_dir / "code2llm").exists() else "code2llm"
-        )
-        subprocess.run(
-            [
-                str(code2llm),
-                str(proj_dir),
-                "-f",
-                "all",
-                "-o",
-                str(project_output),
-                "--no-chunk",
-            ],
-            capture_output=True,
-            cwd=str(proj_dir),
-        )
-
-    if "redup" in tool_list and "redup" not in skip_tools:
-        redup = bin_dir / ("redup.exe" if not (bin_dir / "redup").exists() else "redup")
-        subprocess.run(
-            [
-                str(redup),
-                "scan",
-                str(proj_dir),
-                "--format",
-                "toon",
-                "--output",
-                str(project_output),
-            ],
-            capture_output=True,
-            cwd=str(proj_dir),
-        )
-
-    if "vallm" in tool_list and "vallm" not in skip_tools:
-        vallm = bin_dir / ("vallm.exe" if not (bin_dir / "vallm").exists() else "vallm")
-        subprocess.run(
-            [
-                str(vallm),
-                "batch",
-                str(proj_dir),
-                "--recursive",
-                "--format",
-                "toon",
-                "--output",
-                str(project_output),
-            ],
-            capture_output=True,
-            cwd=str(proj_dir),
-        )
+    for tool in tool_list:
+        if tool not in skip_tools:
+            _run_one_tool(tool, bin_dir, proj_dir, project_output)
 
 
 def _export_sumd_json(proj_dir: Path, doc) -> None:

@@ -57,6 +57,17 @@ def extract_pyproject(proj_dir: Path) -> dict[str, Any]:
         return {}
 
 
+def _first_task_cmd(cmds: list) -> str:
+    """Extract the first command string from a task's cmds list."""
+    if not cmds:
+        return ""
+    if isinstance(cmds[0], str):
+        return cmds[0]
+    if isinstance(cmds[0], dict):
+        return cmds[0].get("task", cmds[0].get("cmd", ""))
+    return ""
+
+
 def extract_taskfile(proj_dir: Path) -> list[dict[str, str]]:
     taskfile_path = proj_dir / "Taskfile.yml"
     if not taskfile_path.exists():
@@ -69,16 +80,38 @@ def extract_taskfile(proj_dir: Path) -> list[dict[str, str]]:
             if not isinstance(body, dict):
                 continue
             desc = body.get("desc", "")
-            cmds = body.get("cmds", [])
-            cmd = ""
-            if cmds and isinstance(cmds[0], str):
-                cmd = cmds[0]
-            elif cmds and isinstance(cmds[0], dict):
-                cmd = cmds[0].get("task", cmds[0].get("cmd", ""))
+            cmd = _first_task_cmd(body.get("cmds", []))
             result.append({"name": task_name, "desc": desc, "cmd": cmd})
         return result
     except Exception:
         return []
+
+
+def _parse_openapi_endpoints(paths: dict) -> list[dict]:
+    """Extract endpoint dicts from the paths section of an OpenAPI spec."""
+    _HTTP_METHODS = {"get", "post", "put", "delete", "patch"}
+    endpoints: list[dict] = []
+    seen: set[tuple] = set()
+    for path, methods in paths.items():
+        if not isinstance(methods, dict) or "://" in path:
+            continue
+        for method, spec in methods.items():
+            if method not in _HTTP_METHODS or not isinstance(spec, dict):
+                continue
+            key = (method.upper(), path)
+            if key in seen:
+                continue
+            seen.add(key)
+            endpoints.append(
+                {
+                    "method": method.upper(),
+                    "path": path,
+                    "operationId": spec.get("operationId", ""),
+                    "summary": spec.get("summary", ""),
+                    "tags": spec.get("tags", []),
+                }
+            )
+    return endpoints
 
 
 def extract_openapi(proj_dir: Path) -> dict[str, Any]:
@@ -89,35 +122,12 @@ def extract_openapi(proj_dir: Path) -> dict[str, Any]:
         data = yaml.safe_load(openapi_path.read_text(encoding="utf-8"))
         info = data.get("info", {})
         paths = data.get("paths", {}) or {}
-        endpoints = []
-        seen: set[tuple] = set()
-        for path, methods in paths.items():
-            if not isinstance(methods, dict) or "://" in path:
-                continue
-            for method, spec in methods.items():
-                if method not in ("get", "post", "put", "delete", "patch"):
-                    continue
-                if not isinstance(spec, dict):
-                    continue
-                key = (method.upper(), path)
-                if key in seen:
-                    continue
-                seen.add(key)
-                endpoints.append(
-                    {
-                        "method": method.upper(),
-                        "path": path,
-                        "operationId": spec.get("operationId", ""),
-                        "summary": spec.get("summary", ""),
-                        "tags": spec.get("tags", []),
-                    }
-                )
         schemas = list((data.get("components", {}) or {}).get("schemas", {}).keys())
         return {
             "title": info.get("title", ""),
             "version": info.get("version", ""),
             "description": info.get("description", ""),
-            "endpoints": endpoints,
+            "endpoints": _parse_openapi_endpoints(paths),
             "schemas": schemas,
         }
     except Exception:
@@ -369,6 +379,22 @@ def extract_env(proj_dir: Path) -> list[dict[str, str]]:
     return vars_
 
 
+def _parse_dockerfile_line(line: str, parsed: dict) -> None:
+    """Update *parsed* dict in-place with one Dockerfile instruction."""
+    upper = line.upper()
+    if upper.startswith("FROM ") and not parsed["from"]:
+        parsed["from"] = line[5:].strip()
+    elif upper.startswith("EXPOSE "):
+        parsed["ports"].extend(line[7:].strip().split())
+    elif upper.startswith("ENTRYPOINT "):
+        parsed["entrypoint"] = line[11:].strip()
+    elif upper.startswith("CMD "):
+        parsed["cmd"] = line[4:].strip()
+    elif upper.startswith("LABEL "):
+        for kv in re.findall(r'(\w[\w.-]*)=("(?:[^"\\]|\\.)*"|\S+)', line[6:]):
+            parsed["labels"][kv[0]] = kv[1].strip('"')
+
+
 def extract_dockerfile(proj_dir: Path) -> dict[str, Any]:
     """Parse Dockerfile — base image, exposed ports, entrypoint, labels."""
     for candidate in (proj_dir / "Dockerfile", proj_dir / "docker" / "Dockerfile"):
@@ -378,29 +404,14 @@ def extract_dockerfile(proj_dir: Path) -> dict[str, Any]:
     else:
         return {}
     content = dockerfile_path.read_text(encoding="utf-8")
-    from_image = ""
-    ports: list[str] = []
-    entrypoint = ""
-    cmd = ""
-    labels: dict[str, str] = {}
+    parsed: dict = {"from": "", "ports": [], "entrypoint": "", "cmd": "", "labels": {}}
     for line in content.splitlines():
-        line = line.strip()
-        if line.upper().startswith("FROM ") and not from_image:
-            from_image = line[5:].strip()
-        elif line.upper().startswith("EXPOSE "):
-            ports.extend(line[7:].strip().split())
-        elif line.upper().startswith("ENTRYPOINT "):
-            entrypoint = line[11:].strip()
-        elif line.upper().startswith("CMD "):
-            cmd = line[4:].strip()
-        elif line.upper().startswith("LABEL "):
-            for kv in re.findall(r'(\w[\w.-]*)=("(?:[^"\\]|\\.)*"|\S+)', line[6:]):
-                labels[kv[0]] = kv[1].strip('"')
+        _parse_dockerfile_line(line.strip(), parsed)
     return {
-        "from": from_image,
-        "ports": ports,
-        "entrypoint": entrypoint or cmd,
-        "labels": labels,
+        "from": parsed["from"],
+        "ports": parsed["ports"],
+        "entrypoint": parsed["entrypoint"] or parsed["cmd"],
+        "labels": parsed["labels"],
     }
 
 
@@ -586,6 +597,18 @@ def _analyse_py_top_funcs(
     return exports, funcs
 
 
+def _analyse_class_methods(node: ast.ClassDef, radon_cc: dict) -> list[dict]:
+    """Extract method signatures and metrics from a class node."""
+    methods: list[dict] = []
+    for item in ast.iter_child_nodes(node):
+        if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            margs = [a.arg for a in item.args.args if a.arg != "self"]
+            cc = radon_cc.get(item.name) or _cc_estimate(item)
+            fo = _fan_out(item)
+            methods.append({"name": item.name, "args": margs, "cc": cc, "fan": fo})
+    return methods
+
+
 def _analyse_py_top_classes(
     tree: ast.AST, radon_cc: dict[str, int]
 ) -> tuple[list[str], list[dict]]:
@@ -595,19 +618,11 @@ def _analyse_py_top_classes(
     for node in ast.iter_child_nodes(tree):
         if not isinstance(node, ast.ClassDef):
             continue
-        cname = node.name
-        exports.append(cname)
-        methods: list[dict] = []
-        for item in ast.iter_child_nodes(node):
-            if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                margs = [a.arg for a in item.args.args if a.arg != "self"]
-                cc = radon_cc.get(item.name) or _cc_estimate(item)
-                fo = _fan_out(item)
-                methods.append({"name": item.name, "args": margs, "cc": cc, "fan": fo})
-        docline = ""
-        if (ast.get_docstring(node) or "").strip():
-            docline = "  # " + (ast.get_docstring(node) or "").splitlines()[0][:60]
-        classes.append({"name": cname, "methods": methods, "doc": docline})
+        exports.append(node.name)
+        methods = _analyse_class_methods(node, radon_cc)
+        doc = (ast.get_docstring(node) or "").strip()
+        docline = ("  # " + doc.splitlines()[0][:60]) if doc else ""
+        classes.append({"name": node.name, "methods": methods, "doc": docline})
     return exports, classes
 
 
@@ -629,6 +644,14 @@ def _analyse_py_module(path: Path) -> dict[str, Any]:
     }
 
 
+def _is_map_ignored_path(p: Path) -> bool:
+    """Return True if *p* (relative) contains an ignored directory segment."""
+    for part in p.parts:
+        if part in _IGNORE_DIRS or part.endswith(".egg-info"):
+            return True
+    return False
+
+
 def _collect_map_files(
     proj_dir: Path,
 ) -> tuple[dict[str, int], list[tuple[Path, int, str]]]:
@@ -636,14 +659,8 @@ def _collect_map_files(
     lang_counts: dict[str, int] = {}
     modules: list[tuple[Path, int, str]] = []  # (path, lines, lang)
 
-    def _should_skip(p: Path) -> bool:
-        for part in p.parts:
-            if part in _IGNORE_DIRS or part.endswith(".egg-info"):
-                return True
-        return False
-
     for f in sorted(proj_dir.rglob("*")):
-        if not f.is_file() or _should_skip(f.relative_to(proj_dir)):
+        if not f.is_file() or _is_map_ignored_path(f.relative_to(proj_dir)):
             continue
         lang = _lang_of(f)
         if lang == "other" or lang not in _SOURCE_LANGS:
@@ -709,6 +726,25 @@ def _map_cc_stats(
     return avg_cc, critical, alerts, hotspots
 
 
+def _render_py_module_detail(rel: Path, info: dict, a) -> None:
+    """Append detail lines for one Python module in map.toon format."""
+    a(f"  {rel}:")
+    if info["exports"]:
+        a(f"    e: {','.join(info['exports'])}")
+    for cls in info["classes"]:
+        method_summary = ",".join(
+            f"{m['name']}({len(m['args'])})" for m in cls["methods"]
+        )
+        doc = cls["doc"]
+        if method_summary:
+            a(f"    {cls['name']}: {method_summary}{doc}")
+        else:
+            a(f"    {cls['name']}:{doc}")
+    for f in info["funcs"]:
+        sig = ";".join(f["args"]) if f["args"] else ""
+        a(f"    {f['name']}({sig})")
+
+
 def generate_map_toon(proj_dir: Path) -> str:
     """Generate project/map.toon.yaml content for proj_dir."""
     proj_dir = proj_dir.resolve()
@@ -755,21 +791,7 @@ def generate_map_toon(proj_dir: Path) -> str:
 
     a("D:")
     for rel, info in py_modules:
-        a(f"  {rel}:")
-        if info["exports"]:
-            a(f"    e: {','.join(info['exports'])}")
-        for cls in info["classes"]:
-            method_summary = ",".join(
-                f"{m['name']}({len(m['args'])})" for m in cls["methods"]
-            )
-            doc = cls["doc"]
-            if method_summary:
-                a(f"    {cls['name']}: {method_summary}{doc}")
-            else:
-                a(f"    {cls['name']}:{doc}")
-        for f in info["funcs"]:
-            sig = ";".join(f["args"]) if f["args"] else ""
-            a(f"    {f['name']}({sig})")
+        _render_py_module_detail(rel, info, a)
 
     return "\n".join(L) + "\n"
 

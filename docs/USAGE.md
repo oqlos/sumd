@@ -1,309 +1,480 @@
-# SUMD — dokumentacja użytkowania
+# SUMD — Usage Guide
 
-## Przegląd ekosystemu
+> **Version 0.3.4** | [README](../README.md) | [SPEC](../SPEC.md)
 
-SUMD jest częścią trójwarstwowego ekosystemu narzędzi:
+## Table of Contents
 
-| Warstwa | Pakiet | Rola |
-|---------|--------|------|
-| Opis | `sumd` | Strukturalny opis projektu dla ludzi i LLM |
-| Dane | `doql` | Deklaratywne zapytania i transformacje danych |
-| Automatyzacja | `taskfile` | Task runner, deploy, CI/CD |
-| Testy | `testql` | Testowanie interfejsów API, GUI, CLI |
+1. [Ecosystem overview](#ecosystem-overview)
+2. [Installation](#installation)
+3. [CLI commands](#cli-commands)
+   - [sumd scan](#sumd-scan--generate-sumdmd)
+   - [sumr alias](#sumr-alias--pre-refactoring-analysis)
+   - [sumd lint](#sumd-lint--validate-sumdmd-files)
+   - [sumd map](#sumd-map--static-code-map)
+   - [sumd scaffold](#sumd-scaffold--generate-testql-skeletons)
+   - [sumd analyze](#sumd-analyze--static-code-analysis)
+   - [Low-level commands](#low-level-commands)
+4. [Section profiles](#section-profiles)
+5. [Python API](#python-api)
+6. [Using SUMD with LLMs](#using-sumd-with-llms)
+7. [MCP server](#mcp-server)
+8. [Integration with known tools](#integration-with-known-tools)
+9. [What is embedded in SUMD.md](#what-is-embedded-in-sumdmd)
 
 ---
 
-## Instalacja
+## Ecosystem Overview
+
+SUMD is the **description layer** in a four-layer toolchain:
+
+| Layer | Package | Role |
+|-------|---------|------|
+| Description | `sumd` | Structured project descriptor for humans and LLMs |
+| Data | `doql` | Declarative data queries and transformations |
+| Automation | `taskfile` | Task runner, deploy, CI/CD orchestration |
+| Testing | `testql` | API, GUI, and CLI interface testing |
+
+The canonical pipeline is:
+
+```
+SUMD.md (describe) → DOQL/source (code) → Taskfile (automate) → testql (verify)
+```
+
+---
+
+## Installation
 
 ```bash
+# From PyPI
 pip install sumd
+
+# With MCP server support
+pip install sumd[mcp]
+
+# From source (development)
+git clone https://github.com/oqlos/sumd
+cd sumd
+pip install -e ".[dev]"
 ```
 
 ---
 
-## Komendy CLI
+## CLI Commands
 
-### `sumd scan` — generowanie SUMD.md
+### `sumd scan` — Generate SUMD.md
 
-Skanuje workspace, wykrywa projekty Python (po obecności `pyproject.toml`) i generuje `SUMD.md`.
+Scans a directory, detects Python projects (by `pyproject.toml` presence), and generates or updates `SUMD.md`.
 
 ```bash
-sumd scan .                    # pomiń projekty z istniejącym plikiem
-sumd scan . --fix              # nadpisz istniejące pliki
-sumd scan . --fix --no-raw     # tryb strukturalny zamiast surowych code bloków
-sumd scan . --fix --report summary.json
-sumd scan . --fix --analyze    # + uruchom code2llm, redup, vallm
-sumd scan . --fix --analyze --tools code2llm,redup
+# Smart shortcut — auto-detects workspace vs single project
+sumd .
+sumd /path/to/project
+
+# Explicit scan subcommand
+sumd scan .                              # skip projects that already have SUMD.md
+sumd scan . --fix                        # overwrite existing SUMD.md
+sumd scan . --fix --no-raw               # render sources as structured Markdown (not raw code blocks)
+sumd scan . --fix --report summary.json  # write scan report to JSON
+sumd scan . --fix --analyze              # also run code2llm, redup, vallm analysis
+sumd scan . --fix --analyze --tools code2llm,redup  # run only selected tools
+sumd scan . --fix --depth 2              # limit recursive search depth (default: unlimited)
+
+# Profile selection
+sumd scan . --fix --profile minimal
+sumd scan . --fix --profile light
+sumd scan . --fix --profile rich         # default — recommended for LLM use
+sumd scan . --fix --profile refactor     # generates SUMR.md instead of SUMD.md
 ```
-
-**Co jest osadzane w SUMD.md:**
-
-| Źródło | Sposób osadzenia | markpact kind |
-|--------|-----------------|---------------|
-| `pyproject.toml` | parsowany (wersja, deps, entry points) | — |
-| `Taskfile.yml` | surowy YAML | `markpact:file` |
-| `openapi.yaml` | pełna spec + endpointy jako sekcje | `markpact:file` |
-| `testql-scenarios/**/*.testql.toon.yaml` | surowy toon | `markpact:file` |
-| `app.doql.less` / `.css` | surowy Less/CSS | `markpact:file` |
-| `pyqual.yaml` | surowy YAML | `markpact:file` |
-| `goal.yaml` | sekcja intent | — |
-| `.env.example` | lista zmiennych | — |
-| `Dockerfile` / `docker-compose.*.yml` | lista plików | — |
-| `src/**/*.py` moduły | lista nazw | — |
-| `project/analysis.toon.yaml` | statyczna analiza kodu (CC, pipelines) | `markpact:file` |
-| `project/project.toon.yaml` | topologia projektu | `markpact:file` |
-| `project/evolution.toon.yaml` | historia commitów | `markpact:file` |
-| `project/map.toon.yaml` | mapa zależności modułów | `markpact:file` |
-| `project/duplication.toon.yaml` | raport duplikacji kodu | `markpact:file` |
-| `project/validation.toon.yaml` | wyniki walidacji vallm | `markpact:file` |
-| `project/compact_flow.mmd` | diagram przepływu wywołań | `markpact:file` |
-| `project/calls.mmd` | pełny call graph | `markpact:file` |
-| `project/flow.mmd` | diagram przepływu | `markpact:file` |
-| `project/context.md` | analiza architektury (code2llm) | inline markdown |
-| `project/README.md` | opis wyników analizy | inline markdown |
-| `project/prompt.txt` | prompt użyty przez code2llm | `markpact:file` |
-
-**Nie osadzane:** `*.png`, `index.html`, `refactor-progress.txt`, `project/testql-scenarios/`.
-
-Folder `project/` jest generowany przez `sumd analyze` (narzędzia `code2llm`, `redup`, `vallm`).
 
 ---
 
-### `sumd lint` — walidacja SUMD.md
+### `sumr` alias — Pre-Refactoring Analysis
+
+`sumr` is a shorthand for `sumd scan --profile refactor`. It generates `SUMR.md` — a deep analysis report designed as AI context for refactoring sessions.
 
 ```bash
-sumd lint SUMD.md
-sumd lint --workspace .
-sumd lint --workspace . --json
+sumr .                   # equivalent to: sumd scan . --profile refactor
+sumr ./my-project        # single project
+sumr . --fix             # overwrite existing SUMR.md
 ```
 
-Walidatory sprawdzają:
-
-- **Markdown**: H1, wymagane sekcje `## Metadata/Intent/Architecture/Workflows/Dependencies/Deployment`, pola `name`+`version`, niezamknięte fenced blocki
-- **`toon`**: obecność nagłówków sekcji (`CONFIG[...]`, `API[...]` itp.)
-- **`yaml`**: poprawność parsowania przez PyYAML
-- **`mermaid`**: prawidłowy typ diagramu
-- **`less`/`css`**: zbilansowane nawiasy klamrowe
-- **`bash`**: brak placeholderów `<YOUR_...>` i TODO
-- **`text`** (deps): poprawny format nazw pakietów pip
+`SUMR.md` includes: code complexity metrics, duplication analysis, call graph, evolution history, architectural critique, testql contracts, and LLM-ready refactoring suggestions.
 
 ---
 
-### `sumd scaffold` — generowanie szkieletów testql
-
-#### Dlaczego `sumd scan` nie generuje testql automatycznie?
-
-`sumd scan` tylko **czyta** istniejące pliki testql i osadza je w SUMD.md.
-Nie może ich generować, ponieważ scenariusze testql kodują **oczekiwane zachowanie biznesowe** —
-asercje, warunki brzegowe, logikę domenową — której sumd nie zna.
-
-`sumd scaffold` generuje **szkielet strukturalny** (endpointy, nazwy plików, konfigurację bazy)
-ze specyfikacji OpenAPI. Asercje i logika domenowa muszą być uzupełnione przez człowieka lub LLM.
+### `sumd lint` — Validate SUMD.md Files
 
 ```bash
-sumd scaffold ./my-project                          # wszystkie scenariusze z openapi.yaml
-sumd scaffold ./my-project --type smoke             # tylko smoke testy (GET /health itp.)
-sumd scaffold ./my-project --type crud              # scenariusze per zasób
-sumd scaffold ./my-project --force                  # nadpisz istniejące pliki
-sumd scaffold ./my-project --output ./my-scenarios/ # inny katalog wyjściowy
+sumd lint SUMD.md                   # validate a single file
+sumd lint --workspace .             # validate all SUMD.md files in the workspace
+sumd lint --workspace . --json      # output JSON (for CI integration)
 ```
 
-**Przepływ pracy scaffold → scan → testql:**
+Validators check:
+
+| Validator | What it checks |
+|-----------|---------------|
+| **Markdown** | H1 presence, required sections, unclosed fenced blocks |
+| **`toon`** | Required section headers (`CONFIG[...]`, `API[...]`, etc.) |
+| **`yaml`** | PyYAML parsability |
+| **`mermaid`** | Valid diagram type declaration |
+| **`less`/`css`** | Balanced braces |
+| **`bash`** | No unresolved `<YOUR_...>` placeholders |
+| **`text`** | Valid pip package name format |
+
+---
+
+### `sumd map` — Static Code Map
+
+Generates `project/map.toon.yaml` using `ast` + `radon` — no external dependencies required.
 
 ```bash
-# 1. Wygeneruj szkielety ze spec OpenAPI
-sumd scaffold ./oqlos
-# → tworzy oqlos/testql-scenarios/smoke-health.testql.toon.yaml
-# → tworzy oqlos/testql-scenarios/api-execution.testql.toon.yaml
-# → ...
-
-# 2. Uzupełnij asercje (każdy plik ma sekcję # ASSERT[0] z TODO)
-vim oqlos/testql-scenarios/api-execution.testql.toon.yaml
-
-# 3. Osadź w SUMD.md
-sumd scan . --fix
-
-# 4. Waliduj
-sumd lint --workspace .
-
-# 5. Uruchom testy
-testql run oqlos/testql-scenarios/
+sumd map ./my-project             # write to project/map.toon.yaml
+sumd map ./my-project --force     # overwrite existing
+sumd map ./my-project --stdout    # print to stdout
 ```
 
-**Przykład wygenerowanego pliku** (`api-execution.testql.toon.yaml`):
-
-```toon
-# SCENARIO: api-execution.testql.toon.yaml — api execution
-# TYPE: api
-# VERSION: 1.0
-# GENERATED: true
-
-# ── Konfiguracja ──────────────────────────────────────
-CONFIG[1]{key, value}:
-  base_path,  http://localhost:8101
-
-# ── Wywołania API ─────────────────────────────────────
-API[3]{method, endpoint, status}:
-  POST,   /api/v1/execution/run,     200
-  GET,    /api/v1/execution/status,  200
-  DELETE, /api/v1/execution/{id},    200
-# ── Asercje ───────────────────────────────────────────
-# ASSERT[0]{field, op, expected}:
-#   TODO: fill in assertions
-```
+`project/map.toon.yaml` is automatically embedded in `SUMD.md` on the next `sumd scan --fix`.
 
 ---
 
-### `sumd map` — generowanie project/map.toon.yaml
+### `sumd scaffold` — Generate testql Skeletons
 
-Generuje `project/map.toon.yaml` — mapę kodu w formacie toon (identyczną z wyjściem `code2llm map`), bez potrzeby instalowania zewnętrznych narzędzi.
+Generates `testql-scenarios/*.testql.toon.yaml` skeleton files from an OpenAPI spec or `SUMD.md`.
 
 ```bash
-sumd map ./my-project            # → project/map.toon.yaml
-sumd map ./my-project --force    # nadpisz istniejący plik
-sumd map ./my-project --stdout   # wydrukuj na stdout
+sumd scaffold ./my-project                           # all scenarios
+sumd scaffold ./my-project --type smoke              # smoke tests only
+sumd scaffold ./my-project --type crud               # per-resource CRUD scenarios
+sumd scaffold ./my-project --force                   # overwrite existing files
+sumd scaffold ./my-project --output ./my-scenarios/  # custom output directory
 ```
 
-Zawartość wygenerowanego pliku:
-
-```toon
-# oqlos | 128f 19993L | python:124,shell:2,css:1,less:1 | 2026-04-18
-# stats: 287 func | 42 cls | 128 mod | CC̄=5.2 | critical:12 | cycles:0
-# alerts[5]: CC interpret=55; fan-out run=31; ...
-# hotspots[5]: interpret fan=31; parse fan=28; ...
-M[128]:
-  oqlos/core/interpreter.py,1243
-  oqlos/core/executor.py,512
-  ...
-D:
-  oqlos/core/interpreter.py:
-    e: Interpreter,run,parse,...
-    Interpreter: __init__(3),run(2),...
-    run(script;context)
-```
-
-Plik `project/map.toon.yaml` jest automatycznie osadzany w SUMD.md przy `sumd scan --fix`.
-
-Relacja do `code2llm`:
-- `sumd map` — wbudowane, zawsze dostępne, analizuje statycznie przez `ast` + `radon`
-- `sumd analyze --tools code2llm` — zewnętrzne narzędzie, wymaga instalacji, generuje więcej metryk
-
----
-
-### `sumd analyze` — analiza statyczna kodu
-
-Uruchamia narzędzia `code2llm`, `redup`, `vallm` i zapisuje wyniki w `project/`.
-Pliki z `project/` są automatycznie osadzane w SUMD.md przy kolejnym `sumd scan --fix`.
+**Full workflow: scaffold → scan → test:**
 
 ```bash
-sumd analyze ./my-project
-sumd analyze ./my-project --tools code2llm,redup
-sumd analyze ./my-project --force    # wymuś reinstalację narzędzi
+sumd scaffold ./oqlos              # 1. generate skeletons
+$EDITOR testql-scenarios/*.yaml   # 2. fill in assertions
+sumd scan . --fix                  # 3. embed in SUMD.md
+sumd lint --workspace .            # 4. validate
+testql run testql-scenarios/       # 5. run tests
 ```
-
-**Pełna lista plików generowanych w `project/`:**
-
-| Plik | Generuje | Polecenie / flaga |
-|------|---------|-------------------|
-| `analysis.toon.yaml` | `code2llm` | `-f toon` |
-| `evolution.toon.yaml` | `code2llm` | `-f evolution` |
-| `map.toon.yaml` | `sumd map` lub `code2llm` | `sumd map` / `-f map` |
-| `context.md` | `code2llm` | `-f context` |
-| `calls.mmd` | `code2llm` | `-f calls` |
-| `flow.mmd`, `compact_flow.mmd`, `calls.mmd` | `code2llm` | `-f mermaid --no-png` |
-| `duplication.toon.yaml` | `redup` | `redup scan --format toon` |
-| `validation.toon.yaml` | `vallm` | `vallm batch --format toon` |
-
-**Nie osadzane do SUMD.md:** `*.png`, `index.html`, `refactor-progress.txt`.
-
-| Narzędzie | Co robi | Generuje |
-|-----------|---------|----------|
-| `code2llm` | Analiza architektury, modułów, call graph | `context.md`, `analysis.toon.yaml`, `evolution.toon.yaml`, `*.mmd` |
-| `redup` | Wykrywanie duplikacji kodu | `duplication.toon.yaml` |
-| `vallm` | Walidacja kodu przez LLM | `validation.toon.yaml` |
 
 ---
 
-## Dlaczego SUMD.md nie wystarczy do odtworzenia projektu przez LLM?
+### `sumd analyze` — Static Code Analysis
 
-SUMD.md zawiera **specyfikację i kontekst**, ale nie **kod źródłowy**.
+Runs `code2llm`, `redup`, `vallm` and writes results to `project/`.
 
-### ✅ Co jest (pozwala odtworzyć strukturę):
+```bash
+sumd analyze ./my-project                    # run all tools
+sumd analyze ./my-project --tools code2llm   # only code2llm
+sumd analyze ./my-project --force            # reinstall tools
+```
 
-- Pełna specyfikacja OpenAPI (endpointy, schematy)
-- Scenariusze testql (kontrakt zachowania API)
-- Taskfile (workflow CI/CD)
-- Zależności Python
-- Architektura modułów, call-graph (`project/`)
-- Historia commitów, topologia projektu
-
-### ❌ Czego brakuje (implementacja):
-
-| Brak | Dlaczego to problem |
-|------|---------------------|
-| **Kod źródłowy `.py`** | Tylko nazwy modułów — bez ciał funkcji |
-| **Docstringi / sygnatury typów** | `analysis.toon.yaml` podaje CC i nazwy, nie kod |
-| **Testy jednostkowe** (`tests/`) | Tylko scenariusze testql, nie pytest |
-| **Logika interpreter/parser** | Złożone algorytmy nieosiągalne z diagramów |
-| **Modele danych** | Brak definicji Pydantic/dataclass |
-| **Komentarze w kodzie** | Tracone przy listowaniu modułów |
-
-### Czego brakuje w specyfikacji SUMD:
-
-1. **Sekcja `## Source`** — osadzenie kluczowych modułów źródłowych (top N wg CC z `analysis.toon.yaml`)
-2. **`markpact:test` dla `tests/`** — testy jednostkowe jako kontrakt niższego poziomu
-3. **Sygnatury publicznego API** — `__all__`, stubs typów, definicje Pydantic schemas
-4. **`markpact:file` dla `.env.example`** — teraz tylko listowany, nie osadzony jako blok kodu
-5. **Diagram sekwencji** — brak sequence diagram dla kluczowych przepływów (jest tylko call-graph)
-6. **Pinowane wersje zależności** — `requirements.txt` z pełnymi pinami
+| Tool | Output file(s) |
+|------|---------------|
+| `code2llm` | `analysis.toon.yaml`, `calls.mmd`, `flow.mmd`, `context.md` |
+| `redup` | `duplication.toon.yaml` |
+| `vallm` | `validation.toon.yaml` |
+| `sumd map` (built-in) | `map.toon.yaml` |
 
 ---
 
-## Format `.testql.toon.yaml`
+### Low-Level Commands
 
-```toon
-# SCENARIO: nazwa.testql.toon.yaml — opis
-# TYPE: api|smoke|crud|e2e|gui
-# VERSION: 1.0
-# GENERATED: true|false
-
-CONFIG[N]{key, value}:
-  base_path,  http://localhost:8080
-
-API[N]{method, endpoint, status}:
-  GET,    /api/v1/users,      200
-  POST,   /api/v1/users,      201  # create - create new user
-  DELETE, /api/v1/users/{id}, 204
-
-ASSERT[N]{field, op, expected}:
-  body.items, !=, null
-  body.count, >=, 0
-
-PERFORMANCE[N]{metric, threshold}:
-  response_time, <500ms
+```bash
+sumd validate SUMD.md                          # validate; exit 1 on errors
+sumd export SUMD.md                            # export to JSON (default)
+sumd export SUMD.md --format yaml -o spec.yaml # export to YAML file
+sumd info SUMD.md                              # show name, description, sections
+sumd extract SUMD.md                           # print raw content
+sumd extract SUMD.md --section Intent          # extract a specific section
+sumd generate spec.json                        # generate SUMD.md from JSON/YAML/TOML
 ```
 
-Sekcje opcjonalne: `NAVIGATE[N]` (GUI), `GUI[N]` (akcje przeglądarki), `SETUP[N]`, `TEARDOWN[N]`.
+---
+
+## Section Profiles
+
+| Profile | Sections | Best for |
+|---------|----------|---------|
+| `minimal` | Metadata, Architecture, Workflows, Dependencies, Deployment | CI badges, quick overview |
+| `light` | `minimal` + Interfaces, Quality, Configuration, Environment | Standard documentation |
+| `rich` | `light` + Code Analysis, Source Snippets, Call Graph, API Stubs, Test Contracts | **LLM context injection** (default) |
+| `refactor` | Analysis sections + complexity, duplication, evolution → `SUMR.md` | AI-assisted refactoring |
 
 ---
 
 ## Python API
 
 ```python
+from pathlib import Path
 from sumd import parse, parse_file
 from sumd.parser import validate_sumd_file
-from pathlib import Path
+from sumd.pipeline import RenderPipeline
 
-# Parsuj SUMD.md
-doc = parse_file("SUMD.md")
-print(doc.project_name, doc.description)
-for s in doc.sections:
-    print(s.name, s.type.value)
+# Parse a SUMD file
+doc = parse_file(Path("SUMD.md"))
+print(doc.project_name)
+print(doc.description)
 
-# Waliduj plik
+# Access sections
+intent = next(s for s in doc.sections if s.name.lower() == "intent")
+print(intent.content)
+
+# Validate
 result = validate_sumd_file(Path("SUMD.md"))
-# result = {"source": "SUMD.md", "markdown": [...], "codeblocks": [...], "ok": True}
 if not result["ok"]:
     for issue in result["markdown"] + result["codeblocks"]:
         print(issue)
+
+# Generate SUMD.md from source directory
+content = RenderPipeline(Path("./my-project")).run(profile="rich")
+Path("./my-project/SUMD.md").write_text(content)
+
+# Generate SUMR.md (refactor profile)
+content = RenderPipeline(Path("./my-project")).run(profile="refactor")
+Path("./my-project/SUMR.md").write_text(content)
 ```
+
+---
+
+## Using SUMD with LLMs
+
+### Pattern 1: Context Injection (Chat)
+
+```bash
+sumd scan . --fix --profile rich
+cat SUMD.md | pbcopy   # macOS — paste into ChatGPT, Claude, etc.
+```
+
+Prompt template:
+```
+<context>
+{SUMD.md content}
+</context>
+
+Based on the project above, identify the most complex module and suggest refactoring priorities.
+```
+
+### Pattern 2: SUMR.md for Refactoring
+
+```bash
+sumr .
+cat SUMR.md | llm "Propose a refactoring plan focused on hotspots and duplication."
+```
+
+### Pattern 3: Python API for custom LLM calls
+
+```python
+from sumd import parse_file
+import openai
+
+doc = parse_file("SUMD.md")
+intent = next((s.content for s in doc.sections if s.name.lower() == "intent"), "")
+architecture = next((s.content for s in doc.sections if s.name.lower() == "architecture"), "")
+
+system_prompt = f"Project: {doc.project_name}\n\nIntent:\n{intent}\n\nArchitecture:\n{architecture}"
+
+client = openai.OpenAI()
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": "List all API endpoints and their purpose."},
+    ],
+)
+print(response.choices[0].message.content)
+```
+
+### Pattern 4: Anthropic Claude API
+
+```python
+import anthropic
+from sumd import parse_file
+
+doc = parse_file("SUMD.md")
+
+client = anthropic.Anthropic()
+message = client.messages.create(
+    model="claude-opus-4-5",
+    max_tokens=1024,
+    system=f"You have full context for the {doc.project_name} project:\n\n{doc.raw_content}",
+    messages=[{"role": "user", "content": "What testql scenarios are missing for the API?"}],
+)
+print(message.content[0].text)
+```
+
+### Pattern 5: Local LLM via Ollama
+
+```bash
+sumd scan . --fix --profile rich
+ollama run llama3 "$(printf 'Context:\n%s\n\nQuestion: What is the main entry point?' "$(cat SUMD.md)")"
+```
+
+---
+
+## MCP Server
+
+SUMD ships with an MCP (Model Context Protocol) server, exposing sumd operations as callable tools to any MCP-compatible agent.
+
+### Available MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `parse_sumd` | Parse SUMD.md → structured JSON |
+| `validate_sumd` | Validate structure → errors list |
+| `export_sumd` | Export to json / yaml / toml / markdown |
+| `list_sections` | List section names and types |
+| `get_section` | Get content of a specific section |
+| `info_sumd` | Project name, description, section stats |
+| `generate_sumd` | Generate SUMD.md from JSON payload |
+
+### Claude Desktop
+
+`~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "sumd": {
+      "command": "python",
+      "args": ["-m", "sumd.mcp_server"],
+      "env": { "PYTHONPATH": "/path/to/your/project" }
+    }
+  }
+}
+```
+
+### Cursor / Windsurf
+
+`.cursor/mcp.json` or `.windsurf/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "sumd": {
+      "command": "python",
+      "args": ["-m", "sumd.mcp_server"]
+    }
+  }
+}
+```
+
+### Continue.dev
+
+`.continue/config.json`:
+
+```json
+{
+  "experimental": {
+    "modelContextProtocolServers": [
+      {
+        "transport": {
+          "type": "stdio",
+          "command": "python",
+          "args": ["-m", "sumd.mcp_server"]
+        }
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Integration with Known Tools
+
+### GitHub Actions
+
+```yaml
+name: SUMD
+on: [push]
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install sumd
+      - run: sumd scan . --fix --profile rich
+      - run: sumd lint --workspace . --json > sumd-report.json
+      - uses: actions/upload-artifact@v4
+        with: { name: sumd-report, path: sumd-report.json }
+```
+
+### pre-commit
+
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: sumd-lint
+        name: Validate SUMD.md
+        entry: sumd lint
+        language: system
+        files: SUMD\.md$
+        pass_filenames: true
+```
+
+### Taskfile
+
+```yaml
+tasks:
+  docs:
+    desc: Regenerate SUMD.md
+    cmds: [sumd scan . --fix --profile rich]
+  docs:lint:
+    desc: Validate all SUMD.md files
+    cmds: [sumd lint --workspace . --json]
+  docs:refactor:
+    desc: Generate SUMR.md
+    cmds: [sumr . --fix]
+```
+
+### VS Code tasks
+
+`.vscode/tasks.json`:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "SUMD: Generate", "type": "shell", "command": "sumd scan . --fix", "group": "build" },
+    { "label": "SUMD: Lint",     "type": "shell", "command": "sumd lint --workspace .", "group": "test" }
+  ]
+}
+```
+
+### Docker
+
+```bash
+docker run --rm -v "$PWD:/project" python:3.12-slim \
+  sh -c "pip install sumd && sumd scan /project --fix"
+```
+
+---
+
+## What is Embedded in SUMD.md
+
+| Source | Contents | Rendering |
+|--------|----------|-----------|
+| `pyproject.toml` | metadata, deps, entry points | parsed |
+| `Taskfile.yml` | all tasks | raw YAML block |
+| `openapi.yaml` | full spec + endpoints | structured sections |
+| `testql-scenarios/**/*.testql.toon.yaml` | scenario files | raw toon blocks |
+| `app.doql.less` / `.css` | DOQL bindings | raw Less/CSS |
+| `pyqual.yaml` | quality pipeline config | raw YAML |
+| `goal.yaml` | project intent | rendered prose |
+| `.env.example` | env variable list | bulleted list |
+| `Dockerfile` / `docker-compose.*.yml` | container config | listed |
+| `src/**/*.py` modules | module names | listed |
+| `package.json` | Node.js deps and scripts | listed |
+| `project/analysis.toon.yaml` | CC metrics, pipeline analysis | raw toon |
+| `project/map.toon.yaml` | module inventory, function signatures | raw toon |
+| `project/evolution.toon.yaml` | commit history | raw toon |
+| `project/duplication.toon.yaml` | duplication report | raw toon |
+| `project/calls.mmd` / `flow.mmd` / `compact_flow.mmd` | Mermaid diagrams | raw mermaid |
+| `project/context.md` | code2llm architecture analysis | inline markdown |
+
+**Not embedded:** `*.png`, `index.html`, `refactor-progress.txt`, `project/testql-scenarios/`.

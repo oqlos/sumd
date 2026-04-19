@@ -1,0 +1,52 @@
+# .github/workflows/sumd.yml
+# GitHub Actions workflow: generate SUMD.md, lint, upload report.
+# Copy this file to .github/workflows/sumd.yml in your repository.
+
+name: SUMD Documentation
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sumd:
+    name: Generate and validate SUMD
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install sumd
+        run: pip install sumd
+
+      # Generate SUMD.md for all projects in the workspace
+      - name: Generate SUMD.md
+        run: sumd scan . --fix --profile rich
+
+      # Validate all generated SUMD.md files
+      - name: Lint SUMD files
+        run: sumd lint --workspace . --json > sumd-report.json
+
+      # Upload the lint report as an artifact
+      - name: Upload SUMD report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sumd-report
+          path: sumd-report.json
+
+      # Optional: commit updated SUMD.md files back to the repository
+      # - name: Commit updated SUMD.md
+      #   uses: stefanzweifel/git-auto-commit-action@v5
+      #   with:
+      #     commit_message: "docs: regenerate SUMD.md [skip ci]"
+      #     file_pattern: "**/SUMD.md"

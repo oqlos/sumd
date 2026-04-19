@@ -1,0 +1,102 @@
+{
+  "project_name": "my-api",
+  "description": "Sample REST API project for SUMD demo",
+  "sections": [
+    {
+      "name": "contents",
+      "type": "unknown",
+      "content": "- [Metadata](#metadata)\n- [Architecture](#architecture)\n- [Interfaces](#interfaces)\n- [Workflows](#workflows)\n- [Configuration](#configuration)\n- [Dependencies](#dependencies)\n- [Deployment](#deployment)\n- [Code Analysis](#code-analysis)\n- [API Stubs](#api-stubs)\n- [Intent](#intent)",
+      "level": 2
+    },
+    {
+      "name": "metadata",
+      "type": "metadata",
+      "content": "- **name**: `my-api`\n- **version**: `0.1.0`\n- **python_requires**: `>=3.10`\n- **license**: {'text': 'Apache-2.0'}\n- **ecosystem**: SUMD + DOQL + testql + taskfile\n- **openapi_title**: My API v0.1.0\n- **generated_from**: pyproject.toml, Taskfile.yml, openapi(5 ep), project/(1 analysis files)",
+      "level": 2
+    },
+    {
+      "name": "architecture",
+      "type": "architecture",
+      "content": "```\nSUMD (description) → DOQL/source (code) → taskfile (automation) → testql (verification)\n```",
+      "level": 2
+    },
+    {
+      "name": "interfaces",
+      "type": "interfaces",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# cli entry points",
+      "type": "unknown",
+      "content": "- `my-api`",
+      "level": 2
+    },
+    {
+      "name": "# rest api (from `openapi.yaml`)",
+      "type": "unknown",
+      "content": "```yaml markpact:openapi path=openapi.yaml\nopenapi: \"3.1.0\"\ninfo:\n  title: My API\n  version: \"0.1.0\"\n  description: Sample REST API for SUMD demo\n\nservers:\n  - url: http://localhost:8000\n\npaths:\n  /health:\n    get:\n      summary: Health check\n      operationId: health_check\n      responses:\n        \"200\":\n          description: Service is healthy\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  status: { type: string, example: ok }\n\n  /items:\n    get:\n      summary: List all items\n      operationId: list_items\n      responses:\n        \"200\":\n          description: List of items\n          content:\n            application/json:\n              schema:\n                type: array\n                items:\n                  $ref: \"#/components/schemas/Item\"\n\n    post:\n      summary: Create an item\n      operationId: create_item\n      requestBody:\n        required: true\n        content:\n          application/json:\n            schema:\n              $ref: \"#/components/schemas/ItemCreate\"\n      responses:\n        \"201\":\n          description: Created item\n          content:\n            application/json:\n              schema:\n                $ref: \"#/components/schemas/Item\"\n\n  /items/{item_id}:\n    get:\n      summary: Get item by ID\n      operationId: get_item\n      parameters:\n        - name: item_id\n          in: path\n          required: true\n          schema: { type: integer }\n      responses:\n        \"200\":\n          description: Item details\n          content:\n            application/json:\n              schema:\n                $ref: \"#/components/schemas/Item\"\n        \"404\":\n          description: Item not found\n\n    delete:\n      summary: Delete an item\n      operationId: delete_item\n      parameters:\n        - name: item_id\n          in: path\n          required: true\n          schema: { type: integer }\n      responses:\n        \"204\":\n          description: Deleted\n\ncomponents:\n  schemas:\n    Item:\n      type: object\n      properties:\n        id:    { type: integer }\n        name:  { type: string }\n        value: { type: number }\n      required: [id, name]\n\n    ItemCreate:\n      type: object\n      properties:\n        name:  { type: string }\n        value: { type: number }\n      required: [name]\n```",
+      "level": 2
+    },
+    {
+      "name": "workflows",
+      "type": "workflows",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# taskfile tasks (`taskfile.yml`)",
+      "type": "unknown",
+      "content": "```yaml markpact:taskfile path=Taskfile.yml\nversion: \"3\"\ntasks:\n  install:\n    desc: Install the project\n    cmds:\n      - pip install -e .\n  run:\n    desc: Start the development server\n    cmds:\n      - uvicorn my_api.main:app --reload\n```",
+      "level": 2
+    },
+    {
+      "name": "configuration",
+      "type": "configuration",
+      "content": "```yaml\nproject:\n  name: my-api\n  version: 0.1.0\n  env: local\n```",
+      "level": 2
+    },
+    {
+      "name": "dependencies",
+      "type": "dependencies",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# runtime",
+      "type": "unknown",
+      "content": "```text markpact:deps python\nfastapi\nuvicorn\n```",
+      "level": 2
+    },
+    {
+      "name": "deployment",
+      "type": "deployment",
+      "content": "```bash markpact:run\npip install my-api\n\n# development install\npip install -e .[dev]\n```",
+      "level": 2
+    },
+    {
+      "name": "code analysis",
+      "type": "unknown",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# `project/map.toon.yaml`",
+      "type": "unknown",
+      "content": "```toon markpact:analysis path=project/map.toon.yaml\n# sample-project | 0f 0L |  | 2026-04-19\n# stats: 0 func | 0 cls | 0 mod | CC̄=1.0 | critical:0 | cycles:0\n# alerts[5]: none\n# hotspots[5]: none\n# evolution: baseline\n# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods\nM[0]:\nD:\n```",
+      "level": 2
+    },
+    {
+      "name": "api stubs",
+      "type": "unknown",
+      "content": "*My API v0.1.0 — auto-generated stubs from `openapi.yaml`.*\n\n```python markpact:openapi path=openapi.yaml\n# default\ndef health_check() -> Response:  # Health check\n    \"GET /health\"\ndef list_items() -> Response:  # List all items\n    \"GET /items\"\ndef create_item() -> Response:  # Create an item\n    \"POST /items\"\ndef get_item() -> Response:  # Get item by ID\n    \"GET /items/{item_id}\"\ndef delete_item() -> Response:  # Delete an item\n    \"DELETE /items/{item_id}\"\n\n```\n\n**Schemas**: `Item`, `ItemCreate`",
+      "level": 2
+    },
+    {
+      "name": "intent",
+      "type": "intent",
+      "content": "Sample REST API project for SUMD demo",
+      "level": 2
+    }
+  ]
+}

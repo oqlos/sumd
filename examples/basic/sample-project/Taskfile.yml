@@ -1,0 +1,10 @@
+version: "3"
+tasks:
+  install:
+    desc: Install the project
+    cmds:
+      - pip install -e .
+  run:
+    desc: Start the development server
+    cmds:
+      - uvicorn my_api.main:app --reload

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "sumd": {
+      "command": "python",
+      "args": ["-m", "sumd.mcp_server"]
+    }
+  }
+}

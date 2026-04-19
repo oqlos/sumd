@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/oqlos/sumd
 - **Primary Language**: python
-- **Languages**: python: 26, shell: 2
+- **Languages**: python: 29, shell: 5
 - **Analysis Mode**: static
-- **Total Functions**: 191
+- **Total Functions**: 198
 - **Total Classes**: 23
-- **Modules**: 28
-- **Entry Points**: 77
+- **Modules**: 34
+- **Entry Points**: 80
 
 ## Architecture by Module
 
@@ -43,20 +43,32 @@
 - **Classes**: 1
 - **File**: `pipeline.py`
 
+### examples.llm.openai_example
+- **Functions**: 3
+- **File**: `openai_example.py`
+
+### examples.llm.anthropic_example
+- **Functions**: 2
+- **File**: `anthropic_example.py`
+
+### examples.mcp.mcp_client
+- **Functions**: 2
+- **File**: `mcp_client.py`
+
 ### sumd.sections.interfaces
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `interfaces.py`
 
-### sumd.sections.refactor_analysis
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `refactor_analysis.py`
-
 ### sumd.sections.quality
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `quality.py`
+
+### sumd.sections.refactor_analysis
+- **Functions**: 2
+- **Classes**: 1
+- **File**: `refactor_analysis.py`
 
 ### sumd.sections.deployment
 - **Functions**: 2
@@ -92,21 +104,6 @@
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `source_snippets.py`
-
-### sumd.sections.workflows
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `workflows.py`
-
-### sumd.sections.extras
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `extras.py`
-
-### sumd.sections.api_stubs
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `api_stubs.py`
 
 ## Key Entry Points
 
@@ -168,6 +165,12 @@ Validates:
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, click.option, click.option, sumd.parser.SUMDParser.parse_file, click.Path, click.Choice, click.Path
 
+### examples.llm.openai_example.main
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, print, print
+
+### examples.llm.anthropic_example.main
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, print, print
+
 ### sumd.pipeline.RenderPipeline._assemble
 > Assemble all section lines into final markdown.
 - **Calls**: a, a, a, self._build_registered_sections, a, a, a, a
@@ -196,6 +199,9 @@ FILE: Path to the SUMD markdown file
 
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, click.option, sumd.parser.SUMDParser.parse_file, click.Path, click.echo, sys.exit, click.echo
+
+### examples.mcp.mcp_client.main
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, asyncio.run, sumd_path.exists
 
 ### sumd.mcp_server._tool_export_sumd
 - **Calls**: sumd.mcp_server._resolve_path, arguments.get, arguments.get, sumd.parser.SUMDParser.parse_file, sumd.mcp_server._doc_to_dict, sumd.mcp_server._resolve_path, out.write_text, types.TextContent
@@ -241,16 +247,6 @@ FILE: Path to the SUMD markdown file
 
 ### sumd.mcp_server._tool_info_sumd
 - **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, len, types.TextContent, json.dumps
-
-### sumd.mcp_server.call_tool
-- **Calls**: server.call_tool, _TOOL_HANDLERS.get, handler, types.TextContent, types.TextContent
-
-### sumd.parser._validate_mermaid_body
-> Check mermaid block starts with a valid diagram type.
-- **Calls**: None.strip, any, None.split, first.startswith, body.strip
-
-### sumd.mcp_server._tool_list_sections
-- **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps
 
 ## Process Flows
 
@@ -307,9 +303,9 @@ export [sumd.cli]
   └─ →> parse_file
 ```
 
-### Flow 10: _assemble
+### Flow 10: main
 ```
-_assemble [sumd.pipeline.RenderPipeline]
+main [examples.llm.openai_example]
 ```
 
 ## Key Classes
@@ -331,13 +327,13 @@ Usage:
 - **Methods**: 2
 - **Key Methods**: sumd.sections.interfaces.InterfacesSection.should_render, sumd.sections.interfaces.InterfacesSection.render
 
-### sumd.sections.refactor_analysis.RefactorAnalysisSection
-- **Methods**: 2
-- **Key Methods**: sumd.sections.refactor_analysis.RefactorAnalysisSection.should_render, sumd.sections.refactor_analysis.RefactorAnalysisSection.render
-
 ### sumd.sections.quality.QualitySection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.quality.QualitySection.should_render, sumd.sections.quality.QualitySection.render
+
+### sumd.sections.refactor_analysis.RefactorAnalysisSection
+- **Methods**: 2
+- **Key Methods**: sumd.sections.refactor_analysis.RefactorAnalysisSection.should_render, sumd.sections.refactor_analysis.RefactorAnalysisSection.render
 
 ### sumd.sections.deployment.DeploymentSection
 - **Methods**: 2
@@ -438,6 +434,22 @@ Key functions that process and transform data:
 > Parse a single *.testql.toon.yaml file into a scenario dict.
 - **Output to**: f.read_text, content.splitlines, re.search, str, _match
 
+### sumd.extractor._parse_doql_entities
+> Parse entity blocks from DOQL content.
+- **Output to**: re.finditer, dict, m.group, entities.append, re.findall
+
+### sumd.extractor._parse_doql_interfaces
+> Parse interface and integration blocks from DOQL content.
+- **Output to**: re.finditer, dict, m.group, entry.update, interfaces.append
+
+### sumd.extractor._parse_doql_workflows
+> Parse workflow blocks from DOQL content, deduplicated by name.
+- **Output to**: re.finditer, list, re.search, m.group, re.findall
+
+### sumd.extractor._parse_doql_content
+> Parse DOQL content from .less or .css file into structured data.
+- **Output to**: re.search, re.finditer, sumd.extractor._parse_doql_interfaces, None.splitlines, dict
+
 ### sumd.cli.validate
 > Validate a SUMD document.
 
@@ -455,22 +467,6 @@ FILE: Path to the SUMD markdown file
 ### sumd.cli._run_tool_subprocess
 > Run a single analysis tool subprocess. Returns True on success.
 - **Output to**: subprocess.run, click.echo, exe.exists, click.echo, str
-
-### sumd.extractor._parse_doql_entities
-> Parse entity blocks from DOQL content.
-- **Output to**: re.finditer, dict, m.group, entities.append, re.findall
-
-### sumd.extractor._parse_doql_interfaces
-> Parse interface and integration blocks from DOQL content.
-- **Output to**: re.finditer, dict, m.group, entry.update, interfaces.append
-
-### sumd.extractor._parse_doql_workflows
-> Parse workflow blocks from DOQL content, deduplicated by name.
-- **Output to**: re.finditer, list, re.search, m.group, re.findall
-
-### sumd.extractor._parse_doql_content
-> Parse DOQL content from .less or .css file into structured data.
-- **Output to**: re.search, re.finditer, sumd.extractor._parse_doql_interfaces, None.splitlines, dict
 
 ### sumd.mcp_server._tool_parse_sumd
 - **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps, sumd.mcp_server._doc_to_dict
@@ -528,6 +524,7 @@ Args:
 
 Functions exposed as public API (no underscore prefix):
 
+- `examples.mcp.mcp_client.run` - 53 calls
 - `sumd.cli.scan` - 33 calls
 - `sumd.cli.analyze` - 33 calls
 - `sumd.cli.scaffold` - 33 calls
@@ -542,18 +539,22 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.cli.lint` - 19 calls
 - `sumd.extractor.extract_pyproject` - 17 calls
 - `sumd.cli.export` - 16 calls
+- `examples.llm.openai_example.main` - 15 calls
 - `sumd.extractor.extract_package_json` - 15 calls
+- `examples.llm.anthropic_example.main` - 14 calls
 - `sumd.sections.metadata.MetadataSection.render` - 14 calls
-- `sumd.cli.validate` - 13 calls
-- `sumd.cli.extract` - 13 calls
 - `sumd.extractor.extract_taskfile` - 13 calls
 - `sumd.extractor.extract_env` - 13 calls
+- `sumd.cli.validate` - 13 calls
+- `sumd.cli.extract` - 13 calls
+- `examples.mcp.mcp_client.main` - 12 calls
 - `sumd.toon_parser.extract_testql_scenarios` - 12 calls
 - `sumd.extractor.extract_pyqual` - 12 calls
 - `sumd.extractor.extract_makefile` - 12 calls
 - `sumd.extractor.extract_source_snippets` - 12 calls
 - `sumd.cli.info` - 11 calls
 - `sumd.sections.refactor_analysis.RefactorAnalysisSection.render` - 11 calls
+- `examples.llm.openai_example.build_context` - 9 calls
 - `sumd.extractor.extract_requirements` - 9 calls
 - `sumd.mcp_server.list_tools` - 8 calls
 - `sumd.extractor.extract_project_analysis` - 7 calls
@@ -563,11 +564,6 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.parser.validate_sumd_file` - 5 calls
 - `sumd.extractor.extract_python_modules` - 4 calls
 - `sumd.sections.environment.EnvironmentSection.render` - 4 calls
-- `sumd.parser.SUMDParser.parse` - 4 calls
-- `sumd.parser.SUMDParser.validate` - 4 calls
-- `sumd.extractor.extract_doql` - 3 calls
-- `sumd.pipeline.RenderPipeline.run` - 3 calls
-- `sumd.mcp_server.main` - 3 calls
 
 ## System Interactions
 

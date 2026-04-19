@@ -75,6 +75,25 @@ def _refresh_map_toon(proj_dir: Path) -> None:
         pass  # non-fatal — embed will use the previous file if it exists
 
 
+def _find_tools_bin_dir(proj_dir: Path) -> Path | None:
+    """Return the venv bin directory for .sumd-tools, or None if not installed."""
+    base = proj_dir / ".sumd-tools" / "venv"
+    for subdir in ("bin", "Scripts"):
+        candidate = base / subdir
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def _run_tool_if_present(bin_dir: Path, name: str, args: list, proj_dir: Path) -> None:
+    """Run *name* executable with *args* if it exists in *bin_dir*."""
+    exe = bin_dir / name
+    if not exe.exists():
+        exe = bin_dir / f"{name}.exe"
+    if exe.exists():
+        subprocess.run([str(exe)] + args, capture_output=True, cwd=str(proj_dir))
+
+
 def _refresh_analysis_files(proj_dir: Path, profile: str) -> None:
     """Run only the external tools required for the given profile.
 
@@ -88,51 +107,33 @@ def _refresh_analysis_files(proj_dir: Path, profile: str) -> None:
     if not tools_needed:
         return
 
-    bin_dir = proj_dir / ".sumd-tools" / "venv" / "bin"
-    if not bin_dir.exists():
-        bin_dir = proj_dir / ".sumd-tools" / "venv" / "Scripts"
-    if not bin_dir.exists():
+    bin_dir = _find_tools_bin_dir(proj_dir)
+    if not bin_dir:
         return  # tools not installed — skip silently
 
     project_output = proj_dir / "project"
     project_output.mkdir(parents=True, exist_ok=True)
 
-    def _exe(name: str):
-        p = bin_dir / name
-        if not p.exists():
-            p = bin_dir / f"{name}.exe"
-        return p if p.exists() else None
-
     try:
-        # code2llm generates calls.toon, analysis.toon, evolution.toon in one run
         if "code2llm" in tools_needed:
-            exe = _exe("code2llm")
-            if exe:
-                subprocess.run(
-                    [str(exe), "./", "-f", "toon", "-o", str(project_output), "--no-chunk"],
-                    capture_output=True,
-                    cwd=str(proj_dir),
-                )
-
+            _run_tool_if_present(
+                bin_dir, "code2llm",
+                ["./", "-f", "toon", "-o", str(project_output), "--no-chunk"],
+                proj_dir,
+            )
         if "redup" in tools_needed:
-            exe = _exe("redup")
-            if exe:
-                subprocess.run(
-                    [str(exe), "scan", str(proj_dir),
-                     "--format", "toon", "--output", str(project_output)],
-                    capture_output=True,
-                    cwd=str(proj_dir),
-                )
-
+            _run_tool_if_present(
+                bin_dir, "redup",
+                ["scan", str(proj_dir), "--format", "toon", "--output", str(project_output)],
+                proj_dir,
+            )
         if "vallm" in tools_needed:
-            exe = _exe("vallm")
-            if exe:
-                subprocess.run(
-                    [str(exe), "batch", str(proj_dir), "--recursive",
-                     "--format", "toon", "--output", str(project_output)],
-                    capture_output=True,
-                    cwd=str(proj_dir),
-                )
+            _run_tool_if_present(
+                bin_dir, "vallm",
+                ["batch", str(proj_dir), "--recursive",
+                 "--format", "toon", "--output", str(project_output)],
+                proj_dir,
+            )
     except Exception:  # noqa: BLE001
         pass  # non-fatal
 

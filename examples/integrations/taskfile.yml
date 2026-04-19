@@ -1,0 +1,54 @@
+# Taskfile.yml — SUMD documentation tasks
+# Copy relevant tasks to your project's Taskfile.yml.
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  docs:
+    desc: Generate SUMD.md for all projects in workspace (rich profile)
+    cmds:
+      - sumd scan . --fix --profile rich
+
+  docs:minimal:
+    desc: Generate SUMD.md (minimal profile — faster, fewer tokens)
+    cmds:
+      - sumd scan . --fix --profile minimal
+
+  docs:refactor:
+    desc: Generate SUMR.md (pre-refactoring analysis)
+    cmds:
+      - sumr . --fix
+
+  docs:lint:
+    desc: Validate all SUMD.md files in the workspace
+    cmds:
+      - sumd lint --workspace . --json
+
+  docs:map:
+    desc: Generate project/map.toon.yaml (static code map)
+    cmds:
+      - sumd map . --force
+
+  docs:scaffold:
+    desc: Generate testql scenario skeletons from OpenAPI spec
+    cmds:
+      - sumd scaffold . --force
+
+  docs:export:
+    desc: Export SUMD.md to JSON, YAML, and TOML
+    cmds:
+      - sumd export SUMD.md --format json --output sumd.json
+      - sumd export SUMD.md --format yaml --output sumd.yaml
+
+  docs:analyze:
+    desc: Run code analysis tools (code2llm, redup, vallm)
+    cmds:
+      - sumd analyze .
+
+  docs:all:
+    desc: Full documentation pipeline — analyze + generate + lint
+    cmds:
+      - task: docs:map
+      - task: docs
+      - task: docs:lint

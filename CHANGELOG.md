@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-04-19
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update docs/README.md
+- Update docs/USAGE.md
+- Update examples/README.md
+- Update examples/basic/README.md
+- Update examples/basic/sample-project/README.md
+- Update examples/basic/sample-project/SUMD.md
+- Update examples/integrations/README.md
+- ... and 5 more files
+
+### Test
+- Update tests/test_cli.py
+- Update tests/test_mcp_server.py
+
+### Other
+- Update Taskfile.yml
+- Update examples/basic/demo.sh
+- Update examples/basic/sample-project/Taskfile.yml
+- Update examples/basic/sample-project/goal.yaml
+- Update examples/basic/sample-project/openapi.yaml
+- Update examples/basic/sample-project/project/map.toon.yaml
+- Update examples/basic/sample-project/pyproject.toml
+- Update examples/basic/sample-project/sumd.json
+- Update examples/integrations/Dockerfile
+- Update examples/integrations/docker-compose.yml
+- ... and 23 more files
+
 ## [0.3.4] - 2026-04-19
 
 ### Docs

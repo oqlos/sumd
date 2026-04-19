@@ -1,266 +1,97 @@
-<!-- code2docs:start --># sumd
+# SUMD Documentation
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-75-green)
-> **75** functions | **5** classes | **7** files | CC̄ = 8.5
+> **Version 0.3.4** | [Project README](../README.md) | [Usage Guide](USAGE.md) | [Specification](../SPEC.md)
 
-> Auto-generated project documentation from source code analysis.
+## Overview
 
-**Author:** Tom Sapletta  
-**License:** Apache-2.0[(LICENSE)](./LICENSE)  
-**Repository:** [https://github.com/oqlos/statement](https://github.com/oqlos/statement)
+SUMD (Structured Unified Markdown Descriptor) is a semantic project descriptor format —
+a machine-readable, LLM-optimised Markdown file that captures a project's intent,
+architecture, interfaces, workflows, and quality contracts in a single document.
 
-## Installation
+## Contents
 
-### From PyPI
+| Document | Description |
+|----------|-------------|
+| [README.md](../README.md) | Project overview, installation, quick start |
+| [USAGE.md](USAGE.md) | Full CLI and API usage guide |
+| [SPEC.md](../SPEC.md) | SUMD format specification |
+| [CHANGELOG.md](../CHANGELOG.md) | Version history |
+| [examples/](../examples/) | Practical examples |
+
+## Quick Reference
+
+### Generate SUMD.md for your project
 
 ```bash
 pip install sumd
+sumd scan . --fix --profile rich   # generates SUMD.md
 ```
 
-### From Source
+### Generate SUMR.md (pre-refactoring analysis)
 
 ```bash
-git clone https://github.com/oqlos/statement
-cd sumd
-pip install -e .
+sumr .    # generates SUMR.md with code complexity, duplication, call graph
 ```
 
-### Optional Extras
+### Validate
 
 ```bash
-pip install sumd[mcp]    # mcp features
+sumd lint SUMD.md
+sumd lint --workspace . --json
 ```
 
-## Quick Start
-
-### CLI Usage
+### Use with LLMs
 
 ```bash
-# Generate full documentation for your project
-sumd ./my-project
+# Inject into any LLM chat as context
+cat SUMD.md
 
-# Only regenerate README
-sumd ./my-project --readme-only
+# Use with llm CLI
+llm -s "$(cat SUMD.md)" "What should I refactor first?"
 
-# Preview what would be generated (no file writes)
-sumd ./my-project --dry-run
-
-# Check documentation health
-sumd check ./my-project
-
-# Sync — regenerate only changed modules
-sumd sync ./my-project
+# Use MCP server with Claude Desktop, Cursor, Windsurf, Continue.dev
+python -m sumd.mcp_server
 ```
 
-### Python API
+## CLI Commands
 
-```python
-from sumd import generate_readme, generate_docs, Code2DocsConfig
+| Command | Description |
+|---------|-------------|
+| `sumd .` | Smart scan — generate/update SUMD.md |
+| `sumd scan . --fix` | Generate SUMD.md for all projects in workspace |
+| `sumr .` | Generate SUMR.md (refactor analysis profile) |
+| `sumd lint SUMD.md` | Validate SUMD.md structure |
+| `sumd map .` | Generate static code map (`project/map.toon.yaml`) |
+| `sumd scaffold .` | Generate testql scenario skeletons |
+| `sumd analyze .` | Run code2llm / redup / vallm analysis |
+| `sumd validate SUMD.md` | Parse + validate (exit 1 on errors) |
+| `sumd export SUMD.md` | Export to JSON / YAML / TOML |
+| `sumd info SUMD.md` | Show project name, description, sections |
 
-# Quick: generate README
-generate_readme("./my-project")
+## Section Profiles
 
-# Full: generate all documentation
-config = Code2DocsConfig(project_name="mylib", verbose=True)
-docs = generate_docs("./my-project", config=config)
-```
+| Profile | Use case |
+|---------|---------|
+| `minimal` | Minimal sections — CI, badges |
+| `light` | Standard documentation |
+| `rich` | Full content — LLM context injection (default) |
+| `refactor` | Pre-refactoring analysis → `SUMR.md` |
 
-## Generated Output
+## MCP Tools
 
-When you run `sumd`, the following files are produced:
+SUMD exposes 7 MCP tools for LLM agent integration:
 
-```
-<project>/
-├── README.md                 # Main project README (auto-generated sections)
-├── docs/
-│   ├── api.md               # Consolidated API reference
-│   ├── modules.md           # Module documentation with metrics
-│   ├── architecture.md      # Architecture overview with diagrams
-│   ├── dependency-graph.md  # Module dependency graphs
-│   ├── coverage.md          # Docstring coverage report
-│   ├── getting-started.md   # Getting started guide
-│   ├── configuration.md    # Configuration reference
-│   └── api-changelog.md    # API change tracking
-├── examples/
-│   ├── quickstart.py       # Basic usage examples
-│   └── advanced_usage.py   # Advanced usage examples
-├── CONTRIBUTING.md         # Contribution guidelines
-└── mkdocs.yml             # MkDocs site configuration
-```
+`parse_sumd` · `validate_sumd` · `export_sumd` · `list_sections` · `get_section` · `info_sumd` · `generate_sumd`
 
-## Configuration
+See [USAGE.md — MCP Server](USAGE.md#mcp-server) for configuration examples (Claude Desktop, Cursor, Continue.dev).
 
-Create `sumd.yaml` in your project root (or run `sumd init`):
+## Examples
 
-```yaml
-project:
-  name: my-project
-  source: ./
-  output: ./docs/
+Practical examples are in [`examples/`](../examples/):
 
-readme:
-  sections:
-    - overview
-    - install
-    - quickstart
-    - api
-    - structure
-  badges:
-    - version
-    - python
-    - coverage
-  sync_markers: true
-
-docs:
-  api_reference: true
-  module_docs: true
-  architecture: true
-  changelog: true
-
-examples:
-  auto_generate: true
-  from_entry_points: true
-
-sync:
-  strategy: markers    # markers | full | git-diff
-  watch: false
-  ignore:
-    - "tests/"
-    - "__pycache__"
-```
-
-## Sync Markers
-
-sumd can update only specific sections of an existing README using HTML comment markers:
-
-```markdown
-<!-- sumd:start -->
-# Project Title
-... auto-generated content ...
-<!-- sumd:end -->
-```
-
-Content outside the markers is preserved when regenerating. Enable this with `sync_markers: true` in your configuration.
-
-## Architecture
-
-```
-sumd/
-├── project├── sumd/    ├── mcp_server    ├── generate_all_sumd    ├── cli    ├── generator    ├── parser```
-
-## API Overview
-
-### Classes
-
-- **`SectionType`** — SUMD section types.
-- **`Section`** — Represents a SUMD section.
-- **`SUMDDocument`** — Represents a parsed SUMD document.
-- **`SUMDParser`** — Parser for SUMD markdown documents.
-- **`CodeBlockIssue`** — —
-
-### Functions
-
-- `list_tools()` — —
-- `call_tool(name, arguments)` — —
-- `main()` — —
-- `cli()` — SUMD - Structured Unified Markdown Descriptor CLI.
-- `validate(file)` — Validate a SUMD document.
-- `export(file, format, output)` — Export a SUMD document to structured format.
-- `info(file)` — Display information about a SUMD document.
-- `generate(file, format, output)` — Generate a SUMD document from structured format.
-- `extract(file, section)` — Extract content from a SUMD document.
-- `scan(workspace, export_json, report, fix)` — Scan a workspace directory and generate SUMD.md for every project found.
-- `lint(files, workspace, as_json)` — Validate SUMD.md files — check markdown structure and codeblock formats.
-- `analyze(project, tools, force)` — Run analysis tools (code2llm, redup, vallm) on a project.
-- `scaffold(project, output, force, scenario_type)` — Generate testql scenario scaffolds from OpenAPI spec or SUMD.md.
-- `map_cmd(project, output, force, stdout)` — Generate project/map.toon.yaml — static code map in toon format.
-- `main()` — Main entry point for the CLI.
-- `extract_pyproject(proj_dir)` — —
-- `extract_taskfile(proj_dir)` — —
-- `extract_testql_scenarios(proj_dir)` — Scan all *.testql.toon.yaml and testql-scenarios/*.yaml files in project.
-- `extract_openapi(proj_dir)` — —
-- `extract_doql(proj_dir)` — Read app.doql.less (preferred) or app.doql.css as fallback.
-- `extract_pyqual(proj_dir)` — —
-- `extract_python_modules(proj_dir, pkg_name)` — —
-- `extract_readme_title(proj_dir)` — —
-- `extract_requirements(proj_dir)` — Parse requirements*.txt files — return list of {file, deps[]}.
-- `extract_makefile(proj_dir)` — Parse Makefile — return list of {target, comment}.
-- `extract_goal(proj_dir)` — Parse goal.yaml — versioning strategy, git conventions, build strategies.
-- `extract_env(proj_dir)` — Parse .env.example — return list of {key, default, comment}.
-- `extract_dockerfile(proj_dir)` — Parse Dockerfile — base image, exposed ports, entrypoint, labels.
-- `extract_docker_compose(proj_dir)` — Parse docker-compose*.yml — services with images, ports, environment.
-- `extract_package_json(proj_dir)` — Parse package.json — name, version, scripts, dependencies.
-- `generate_map_toon(proj_dir)` — Generate project/map.toon.yaml content for proj_dir.
-- `extract_project_analysis(proj_dir)` — Return list of {file, lang, content} for files present in project/ subdir.
-- `generate_sumd_content(proj_dir, return_sources, raw_sources)` — Generate SUMD.md content from a project directory.
-- `parse(content)` — Parse a SUMD markdown document.
-- `parse_file(path)` — Parse a SUMD file.
-- `validate(document)` — Validate a SUMD document.
-- `validate_codeblocks(content, source)` — Validate all fenced code blocks in *content*.
-- `validate_markdown(content, source)` — Validate SUMD markdown structure.
-- `validate_sumd_file(path)` — Run all validators on a SUMD.md file.
-
-
-## Project Structure
-
-📄 `project`
-📄 `scripts.generate_all_sumd`
-📦 `sumd`
-📄 `sumd.cli` (12 functions)
-📄 `sumd.generator` (40 functions)
-📄 `sumd.mcp_server` (5 functions)
-📄 `sumd.parser` (18 functions, 5 classes)
-
-## Requirements
-
-- Python >= >=3.10
-- click >=8.0- pyyaml >=6.0- toml >=0.10.0
-
-## Contributing
-
-**Contributors:**
-- Tom Softreck <tom@sapletta.com>
-- Tom Sapletta <tom-sapletta-com@users.noreply.github.com>
-
-We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
-
-### Development Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/oqlos/statement
-cd sumd
-
-# Install in development mode
-pip install -e ".[dev]"
-
-# Run tests
-pytest
-```
-
-## Documentation
-
-- 📖 [Full Documentation](https://github.com/oqlos/statement/tree/main/docs) — API reference, module docs, architecture
-- 🚀 [Getting Started](https://github.com/oqlos/statement/blob/main/docs/getting-started.md) — Quick start guide
-- 📚 [API Reference](https://github.com/oqlos/statement/blob/main/docs/api.md) — Complete API documentation
-- 🔧 [Configuration](https://github.com/oqlos/statement/blob/main/docs/configuration.md) — Configuration options
-- 💡 [Examples](./examples) — Usage examples and code samples
-
-### Generated Files
-
-| Output | Description | Link |
-|--------|-------------|------|
-| `README.md` | Project overview (this file) | — |
-| `docs/api.md` | Consolidated API reference | [View](./docs/api.md) |
-| `docs/modules.md` | Module reference with metrics | [View](./docs/modules.md) |
-| `docs/architecture.md` | Architecture with diagrams | [View](./docs/architecture.md) |
-| `docs/dependency-graph.md` | Dependency graphs | [View](./docs/dependency-graph.md) |
-| `docs/coverage.md` | Docstring coverage report | [View](./docs/coverage.md) |
-| `docs/getting-started.md` | Getting started guide | [View](./docs/getting-started.md) |
-| `docs/configuration.md` | Configuration reference | [View](./docs/configuration.md) |
-| `docs/api-changelog.md` | API change tracking | [View](./docs/api-changelog.md) |
-| `CONTRIBUTING.md` | Contribution guidelines | [View](./CONTRIBUTING.md) |
-| `examples/` | Usage examples | [Browse](./examples) |
-| `mkdocs.yml` | MkDocs configuration | — |
-
-<!-- code2docs:end -->
+| Directory | What it demonstrates |
+|-----------|---------------------|
+| `examples/basic/` | CLI commands: scan, lint, map, scaffold |
+| `examples/llm/` | LLM context injection patterns |
+| `examples/mcp/` | MCP server integration |
+| `examples/integrations/` | GitHub Actions, pre-commit, VS Code, Docker |

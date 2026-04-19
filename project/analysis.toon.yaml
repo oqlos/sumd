@@ -1,5 +1,5 @@
 # code2llm | 28f 5130L | python:26,shell:2 | 2026-04-19
-# CC̄=4.6 | critical:2/191 | dups:0 | cycles:0
+# CC̄=4.6 | critical:2/198 | dups:0 | cycles:0
 
 HEALTH[3]:
   🔴 GOD   sumd/parser.py = 543L, 5 classes, 23m, max CC=13
@@ -10,16 +10,16 @@ REFACTOR[2]:
   1. split sumd/parser.py  (god module)
   2. split 2 high-CC methods  (CC>15)
 
-PIPELINES[69]:
-  [1] Src [validate]: validate → parse_file
+PIPELINES[72]:
+  [1] Src [main]: main → ask → build_context → parse_file
       PURITY: 100% pure
-  [2] Src [export]: export → parse_file
+  [2] Src [main]: main → ask → parse_file
       PURITY: 100% pure
-  [3] Src [info]: info → parse_file
+  [3] Src [main]: main → run
       PURITY: 100% pure
-  [4] Src [generate]: generate
+  [4] Src [validate]: validate → parse_file
       PURITY: 100% pure
-  [5] Src [extract]: extract → parse_file
+  [5] Src [export]: export → parse_file
       PURITY: 100% pure
 
 LAYERS:
@@ -27,7 +27,7 @@ LAYERS:
   │ !! cli                       1090L  0C   29m  CC=15     ←0
   │ !! renderer                   989L  0C   46m  CC=15     ←14
   │ !! extractor                  886L  0C   33m  CC=13     ←2
-  │ !! parser                     543L  5C   23m  CC=13     ←2
+  │ !! parser                     543L  5C   23m  CC=13     ←4
   │ mcp_server                 358L  0C   12m  CC=5      ←0
   │ pipeline                   318L  1C    8m  CC=11     ←0
   │ toon_parser                173L  0C    8m  CC=9      ←1

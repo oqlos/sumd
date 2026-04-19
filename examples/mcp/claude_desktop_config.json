@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "sumd": {
+      "command": "python",
+      "args": ["-m", "sumd.mcp_server"],
+      "cwd": "/path/to/your-project",
+      "env": {
+        "PYTHONPATH": "/path/to/your-project"
+      }
+    }
+  }
+}

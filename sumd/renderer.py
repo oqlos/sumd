@@ -453,20 +453,25 @@ def _render_deployment_reqs(reqs: list, L: list[str]) -> None:
         a("")
 
 
+def _render_dockerfile_info(dockerfile: dict, a) -> None:
+    """Append Dockerfile section lines to output via *a*."""
+    a("### Docker")
+    a("")
+    a(f"- **base image**: `{dockerfile['from']}`")
+    if dockerfile["ports"]:
+        a(f"- **expose**: {', '.join(f'`{p}`' for p in dockerfile['ports'])}")
+    if dockerfile["entrypoint"]:
+        a(f"- **entrypoint**: `{dockerfile['entrypoint']}`")
+    if dockerfile["labels"]:
+        for k, v in dockerfile["labels"].items():
+            a(f"- **label** `{k}`: {v}")
+    a("")
+
+
 def _render_deployment_docker(dockerfile: dict, compose: dict, L: list[str]) -> None:
     a = L.append
     if dockerfile:
-        a("### Docker")
-        a("")
-        a(f"- **base image**: `{dockerfile['from']}`")
-        if dockerfile["ports"]:
-            a(f"- **expose**: {', '.join(f'`{p}`' for p in dockerfile['ports'])}")
-        if dockerfile["entrypoint"]:
-            a(f"- **entrypoint**: `{dockerfile['entrypoint']}`")
-        if dockerfile["labels"]:
-            for k, v in dockerfile["labels"].items():
-                a(f"- **label** `{k}`: {v}")
-        a("")
+        _render_dockerfile_info(dockerfile, a)
     if compose.get("services"):
         a(f"### Docker Compose (`{compose['file']}`)")
         a("")
@@ -495,35 +500,45 @@ def _render_deployment(
     return L
 
 
+def _render_makefile_targets(makefile: list, a) -> None:
+    """Append Makefile targets section via *a*."""
+    a("## Makefile Targets")
+    a("")
+    for t in makefile:
+        desc = f" — {t['desc']}" if t["desc"] else ""
+        a(f"- `{t['target']}`{desc}")
+    a("")
+
+
+def _render_pkg_json_scripts(pkg_json: dict, a) -> None:
+    """Append Node.js scripts section via *a*."""
+    a("## Node.js Scripts (`package.json`)")
+    a("")
+    if pkg_json.get("description"):
+        a(pkg_json["description"])
+        a("")
+    for script, cmd in pkg_json["scripts"].items():
+        a(f"- `npm run {script}` — `{cmd}`")
+    a("")
+    if pkg_json.get("dependencies"):
+        a(
+            "**Runtime deps**: "
+            + ", ".join(f"`{d}`" for d in pkg_json["dependencies"][:15])
+        )
+        a("")
+    if pkg_json.get("engines"):
+        for eng, ver in pkg_json["engines"].items():
+            a(f"- **{eng}**: `{ver}`")
+        a("")
+
+
 def _render_extras(makefile: list, pkg_json: dict) -> list[str]:
     L: list[str] = []
     a = L.append
     if makefile:
-        a("## Makefile Targets")
-        a("")
-        for t in makefile:
-            desc = f" — {t['desc']}" if t["desc"] else ""
-            a(f"- `{t['target']}`{desc}")
-        a("")
+        _render_makefile_targets(makefile, a)
     if pkg_json.get("scripts"):
-        a("## Node.js Scripts (`package.json`)")
-        a("")
-        if pkg_json.get("description"):
-            a(pkg_json["description"])
-            a("")
-        for script, cmd in pkg_json["scripts"].items():
-            a(f"- `npm run {script}` — `{cmd}`")
-        a("")
-        if pkg_json.get("dependencies"):
-            a(
-                "**Runtime deps**: "
-                + ", ".join(f"`{d}`" for d in pkg_json["dependencies"][:15])
-            )
-            a("")
-        if pkg_json.get("engines"):
-            for eng, ver in pkg_json["engines"].items():
-                a(f"- **{eng}**: `{ver}`")
-            a("")
+        _render_pkg_json_scripts(pkg_json, a)
     return L
 
 
@@ -637,6 +652,25 @@ def _render_api_stubs(openapi: dict) -> list[str]:
     return L
 
 
+def _render_scenario_contract(sc: dict, a) -> None:
+    """Append contract lines for a single scenario to the output via *a*."""
+    a(f"**`{sc['name']}`**")
+    if sc.get("endpoints"):
+        for ep in sc["endpoints"][:3]:
+            status = ep.get("status", "")
+            op = f" — `{ep['operationId']}`" if ep.get("operationId") else ""
+            a(f"- `{ep['method']} {ep['path']}` → `{status}`{op}")
+    if sc.get("asserts"):
+        for ass in sc["asserts"][:3]:
+            a(f"- assert `{ass['field']} {ass['op']} {ass['expected']}`")
+    if sc.get("performance"):
+        for p in sc["performance"][:2]:
+            a(f"- perf `{p['metric']} < {p['threshold']}`")
+    if sc.get("detectors"):
+        a(f"- detectors: {sc['detectors']}")
+    a("")
+
+
 def _render_test_contracts(scenarios: list) -> list[str]:
     """Render test scenarios as contract signatures — endpoint + key assertions."""
     if not scenarios:
@@ -658,21 +692,7 @@ def _render_test_contracts(scenarios: list) -> list[str]:
         a(f"### {sc_type.title()} ({len(scs)})")
         a("")
         for sc in scs:
-            a(f"**`{sc['name']}`**")
-            if sc.get("endpoints"):
-                for ep in sc["endpoints"][:3]:
-                    status = ep.get("status", "")
-                    op = f" — `{ep['operationId']}`" if ep.get("operationId") else ""
-                    a(f"- `{ep['method']} {ep['path']}` → `{status}`{op}")
-            if sc.get("asserts"):
-                for ass in sc["asserts"][:3]:
-                    a(f"- assert `{ass['field']} {ass['op']} {ass['expected']}`")
-            if sc.get("performance"):
-                for p in sc["performance"][:2]:
-                    a(f"- perf `{p['metric']} < {p['threshold']}`")
-            if sc.get("detectors"):
-                a(f"- detectors: {sc['detectors']}")
-            a("")
+            _render_scenario_contract(sc, a)
     return L
 
 
@@ -695,6 +715,32 @@ def _parse_calls_header(lines: list[str]) -> dict:
     return result
 
 
+def _parse_hub_stat_line(line: str) -> dict | None:
+    """Extract CC/in/out/total metrics from a hub stats line, or return None."""
+    m = re.search(r"CC=(\d+)\s+in:(\d+)\s+out:(\d+)\s+total:(\d+)", line)
+    if not m:
+        return None
+    return {
+        "cc": int(m.group(1)),
+        "in": int(m.group(2)),
+        "out": int(m.group(3)),
+        "total": int(m.group(4)),
+    }
+
+
+def _process_in_hubs_line(line: str, hubs: list, current_hub: dict) -> dict:
+    """Process a single indented line while inside the HUBS block."""
+    if line.startswith("    "):
+        stats = _parse_hub_stat_line(line)
+        if stats and current_hub:
+            current_hub.update(stats)
+    elif line.startswith("  "):
+        if current_hub:
+            hubs.append(current_hub)
+        current_hub = {"name": line.strip()}
+    return current_hub
+
+
 def _parse_calls_hubs(lines: list[str]) -> list[dict]:
     """Parse HUBS section into list of hub dicts."""
     hubs: list[dict] = []
@@ -706,21 +752,8 @@ def _parse_calls_hubs(lines: list[str]) -> list[dict]:
             continue
         if in_hubs and line and not line.startswith(" "):
             in_hubs = False
-        if in_hubs and line.startswith("  ") and not line.startswith("    "):
-            if current_hub:
-                hubs.append(current_hub)
-            current_hub = {"name": line.strip()}
-        elif in_hubs and line.startswith("    "):
-            m = re.search(r"CC=(\d+)\s+in:(\d+)\s+out:(\d+)\s+total:(\d+)", line)
-            if m and current_hub:
-                current_hub.update(
-                    {
-                        "cc": int(m.group(1)),
-                        "in": int(m.group(2)),
-                        "out": int(m.group(3)),
-                        "total": int(m.group(4)),
-                    }
-                )
+        if in_hubs:
+            current_hub = _process_in_hubs_line(line, hubs, current_hub)
     if current_hub:
         hubs.append(current_hub)
     return hubs
@@ -786,6 +819,31 @@ def _render_call_graph(project_analysis: list) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
+def _collect_tool_sources(
+    pyproj: dict, reqs: list, tasks: list, makefile: list, scenarios: list
+) -> list[str]:
+    """Collect source labels for file-based tool inputs."""
+    sources: list[str] = []
+    if pyproj:
+        sources.append("pyproject.toml")
+    if reqs:
+        sources.extend(r["file"] for r in reqs)
+    if tasks:
+        sources.append("Taskfile.yml")
+    if makefile:
+        sources.append("Makefile")
+    if scenarios:
+        sources.append(f"testql({len(scenarios)})")
+    return sources
+
+
+def _doql_sources(doql: dict) -> list[str]:
+    """Return doql source labels if any doql content is present."""
+    if doql.get("app") or doql.get("workflows") or doql.get("entities"):
+        return doql.get("sources", ["app.doql.less"])
+    return []
+
+
 def _collect_pkg_sources(
     pyproj: dict,
     reqs: list,
@@ -799,21 +857,10 @@ def _collect_pkg_sources(
     env_vars: list,
 ) -> list[str]:
     """Collect source labels for code/pipeline sources."""
-    sources: list[str] = []
-    if pyproj:
-        sources.append("pyproject.toml")
-    if reqs:
-        sources.extend(r["file"] for r in reqs)
-    if tasks:
-        sources.append("Taskfile.yml")
-    if makefile:
-        sources.append("Makefile")
-    if scenarios:
-        sources.append(f"testql({len(scenarios)})")
+    sources = _collect_tool_sources(pyproj, reqs, tasks, makefile, scenarios)
     if openapi.get("endpoints"):
         sources.append(f"openapi({len(openapi['endpoints'])} ep)")
-    if doql.get("app") or doql.get("workflows") or doql.get("entities"):
-        sources.extend(doql.get("sources", ["app.doql.less"]))
+    sources.extend(_doql_sources(doql))
     if pyqual.get("stages"):
         sources.append("pyqual.yaml")
     if goal.get("name"):

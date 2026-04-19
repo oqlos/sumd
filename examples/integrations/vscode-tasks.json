@@ -1,0 +1,62 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SUMD: Generate (rich)",
+      "type": "shell",
+      "command": "sumd scan . --fix --profile rich",
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "SUMD: Generate (minimal)",
+      "type": "shell",
+      "command": "sumd scan . --fix --profile minimal",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "SUMD: Lint workspace",
+      "type": "shell",
+      "command": "sumd lint --workspace . --json",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "SUMD: Lint current file",
+      "type": "shell",
+      "command": "sumd lint ${file}",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "SUMD: Refactor analysis (SUMR.md)",
+      "type": "shell",
+      "command": "sumr . --fix",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "SUMD: Map (code map)",
+      "type": "shell",
+      "command": "sumd map . --force",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "SUMD: Scaffold testql",
+      "type": "shell",
+      "command": "sumd scaffold . --force",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "SUMD: Export to JSON",
+      "type": "shell",
+      "command": "sumd export SUMD.md --format json --output sumd-export.json",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

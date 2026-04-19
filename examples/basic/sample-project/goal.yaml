@@ -1,0 +1,9 @@
+name: my-api
+version: "0.1.0"
+intent: >
+  Provide a simple REST API to demonstrate SUMD project scanning.
+  The API allows users to create and retrieve items.
+stack:
+  - Python 3.10+
+  - FastAPI
+  - uvicorn

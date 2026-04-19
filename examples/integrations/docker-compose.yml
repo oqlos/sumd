@@ -1,0 +1,16 @@
+services:
+  # Run sumd scan once, then exit (useful in CI or local dev scripts)
+  sumd-scan:
+    image: python:3.12-slim
+    working_dir: /project
+    volumes:
+      - .:/project
+    command: sh -c "pip install -q sumd && sumd scan . --fix --profile rich"
+
+  # Validate all SUMD.md files
+  sumd-lint:
+    image: python:3.12-slim
+    working_dir: /project
+    volumes:
+      - .:/project
+    command: sh -c "pip install -q sumd && sumd lint --workspace . --json"

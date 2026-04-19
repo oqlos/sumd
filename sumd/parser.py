@@ -353,6 +353,35 @@ _MARKPACT_REQUIRED_ATTRS = {
 }
 
 
+def _validate_markpact_meta(
+    mp: re.Match, line_no: int, lang: str, meta: str, issues: list
+) -> None:
+    """Check markpact annotation kind and required attributes."""
+    kind = mp.group("kind")
+    attrs = mp.group("attrs") or ""
+    if kind not in _VALID_MARKPACT_KINDS:
+        issues.append(
+            CodeBlockIssue(
+                line_no,
+                lang,
+                "error",
+                f"unknown markpact kind {kind!r} (valid: {', '.join(sorted(_VALID_MARKPACT_KINDS))})",
+                meta,
+            )
+        )
+    req_attr = _MARKPACT_REQUIRED_ATTRS.get(kind)
+    if req_attr and f"{req_attr}=" not in attrs:
+        issues.append(
+            CodeBlockIssue(
+                line_no,
+                lang,
+                "error",
+                f"markpact:{kind} requires {req_attr}=... but got: {attrs!r}",
+                meta,
+            )
+        )
+
+
 def validate_codeblocks(content: str, source: str = "SUMD.md") -> list[CodeBlockIssue]:
     """Validate all fenced code blocks in *content*.
 
@@ -373,29 +402,7 @@ def validate_codeblocks(content: str, source: str = "SUMD.md") -> list[CodeBlock
         # ── markpact annotation checks ──────────────────────────────────
         mp = _MARKPACT_META_RE.search(meta)
         if mp:
-            kind = mp.group("kind")
-            attrs = mp.group("attrs") or ""
-            if kind not in _VALID_MARKPACT_KINDS:
-                issues.append(
-                    CodeBlockIssue(
-                        line_no,
-                        lang,
-                        "error",
-                        f"unknown markpact kind {kind!r} (valid: {', '.join(sorted(_VALID_MARKPACT_KINDS))})",
-                        meta,
-                    )
-                )
-            req_attr = _MARKPACT_REQUIRED_ATTRS.get(kind)
-            if req_attr and f"{req_attr}=" not in attrs:
-                issues.append(
-                    CodeBlockIssue(
-                        line_no,
-                        lang,
-                        "error",
-                        f"markpact:{kind} requires {req_attr}=... but got: {attrs!r}",
-                        meta,
-                    )
-                )
+            _validate_markpact_meta(mp, line_no, lang, meta, issues)
 
         # ── body emptiness ──────────────────────────────────────────────
         if not body:
