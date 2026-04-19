@@ -15,7 +15,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.1.24`
+- **version**: `0.2.0-rc1`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -190,7 +190,7 @@ pipeline:
   metrics:
     cc_max: 15           # cyclomatic complexity per function
     vallm_pass_min: 60   # vallm validation pass rate (%)
-    coverage_min: 40     # test coverage (%) — 41% measured after pipeline + sections + extractor
+    coverage_min: 35     # branch+statement coverage (%) — 37% measured with --cov-branch
 
   # Pipeline stages — use 'tool:' for built-in presets or 'run:' for custom commands
   # See all presets: pyqual tools
@@ -225,6 +225,12 @@ pipeline:
       optional: true
       timeout: 120
 
+    - name: publish
+      tool: twine-publish       # built-in: python -m build + twine upload
+      optional: true
+      when: metrics_pass
+      timeout: 120
+
   # Loop behavior
   loop:
     max_iterations: 3
@@ -256,6 +262,7 @@ pytest-cov>=4.0
 ruff>=0.1
 build
 twine
+pyqual>=0.1
 ```
 
 ## Source Map
@@ -442,8 +449,8 @@ def main()  # CC=2, fan=3
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/oqlos/sumd
-# nodes: 129 | edges: 118 | modules: 20
-# CC̄=4.6
+# nodes: 130 | edges: 119 | modules: 20
+# CC̄=4.5
 
 HUBS[20]:
   sumd.extractor.generate_map_toon
@@ -452,10 +459,10 @@ HUBS[20]:
     CC=11  in:0  out:33  total:33
   sumd.renderer._render_call_graph
     CC=7  in:1  out:28  total:29
-  sumd.renderer._render_api_stubs
-    CC=11  in:1  out:27  total:28
   sumd.pipeline.RenderPipeline._collect
     CC=3  in:0  out:28  total:28
+  sumd.renderer._render_api_stubs
+    CC=11  in:1  out:27  total:28
   sumd.cli._run_analysis_tools
     CC=11  in:1  out:27  total:28
   sumd.parser.validate_codeblocks
@@ -464,31 +471,31 @@ HUBS[20]:
     CC=12  in:1  out:24  total:25
   sumd.renderer._render_extras
     CC=11  in:1  out:21  total:22
-  sumd.cli._scan_one_project
-    CC=11  in:1  out:21  total:22
   sumd.renderer._render_quality_parsed
     CC=9  in:1  out:21  total:22
-  sumd.extractor._parse_doql_content
-    CC=6  in:1  out:19  total:20
+  sumd.cli._scan_one_project
+    CC=12  in:1  out:21  total:22
   sumd.renderer._render_deps_runtime
+    CC=6  in:1  out:19  total:20
+  sumd.extractor._parse_doql_content
     CC=6  in:1  out:19  total:20
   sumd.renderer._collect_pkg_sources
     CC=14  in:1  out:19  total:20
-  sumd.cli.map_cmd
-    CC=7  in:0  out:20  total:20
   sumd.renderer._render_interfaces_openapi
     CC=6  in:1  out:19  total:20
-  sumd.renderer._parse_calls_hubs
-    CC=15  in:1  out:18  total:19
-  sumd.cli.lint
-    CC=10  in:0  out:19  total:19
+  sumd.cli.map_cmd
+    CC=7  in:0  out:20  total:20
   sumd.extractor._parse_doql_workflows
     CC=7  in:1  out:18  total:19
-  sumd.extractor.extract_pyproject
-    CC=3  in:1  out:17  total:18
+  sumd.cli.lint
+    CC=10  in:0  out:19  total:19
+  sumd.renderer._parse_calls_hubs
+    CC=15  in:1  out:18  total:19
+  sumd.renderer._render_workflows_taskfile
+    CC=6  in:1  out:17  total:18
 
 MODULES:
-  sumd.cli  [21 funcs]
+  sumd.cli  [22 funcs]
     _api_scenario_template  CC=1  out:3
     _export_sumd_json  CC=2  out:2
     _lint_collect_paths  CC=6  out:7
@@ -525,7 +532,7 @@ MODULES:
     _check_empty_links  CC=2  out:1
     _check_h1  CC=3  out:2
     _check_metadata_fields  CC=9  out:7
-    _check_required_sections  CC=6  out:6
+    _check_required_sections  CC=7  out:6
     _check_unclosed_fences  CC=4  out:2
     validate  CC=1  out:2
     validate_codeblocks  CC=13  out:25
@@ -627,70 +634,73 @@ EDGES:
   sumd.cli._scaffold_generic → sumd.cli._scaffold_write
   sumd.cli.map_cmd → sumd.extractor.generate_map_toon
   sumd.cli.main → sumd.cli.cli
+  sumd.cli.main_sumr → sumd.cli.cli
   sumd.pipeline.RenderPipeline._collect → sumd.extractor.extract_pyproject
   sumd.pipeline.RenderPipeline._collect → sumd.extractor.extract_taskfile
   sumd.pipeline.RenderPipeline._collect → sumd.toon_parser.extract_testql_scenarios
-  sumd.pipeline.RenderPipeline._collect → sumd.extractor.extract_openapi
 ```
 
 ### Code Analysis (`project/analysis.toon.yaml`)
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
-# code2llm | 28f 4394L | python:27,shell:1 | 2026-04-19
+# code2llm | 29f 5023L | python:27,shell:2 | 2026-04-19
 # CC̄=4.5 | critical:1/188 | dups:0 | cycles:0
 
-HEALTH[1]:
+HEALTH[2]:
+  🔴 GOD   sumd/parser.py = 543L, 5 classes, 23m, max CC=13
   🟡 CC    _parse_calls_hubs CC=15 (limit:15)
 
-REFACTOR[1]:
-  1. split 1 high-CC methods  (CC>15)
+REFACTOR[2]:
+  1. split sumd/parser.py  (god module)
+  2. split 1 high-CC methods  (CC>15)
 
 PIPELINES[69]:
-  [1] Src [__init__]: __init__
+  [1] Src [validate]: validate → parse_file
       PURITY: 100% pure
-  [2] Src [_collect]: _collect → extract_pyproject → _read_toml
+  [2] Src [export]: export → parse_file
       PURITY: 100% pure
-  [3] Src [_build_registered_sections]: _build_registered_sections
+  [3] Src [info]: info → parse_file
       PURITY: 100% pure
-  [4] Src [_assemble]: _assemble
+  [4] Src [generate]: generate
       PURITY: 100% pure
-  [5] Src [run]: run → _inject_toc
+  [5] Src [extract]: extract → parse_file
       PURITY: 100% pure
 
 LAYERS:
   sumd/                           CC̄=4.5    ←in:14  →out:0
-  │ !! renderer                   912L  0C   46m  CC=15     ←14
-  │ !! cli                        842L  0C   29m  CC=12     ←0
-  │ !! extractor                  782L  0C   32m  CC=13     ←2
-  │ parser                     491L  5C   23m  CC=13     ←2
-  │ mcp_server                 322L  0C   12m  CC=5      ←0
-  │ pipeline                   207L  1C    6m  CC=4      ←0
-  │ toon_parser                166L  0C    8m  CC=9      ←1
-  │ base                        91L  2C    2m  CC=1      ←0
-  │ __init__                    78L  0C    0m  CC=0.0    ←0
-  │ refactor_analysis           67L  1C    2m  CC=3      ←0
-  │ metadata                    47L  1C    2m  CC=5      ←0
+  │ !! cli                       1081L  0C   29m  CC=12     ←0
+  │ !! renderer                   989L  0C   46m  CC=15     ←14
+  │ !! extractor                  861L  0C   32m  CC=13     ←2
+  │ !! parser                     543L  5C   23m  CC=13     ←2
+  │ mcp_server                 358L  0C   12m  CC=5      ←0
+  │ pipeline                   226L  1C    6m  CC=4      ←0
+  │ toon_parser                173L  0C    8m  CC=9      ←1
+  │ __init__                   100L  0C    0m  CC=0.0    ←0
+  │ base                        93L  2C    2m  CC=1      ←0
+  │ refactor_analysis           68L  1C    2m  CC=3      ←0
+  │ metadata                    51L  1C    2m  CC=5      ←0
   │ __init__                    33L  0C    0m  CC=0.0    ←0
-  │ call_graph                  26L  1C    2m  CC=2      ←0
-  │ source_snippets             25L  1C    2m  CC=1      ←0
-  │ dependencies                24L  1C    2m  CC=4      ←0
-  │ api_stubs                   24L  1C    2m  CC=1      ←0
-  │ environment                 23L  1C    2m  CC=2      ←0
-  │ deployment                  22L  1C    2m  CC=1      ←0
-  │ code_analysis               22L  1C    2m  CC=3      ←0
-  │ interfaces                  20L  1C    2m  CC=3      ←0
-  │ quality                     20L  1C    2m  CC=1      ←0
-  │ architecture                20L  1C    2m  CC=1      ←0
-  │ extras                      20L  1C    2m  CC=2      ←0
-  │ workflows                   20L  1C    2m  CC=2      ←0
-  │ configuration               20L  1C    2m  CC=1      ←0
+  │ call_graph                  27L  1C    2m  CC=2      ←0
+  │ dependencies                26L  1C    2m  CC=4      ←0
+  │ source_snippets             26L  1C    2m  CC=1      ←0
+  │ code_analysis               25L  1C    2m  CC=3      ←0
+  │ api_stubs                   25L  1C    2m  CC=1      ←0
+  │ environment                 24L  1C    2m  CC=2      ←0
+  │ interfaces                  23L  1C    2m  CC=3      ←0
+  │ deployment                  23L  1C    2m  CC=1      ←0
+  │ architecture                23L  1C    2m  CC=1      ←0
+  │ quality                     21L  1C    2m  CC=1      ←0
+  │ workflows                   21L  1C    2m  CC=2      ←0
+  │ extras                      21L  1C    2m  CC=2      ←0
+  │ configuration               21L  1C    2m  CC=1      ←0
   │ generator                   15L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
   │ project.sh                  35L  0C    0m  CC=0.0    ←0
   │
   scripts/                        CC̄=0.0    ←in:0  →out:0
-  │ generate_all_sumd           20L  0C    0m  CC=0.0    ←0
+  │ bootstrap.sh                69L  0C    0m  CC=0.0    ←0
+  │ generate_all_sumd           22L  0C    0m  CC=0.0    ←0
   │
 
 COUPLING:
@@ -757,20 +767,20 @@ METRICS-TARGET:
 ### Evolution / Churn (`project/evolution.toon.yaml`)
 
 ```toon markpact:analysis path=project/evolution.toon.yaml
-# code2llm/evolution | 177 func | 22f | 2026-04-19
+# code2llm/evolution | 188 func | 23f | 2026-04-19
 
 NEXT[4] (ranked by impact):
   [1] !! SPLIT           sumd/renderer.py
-      WHY: 873L, 0 classes, max CC=15
-      EFFORT: ~4h  IMPACT: 13095
+      WHY: 989L, 0 classes, max CC=15
+      EFFORT: ~4h  IMPACT: 14835
 
-  [2] !! SPLIT           sumd/extractor.py
-      WHY: 761L, 0 classes, max CC=13
-      EFFORT: ~4h  IMPACT: 9893
+  [2] !! SPLIT           sumd/cli.py
+      WHY: 1081L, 0 classes, max CC=12
+      EFFORT: ~4h  IMPACT: 12972
 
-  [3] !! SPLIT           sumd/cli.py
-      WHY: 820L, 0 classes, max CC=11
-      EFFORT: ~4h  IMPACT: 9020
+  [3] !! SPLIT           sumd/extractor.py
+      WHY: 861L, 0 classes, max CC=13
+      EFFORT: ~4h  IMPACT: 11193
 
   [4] !  SPLIT-FUNC      _parse_calls_hubs  CC=15  fan=7
       WHY: CC=15 exceeds 15
@@ -778,14 +788,14 @@ NEXT[4] (ranked by impact):
 
 
 RISKS[3]:
-  ⚠ Splitting sumd/renderer.py may break 38 import paths
-  ⚠ Splitting sumd/cli.py may break 28 import paths
+  ⚠ Splitting sumd/cli.py may break 29 import paths
+  ⚠ Splitting sumd/renderer.py may break 46 import paths
   ⚠ Splitting sumd/extractor.py may break 32 import paths
 
 METRICS-TARGET:
-  CC̄:          4.7 → ≤3.3
+  CC̄:          4.5 → ≤3.1
   max-CC:      15 → ≤7
-  god-modules: 3 → 0
+  god-modules: 4 → 0
   high-CC(≥15): 1 → ≤0
   hub-types:   0 → ≤0
 
@@ -814,36 +824,36 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.7 → now CC̄=4.7
+  prev CC̄=4.7 → now CC̄=4.5
 ```
 
 ### Validation (`project/validation.toon.yaml`)
 
 ```toon markpact:analysis path=project/validation.toon.yaml
-# vallm batch | 59f | 37✓ 4⚠ 0✗ | 2026-04-19
+# vallm batch | 69f | 44✓ 4⚠ 0✗ | 2026-04-19
 
 SUMMARY:
-  scanned: 59  passed: 37 (62.7%)  warnings: 4  errors: 0  unsupported: 22
+  scanned: 69  passed: 44 (63.8%)  warnings: 4  errors: 0  unsupported: 25
 
 WARNINGS[4]{path,score}:
   sumd/mcp_server.py,0.97
     issues[1]{rule,severity,message,line}:
-      complexity.lizard_length,warning,list_tools: 119 lines exceeds limit 100,66
+      complexity.lizard_length,warning,list_tools: 119 lines exceeds limit 100,68
   sumd/cli.py,0.98
     issues[1]{rule,severity,message,line}:
-      complexity.maintainability,warning,Low maintainability index: 3.0 (threshold: 20),
+      complexity.maintainability,warning,Low maintainability index: 1.8 (threshold: 20),
   sumd/extractor.py,0.98
     issues[1]{rule,severity,message,line}:
-      complexity.maintainability,warning,Low maintainability index: 6.0 (threshold: 20),
+      complexity.maintainability,warning,Low maintainability index: 5.4 (threshold: 20),
   sumd/renderer.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 0.0 (threshold: 20),
 
 UNSUPPORTED[4]{bucket,count}:
-  *.md,12
+  *.md,13
   *.txt,1
-  *.yml,1
-  other,8
+  *.yml,2
+  other,9
 ```
 
 ## Intent

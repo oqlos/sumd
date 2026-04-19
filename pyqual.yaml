@@ -48,6 +48,12 @@ pipeline:
       optional: true
       timeout: 120
 
+    - name: publish
+      tool: twine-publish       # built-in: python -m build + twine upload
+      optional: true
+      when: metrics_pass
+      timeout: 120
+
   # Loop behavior
   loop:
     max_iterations: 3
