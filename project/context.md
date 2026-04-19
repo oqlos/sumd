@@ -78,30 +78,30 @@
 - **Classes**: 1
 - **File**: `dependencies.py`
 
-### sumd.sections.architecture
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `architecture.py`
-
 ### sumd.sections.call_graph
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `call_graph.py`
+
+### sumd.sections.architecture
+- **Functions**: 2
+- **Classes**: 1
+- **File**: `architecture.py`
 
 ### sumd.sections.source_snippets
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `source_snippets.py`
 
-### sumd.sections.extras
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `extras.py`
-
 ### sumd.sections.workflows
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `workflows.py`
+
+### sumd.sections.extras
+- **Functions**: 2
+- **Classes**: 1
+- **File**: `extras.py`
 
 ### sumd.sections.api_stubs
 - **Functions**: 2
@@ -168,11 +168,15 @@ Validates:
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, click.option, click.option, sumd.parser.SUMDParser.parse_file, click.Path, click.Choice, click.Path
 
-### sumd.renderer._render_metadata_section
-- **Calls**: a, a, a, a, a, openapi.get, a, a
+### sumd.pipeline.RenderPipeline._assemble
+> Assemble all section lines into final markdown.
+- **Calls**: a, a, a, self._build_registered_sections, a, a, a, a
 
 ### sumd.sections.metadata.MetadataSection.render
 - **Calls**: a, a, a, a, a, ctx.openapi.get, a, a
+
+### sumd.renderer._render_metadata_section
+- **Calls**: a, a, a, a, a, openapi.get, a, a
 
 ### sumd.parser.SUMDParser._parse_header
 > Parse the project header (H1).
@@ -180,10 +184,6 @@ FILE: Path to the SUMD markdown file
 Args:
     lines: List of document lines
 - **Calls**: enumerate, line.startswith, None.strip, header_content.split, None.strip, line.startswith, len, None.strip
-
-### sumd.pipeline.RenderPipeline._assemble
-> Assemble all section lines into final markdown.
-- **Calls**: a, a, a, a, self._build_registered_sections, a, a, a
 
 ### sumd.cli.validate
 > Validate a SUMD document.
@@ -307,9 +307,9 @@ export [sumd.cli]
   └─ →> parse_file
 ```
 
-### Flow 10: _render_metadata_section
+### Flow 10: _assemble
 ```
-_render_metadata_section [sumd.renderer]
+_assemble [sumd.pipeline.RenderPipeline]
 ```
 
 ## Key Classes
@@ -356,25 +356,25 @@ Usage:
 - **Methods**: 2
 - **Key Methods**: sumd.sections.dependencies.DependenciesSection.should_render, sumd.sections.dependencies.DependenciesSection.render
 
-### sumd.sections.architecture.ArchitectureSection
-- **Methods**: 2
-- **Key Methods**: sumd.sections.architecture.ArchitectureSection.should_render, sumd.sections.architecture.ArchitectureSection.render
-
 ### sumd.sections.call_graph.CallGraphSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.call_graph.CallGraphSection.should_render, sumd.sections.call_graph.CallGraphSection.render
+
+### sumd.sections.architecture.ArchitectureSection
+- **Methods**: 2
+- **Key Methods**: sumd.sections.architecture.ArchitectureSection.should_render, sumd.sections.architecture.ArchitectureSection.render
 
 ### sumd.sections.source_snippets.SourceSnippetsSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.source_snippets.SourceSnippetsSection.should_render, sumd.sections.source_snippets.SourceSnippetsSection.render
 
-### sumd.sections.extras.ExtrasSection
-- **Methods**: 2
-- **Key Methods**: sumd.sections.extras.ExtrasSection.should_render, sumd.sections.extras.ExtrasSection.render
-
 ### sumd.sections.workflows.WorkflowsSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.workflows.WorkflowsSection.should_render, sumd.sections.workflows.WorkflowsSection.render
+
+### sumd.sections.extras.ExtrasSection
+- **Methods**: 2
+- **Key Methods**: sumd.sections.extras.ExtrasSection.should_render, sumd.sections.extras.ExtrasSection.render
 
 ### sumd.sections.api_stubs.ApiStubsSection
 - **Methods**: 2
@@ -397,14 +397,14 @@ Attributes:
 - **Key Methods**: sumd.sections.base.Section.should_render, sumd.sections.base.Section.render
 - **Inherits**: Protocol
 
-### sumd.sections.base.RenderContext
-> All extracted data for a project, passed to every Section.render().
-- **Methods**: 0
-
 ### sumd.parser.SectionType
 > SUMD section types.
 - **Methods**: 0
 - **Inherits**: Enum
+
+### sumd.parser.Section
+> Represents a SUMD section.
+- **Methods**: 0
 
 ## Data Transformation Functions
 

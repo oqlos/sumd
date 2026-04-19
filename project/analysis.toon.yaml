@@ -1,4 +1,4 @@
-# code2llm | 28f 4394L | python:27,shell:1 | 2026-04-19
+# code2llm | 28f 4397L | python:27,shell:1 | 2026-04-19
 # CC̄=4.5 | critical:1/188 | dups:0 | cycles:0
 
 HEALTH[1]:
@@ -26,7 +26,7 @@ LAYERS:
   │ !! extractor                  782L  0C   32m  CC=13     ←2
   │ parser                     491L  5C   23m  CC=13     ←2
   │ mcp_server                 322L  0C   12m  CC=5      ←0
-  │ pipeline                   207L  1C    6m  CC=4      ←0
+  │ pipeline                   210L  1C    6m  CC=4      ←0
   │ toon_parser                166L  0C    8m  CC=9      ←1
   │ base                        91L  2C    2m  CC=1      ←0
   │ __init__                    78L  0C    0m  CC=0.0    ←0
@@ -43,8 +43,8 @@ LAYERS:
   │ interfaces                  20L  1C    2m  CC=3      ←0
   │ quality                     20L  1C    2m  CC=1      ←0
   │ architecture                20L  1C    2m  CC=1      ←0
-  │ extras                      20L  1C    2m  CC=2      ←0
   │ workflows                   20L  1C    2m  CC=2      ←0
+  │ extras                      20L  1C    2m  CC=2      ←0
   │ configuration               20L  1C    2m  CC=1      ←0
   │ generator                   15L  0C    0m  CC=0.0    ←0
   │
