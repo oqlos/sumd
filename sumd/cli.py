@@ -246,8 +246,17 @@ def _detect_projects(workspace: Path, max_depth: int | None = None) -> list[Path
     return projects
 
 
-def _run_analysis_tools(proj_dir: Path, tool_list: list[str]) -> None:
-    """Install and run code2llm/redup/vallm analysis tools for a project."""
+def _run_analysis_tools(
+    proj_dir: Path,
+    tool_list: list[str],
+    skip_tools: "set[str] | None" = None,
+) -> None:
+    """Install and run code2llm/redup/vallm analysis tools for a project.
+
+    skip_tools: tools already run by _refresh_analysis_files() that should
+                not be executed again (avoids double-running on --analyze).
+    """
+    skip_tools = skip_tools or set()
     tools_dir = proj_dir / ".sumd-tools"
     venv_dir = tools_dir / "venv"
     project_output = proj_dir / "project"
@@ -269,7 +278,7 @@ def _run_analysis_tools(proj_dir: Path, tool_list: list[str]) -> None:
 
     project_output.mkdir(exist_ok=True)
 
-    if "code2llm" in tool_list:
+    if "code2llm" in tool_list and "code2llm" not in skip_tools:
         code2llm = bin_dir / (
             "code2llm.exe" if not (bin_dir / "code2llm").exists() else "code2llm"
         )
@@ -287,7 +296,7 @@ def _run_analysis_tools(proj_dir: Path, tool_list: list[str]) -> None:
             cwd=str(proj_dir),
         )
 
-    if "redup" in tool_list:
+    if "redup" in tool_list and "redup" not in skip_tools:
         redup = bin_dir / ("redup.exe" if not (bin_dir / "redup").exists() else "redup")
         subprocess.run(
             [
@@ -303,7 +312,7 @@ def _run_analysis_tools(proj_dir: Path, tool_list: list[str]) -> None:
             cwd=str(proj_dir),
         )
 
-    if "vallm" in tool_list:
+    if "vallm" in tool_list and "vallm" not in skip_tools:
         vallm = bin_dir / ("vallm.exe" if not (bin_dir / "vallm").exists() else "vallm")
         subprocess.run(
             [

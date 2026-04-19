@@ -23,6 +23,7 @@ ACCEPTANCE (Faza 1 complete):
 
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 from sumd.extractor import (
@@ -43,6 +44,7 @@ from sumd.extractor import (
     extract_source_snippets,
     extract_taskfile,
     generate_map_toon,
+    required_tools_for_profile,
 )
 from sumd.renderer import (
     _collect_sources,
@@ -71,6 +73,68 @@ def _refresh_map_toon(proj_dir: Path) -> None:
         map_path.write_text(content, encoding="utf-8")
     except Exception:  # noqa: BLE001
         pass  # non-fatal — embed will use the previous file if it exists
+
+
+def _refresh_analysis_files(proj_dir: Path, profile: str) -> None:
+    """Run only the external tools required for the given profile.
+
+    Called from RenderPipeline._collect() before extract_project_analysis()
+    so analysis files are always fresh when embedded.  Silently skips any
+    tool not installed in .sumd-tools/venv.
+
+    profile: 'minimal' | 'light' | 'rich' | 'refactor'
+    """
+    tools_needed = required_tools_for_profile(profile)
+    if not tools_needed:
+        return
+
+    bin_dir = proj_dir / ".sumd-tools" / "venv" / "bin"
+    if not bin_dir.exists():
+        bin_dir = proj_dir / ".sumd-tools" / "venv" / "Scripts"
+    if not bin_dir.exists():
+        return  # tools not installed — skip silently
+
+    project_output = proj_dir / "project"
+    project_output.mkdir(parents=True, exist_ok=True)
+
+    def _exe(name: str):
+        p = bin_dir / name
+        if not p.exists():
+            p = bin_dir / f"{name}.exe"
+        return p if p.exists() else None
+
+    try:
+        # code2llm generates calls.toon, analysis.toon, evolution.toon in one run
+        if "code2llm" in tools_needed:
+            exe = _exe("code2llm")
+            if exe:
+                subprocess.run(
+                    [str(exe), "./", "-f", "toon", "-o", str(project_output), "--no-chunk"],
+                    capture_output=True,
+                    cwd=str(proj_dir),
+                )
+
+        if "redup" in tools_needed:
+            exe = _exe("redup")
+            if exe:
+                subprocess.run(
+                    [str(exe), "scan", str(proj_dir),
+                     "--format", "toon", "--output", str(project_output)],
+                    capture_output=True,
+                    cwd=str(proj_dir),
+                )
+
+        if "vallm" in tools_needed:
+            exe = _exe("vallm")
+            if exe:
+                subprocess.run(
+                    [str(exe), "batch", str(proj_dir), "--recursive",
+                     "--format", "toon", "--output", str(project_output)],
+                    capture_output=True,
+                    cwd=str(proj_dir),
+                )
+    except Exception:  # noqa: BLE001
+        pass  # non-fatal
 
 
 class RenderPipeline:
@@ -109,10 +173,11 @@ class RenderPipeline:
         compose = extract_docker_compose(proj_dir)
         pkg_json = extract_package_json(proj_dir)
 
-        # Auto-regenerate map.toon.yaml before embedding — pure-Python, fast (~0.1s),
-        # ensures SUMD.md always reflects current code without requiring a separate
-        # `sumd map` invocation.
+        # Auto-regenerate map.toon.yaml — pure-Python, always fast.
         _refresh_map_toon(proj_dir)
+
+        # Run only the external tools needed by the active profile (if installed).
+        _refresh_analysis_files(proj_dir, self._profile)
 
         project_analysis = extract_project_analysis(
             proj_dir, refactor=(self._profile == "refactor")

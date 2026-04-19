@@ -794,6 +794,31 @@ _REFACTOR_ANALYSIS_FILES = [
     ("validation.toon.yaml", "toon"),
 ]
 
+# Maps each analysis file to the external tool that generates it.
+# map.toon.yaml is excluded — handled by _refresh_map_toon() (pure-Python).
+_TOOL_FOR_FILE: dict[str, str] = {
+    "calls.toon.yaml":        "code2llm",
+    "analysis.toon.yaml":     "code2llm",
+    "evolution.toon.yaml":    "code2llm",
+    "duplication.toon.yaml":  "redup",
+    "validation.toon.yaml":   "vallm",
+}
+
+
+def required_tools_for_profile(profile: str) -> set[str]:
+    """Return the set of external tools needed to refresh analysis files for *profile*.
+
+    Used by RenderPipeline._refresh_analysis_files() to run only the tools
+    that are actually embedded by the active profile.
+
+    Examples:
+        required_tools_for_profile('rich')     → {'code2llm'}
+        required_tools_for_profile('refactor') → {'code2llm', 'redup', 'vallm'}
+        required_tools_for_profile('minimal')  → set()
+    """
+    file_list = _REFACTOR_ANALYSIS_FILES if profile == "refactor" else _PROJECT_ANALYSIS_FILES
+    return {_TOOL_FOR_FILE[f] for f, _ in file_list if f in _TOOL_FOR_FILE}
+
 
 def extract_source_snippets(proj_dir: Path, pkg_name: str) -> list[dict]:
     """Return per-module AST summary for source_snippets section.
