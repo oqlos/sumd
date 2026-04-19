@@ -3,6 +3,7 @@
 Renders OpenAPI endpoints as Python-like typed stubs for LLM orientation.
 LLM sees function signatures and HTTP method/path without reading full openapi.yaml.
 """
+
 from __future__ import annotations
 
 from sumd.renderer import _render_api_stubs

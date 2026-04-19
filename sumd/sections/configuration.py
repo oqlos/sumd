@@ -1,4 +1,5 @@
 """sumd.sections.configuration — ConfigurationSection."""
+
 from __future__ import annotations
 
 from sumd.renderer import _render_configuration_section

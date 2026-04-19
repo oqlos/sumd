@@ -57,12 +57,12 @@ tasks:
   lint:
     desc: Run ruff lint check
     cmds:
-      - "{{.VENV_PY}} -m ruff check ."
+      - ruff check .
 
   fmt:
     desc: Auto-format with ruff
     cmds:
-      - "{{.VENV_PY}} -m ruff format ."
+      - ruff format .
 
   build:
     desc: Build wheel + sdist
@@ -193,6 +193,19 @@ tasks:
       - task: lint
       - task: test
       - task: quality
+
+  doctor:
+    desc: Smoke-test all external CLI tools used by this project
+    cmds:
+      - |
+        echo "=== sumd doctor ==="
+        check() { "$@" > /dev/null 2>&1 && echo "  ✅ $1" || echo "  ❌ $1  (command failed: $*)"; }
+        check {{.VENV_PY}} -m pyqual doctor
+        check {{.VENV_PY}} -m pytest --version
+        check ruff --version
+        check {{.PWD}}/.venv/bin/sumd --version
+        check {{.PWD}}/.venv/bin/sumd --help
+        echo "=== done ==="
 
   help:
     desc: Show available tasks

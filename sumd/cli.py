@@ -13,8 +13,7 @@ from sumd.parser import SUMDParser, parse_file
 from sumd.parser import validate_sumd_file
 from sumd.generator import generate_map_toon
 from sumd.pipeline import RenderPipeline
-
-__version__ = "0.1.24"
+from sumd import __version__
 
 
 @click.group()
@@ -28,14 +27,14 @@ def cli():
 @click.argument("file", type=click.Path(exists=True, path_type=Path))
 def validate(file: Path):
     """Validate a SUMD document.
-    
+
     FILE: Path to the SUMD markdown file
     """
     try:
         document = parse_file(file)
         parser = SUMDParser()
         errors = parser.validate(document)
-        
+
         if errors:
             click.echo("❌ Validation failed:", err=True)
             for error in errors:
@@ -51,16 +50,21 @@ def validate(file: Path):
 
 @cli.command()
 @click.argument("file", type=click.Path(exists=True, path_type=Path))
-@click.option("--format", type=click.Choice(["markdown", "json", "yaml", "toml"]), default="json", help="Output format")
+@click.option(
+    "--format",
+    type=click.Choice(["markdown", "json", "yaml", "toml"]),
+    default="json",
+    help="Output format",
+)
 @click.option("--output", type=click.Path(path_type=Path), help="Output file path")
 def export(file: Path, format: str, output: Optional[Path]):
     """Export a SUMD document to structured format.
-    
+
     FILE: Path to the SUMD markdown file
     """
     try:
         document = parse_file(file)
-        
+
         data = {
             "project_name": document.project_name,
             "description": document.description,
@@ -74,20 +78,23 @@ def export(file: Path, format: str, output: Optional[Path]):
                 for section in document.sections
             ],
         }
-        
+
         result = ""
         if format == "markdown":
             result = document.raw_content
         elif format == "json":
             import json
+
             result = json.dumps(data, indent=2)
         elif format == "yaml":
             import yaml
+
             result = yaml.dump(data, default_flow_style=False)
         elif format == "toml":
             import toml
+
             result = toml.dumps(data)
-        
+
         if output:
             output.write_text(result, encoding="utf-8")
             click.echo(f"✅ Exported to {output}")
@@ -102,16 +109,16 @@ def export(file: Path, format: str, output: Optional[Path]):
 @click.argument("file", type=click.Path(exists=True, path_type=Path))
 def info(file: Path):
     """Display information about a SUMD document.
-    
+
     FILE: Path to the SUMD markdown file
     """
     try:
         document = parse_file(file)
-        
+
         click.echo(f"📦 Project: {document.project_name}")
         click.echo(f"📝 Description: {document.description}")
         click.echo(f"📑 Sections: {len(document.sections)}")
-        
+
         for section in document.sections:
             click.echo(f"  - {section.name} ({section.type.value})")
     except Exception as e:
@@ -121,43 +128,51 @@ def info(file: Path):
 
 @cli.command()
 @click.argument("file", type=click.Path(exists=True, path_type=Path))
-@click.option("--format", type=click.Choice(["json", "yaml", "toml"]), default="json", help="Input format")
+@click.option(
+    "--format",
+    type=click.Choice(["json", "yaml", "toml"]),
+    default="json",
+    help="Input format",
+)
 @click.option("--output", type=click.Path(path_type=Path), help="Output SUMD file path")
 def generate(file: Path, format: str, output: Optional[Path]):
     """Generate a SUMD document from structured format.
-    
+
     FILE: Path to the structured format file (json/yaml/toml)
     """
     try:
         content = file.read_text(encoding="utf-8")
         data = {}
-        
+
         if format == "json":
             import json
+
             data = json.loads(content)
         elif format == "yaml":
             import yaml
+
             data = yaml.safe_load(content)
         elif format == "toml":
             import toml
+
             data = toml.loads(content)
-        
+
         # Generate SUMD markdown
         lines = []
         lines.append(f"# {data.get('project_name', 'Untitled')}")
-        if data.get('description'):
+        if data.get("description"):
             lines.append(f"{data['description']}")
         lines.append("")
-        
-        for section in data.get('sections', []):
-            level_prefix = "#" * section.get('level', 2)
+
+        for section in data.get("sections", []):
+            level_prefix = "#" * section.get("level", 2)
             lines.append(f"{level_prefix} {section['name'].title()}")
             lines.append("")
-            lines.append(section.get('content', ''))
+            lines.append(section.get("content", ""))
             lines.append("")
-        
+
         result = "\n".join(lines)
-        
+
         if output:
             output.write_text(result, encoding="utf-8")
             click.echo(f"✅ Generated SUMD at {output}")
@@ -173,12 +188,12 @@ def generate(file: Path, format: str, output: Optional[Path]):
 @click.option("--section", type=str, help="Extract specific section")
 def extract(file: Path, section: str):
     """Extract content from a SUMD document.
-    
+
     FILE: Path to the SUMD markdown file
     """
     try:
         document = parse_file(file)
-        
+
         if section:
             for sec in document.sections:
                 if sec.name.lower() == section.lower():
@@ -194,8 +209,17 @@ def extract(file: Path, section: str):
 
 
 _SKIP_DIRS = {
-    ".venv", "venv", "node_modules", ".git", "__pycache__",
-    ".sumd-tools", "site-packages", "dist", "build", ".tox", ".mypy_cache",
+    ".venv",
+    "venv",
+    "node_modules",
+    ".git",
+    "__pycache__",
+    ".sumd-tools",
+    "site-packages",
+    "dist",
+    "build",
+    ".tox",
+    ".mypy_cache",
 }
 
 
@@ -230,7 +254,9 @@ def _run_analysis_tools(proj_dir: Path, tool_list: list[str]) -> None:
 
     if not venv_dir.exists():
         tools_dir.mkdir(exist_ok=True)
-        subprocess.run([sys.executable, "-m", "venv", str(venv_dir)], capture_output=True)
+        subprocess.run(
+            [sys.executable, "-m", "venv", str(venv_dir)], capture_output=True
+        )
         pip_path = venv_dir / "bin" / "pip"
         if not pip_path.exists():
             pip_path = venv_dir / "Scripts" / "pip.exe"
@@ -244,24 +270,54 @@ def _run_analysis_tools(proj_dir: Path, tool_list: list[str]) -> None:
     project_output.mkdir(exist_ok=True)
 
     if "code2llm" in tool_list:
-        code2llm = bin_dir / ("code2llm.exe" if not (bin_dir / "code2llm").exists() else "code2llm")
+        code2llm = bin_dir / (
+            "code2llm.exe" if not (bin_dir / "code2llm").exists() else "code2llm"
+        )
         subprocess.run(
-            [str(code2llm), str(proj_dir), "-f", "all", "-o", str(project_output), "--no-chunk"],
-            capture_output=True, cwd=str(proj_dir),
+            [
+                str(code2llm),
+                str(proj_dir),
+                "-f",
+                "all",
+                "-o",
+                str(project_output),
+                "--no-chunk",
+            ],
+            capture_output=True,
+            cwd=str(proj_dir),
         )
 
     if "redup" in tool_list:
         redup = bin_dir / ("redup.exe" if not (bin_dir / "redup").exists() else "redup")
         subprocess.run(
-            [str(redup), "scan", str(proj_dir), "--format", "toon", "--output", str(project_output)],
-            capture_output=True, cwd=str(proj_dir),
+            [
+                str(redup),
+                "scan",
+                str(proj_dir),
+                "--format",
+                "toon",
+                "--output",
+                str(project_output),
+            ],
+            capture_output=True,
+            cwd=str(proj_dir),
         )
 
     if "vallm" in tool_list:
         vallm = bin_dir / ("vallm.exe" if not (bin_dir / "vallm").exists() else "vallm")
         subprocess.run(
-            [str(vallm), "batch", str(proj_dir), "--recursive", "--format", "toon", "--output", str(project_output)],
-            capture_output=True, cwd=str(proj_dir),
+            [
+                str(vallm),
+                "batch",
+                str(proj_dir),
+                "--recursive",
+                "--format",
+                "toon",
+                "--output",
+                str(project_output),
+            ],
+            capture_output=True,
+            cwd=str(proj_dir),
         )
 
 
@@ -272,18 +328,30 @@ def _export_sumd_json(proj_dir: Path, doc) -> None:
         "project_name": doc.project_name,
         "description": doc.description,
         "sections": [
-            {"name": s.name, "type": s.type.value, "content": s.content, "level": s.level}
+            {
+                "name": s.name,
+                "type": s.type.value,
+                "content": s.content,
+                "level": s.level,
+            }
             for s in doc.sections
         ],
     }
-    json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    json_path.write_text(
+        json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
 
 def _render_write_validate(
-    proj_dir: Path, sumd_path: Path, raw: bool, profile: str,
+    proj_dir: Path,
+    sumd_path: Path,
+    raw: bool,
+    profile: str,
 ) -> tuple:
     """Render SUMD content, write file, validate. Returns (doc, md_issues, cb_errors, cb_warnings, sources)."""
-    content, sources = RenderPipeline(proj_dir, raw_sources=raw).run(profile=profile, return_sources=True)
+    content, sources = RenderPipeline(proj_dir, raw_sources=raw).run(
+        profile=profile, return_sources=True
+    )
     sumd_path.write_text(content, encoding="utf-8")
     result = validate_sumd_file(sumd_path, profile=profile)
     md_issues = result["markdown"]
@@ -294,8 +362,13 @@ def _render_write_validate(
 
 
 def _scan_one_project(
-    proj_dir: Path, fix: bool, raw: bool, export_json: bool,
-    run_analyze: bool, tool_list: list[str], parser_inst: "SUMDParser",
+    proj_dir: Path,
+    fix: bool,
+    raw: bool,
+    export_json: bool,
+    run_analyze: bool,
+    tool_list: list[str],
+    parser_inst: "SUMDParser",
     profile: str = "rich",
 ) -> dict:
     """Generate SUMD.md (or SUMR.md for refactor profile) for one project."""
@@ -304,7 +377,9 @@ def _scan_one_project(
 
     if sumd_path.exists() and not fix:
         dash = "\u2013"
-        click.echo(f"  {'~'} {proj_dir.name:<18} {'skip':<10} {dash:<10} already exists (use --fix to overwrite)")
+        click.echo(
+            f"  {'~'} {proj_dir.name:<18} {'skip':<10} {dash:<10} already exists (use --fix to overwrite)"
+        )
         return {"status": "SKIP", "path": str(sumd_path)}
 
     try:
@@ -314,13 +389,17 @@ def _scan_one_project(
         all_errors = md_issues + [c.message for c in cb_errors]
 
         if all_errors:
-            click.echo(f"  \u274c {proj_dir.name:<18} {'invalid':<10} {len(doc.sections):<10} {', '.join(sources)}")
+            click.echo(
+                f"  \u274c {proj_dir.name:<18} {'invalid':<10} {len(doc.sections):<10} {', '.join(sources)}"
+            )
             for e in all_errors:
                 click.echo(f"       \u2193 {e}")
             return {"status": "INVALID", "errors": all_errors, "path": str(sumd_path)}
 
         warn_str = f" \u26a0 {len(cb_warnings)} warnings" if cb_warnings else ""
-        click.echo(f"  \u2705 {proj_dir.name:<18} {'ok':<10} {len(doc.sections):<10} {', '.join(sources)}{warn_str}")
+        click.echo(
+            f"  \u2705 {proj_dir.name:<18} {'ok':<10} {len(doc.sections):<10} {', '.join(sources)}{warn_str}"
+        )
 
         if export_json:
             _export_sumd_json(proj_dir, doc)
@@ -347,15 +426,61 @@ def _scan_one_project(
 
 @cli.command()
 @click.argument("workspace", type=click.Path(exists=True, path_type=Path), default=".")
-@click.option("--export-json/--no-export-json", default=True, help="Also export sumd.json per project")
-@click.option("--report", type=click.Path(path_type=Path), default=None, help="Save JSON summary report to file")
-@click.option("--fix/--no-fix", default=True, help="Overwrite existing SUMD.md (default). Use --no-fix to skip if already present.")
-@click.option("--raw/--no-raw", default=True, help="Embed source files as raw code blocks (default). Use --no-raw for structured Markdown.")
-@click.option("--analyze/--no-analyze", default=False, help="Run analysis tools (code2llm, redup, vallm) on each project after scan")
-@click.option("--tools", type=str, default="code2llm,redup,vallm", help="Tools to run with --analyze")
-@click.option("--profile", type=click.Choice(["minimal", "light", "rich", "refactor"]), default="rich", help="Section profile to use when rendering SUMD.md. Use 'refactor' for pre-refactoring analysis report.")
-@click.option("--depth", type=int, default=None, help="Max directory depth to scan for projects (default: unlimited)")
-def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, raw: bool, analyze: bool, tools: str, profile: str, depth: Optional[int]):
+@click.option(
+    "--export-json/--no-export-json",
+    default=True,
+    help="Also export sumd.json per project",
+)
+@click.option(
+    "--report",
+    type=click.Path(path_type=Path),
+    default=None,
+    help="Save JSON summary report to file",
+)
+@click.option(
+    "--fix/--no-fix",
+    default=True,
+    help="Overwrite existing SUMD.md (default). Use --no-fix to skip if already present.",
+)
+@click.option(
+    "--raw/--no-raw",
+    default=True,
+    help="Embed source files as raw code blocks (default). Use --no-raw for structured Markdown.",
+)
+@click.option(
+    "--analyze/--no-analyze",
+    default=False,
+    help="Run analysis tools (code2llm, redup, vallm) on each project after scan",
+)
+@click.option(
+    "--tools",
+    type=str,
+    default="code2llm,redup,vallm",
+    help="Tools to run with --analyze",
+)
+@click.option(
+    "--profile",
+    type=click.Choice(["minimal", "light", "rich", "refactor"]),
+    default="rich",
+    help="Section profile to use when rendering SUMD.md. Use 'refactor' for pre-refactoring analysis report.",
+)
+@click.option(
+    "--depth",
+    type=int,
+    default=None,
+    help="Max directory depth to scan for projects (default: unlimited)",
+)
+def scan(
+    workspace: Path,
+    export_json: bool,
+    report: Optional[Path],
+    fix: bool,
+    raw: bool,
+    analyze: bool,
+    tools: str,
+    profile: str,
+    depth: Optional[int],
+):
     """Scan a workspace directory and generate SUMD.md for every project found.
 
     Detects projects by presence of pyproject.toml. Extracts metadata from:
@@ -377,7 +502,9 @@ def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, 
         project_dirs = [workspace]
 
     if not project_dirs:
-        click.echo(f"⚠️  No projects found in {workspace} (looking for directories with pyproject.toml)")
+        click.echo(
+            f"⚠️  No projects found in {workspace} (looking for directories with pyproject.toml)"
+        )
         sys.exit(1)
 
     click.echo(f"\n🔍 Scanning {len(project_dirs)} projects in {workspace}\n")
@@ -386,7 +513,9 @@ def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, 
 
     for proj_dir in project_dirs:
         total += 1
-        result = _scan_one_project(proj_dir, fix, raw, export_json, analyze, tool_list, parser_inst, profile)
+        result = _scan_one_project(
+            proj_dir, fix, raw, export_json, analyze, tool_list, parser_inst, profile
+        )
         results[proj_dir.name] = result
         if result["status"] == "SKIP":
             skip_count += 1
@@ -396,10 +525,14 @@ def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, 
             fail_count += 1
 
     click.echo("─" * 70)
-    click.echo(f"\n📊 Summary: {total} projects | ✅ {ok_count} ok | ⏭ {skip_count} skipped | ❌ {fail_count} failed\n")
+    click.echo(
+        f"\n📊 Summary: {total} projects | ✅ {ok_count} ok | ⏭ {skip_count} skipped | ❌ {fail_count} failed\n"
+    )
 
     if report:
-        report.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
+        report.write_text(
+            json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
         click.echo(f"📄 Report saved to {report}")
 
     sys.exit(0 if fail_count == 0 else 1)
@@ -407,9 +540,15 @@ def scan(workspace: Path, export_json: bool, report: Optional[Path], fix: bool, 
 
 @cli.command()
 @click.argument("files", nargs=-1, type=click.Path(exists=True, path_type=Path))
-@click.option("--workspace", type=click.Path(exists=True, path_type=Path), default=None,
-              help="Validate all SUMD.md files in workspace subdirectories")
-@click.option("--json", "as_json", is_flag=True, default=False, help="Output results as JSON")
+@click.option(
+    "--workspace",
+    type=click.Path(exists=True, path_type=Path),
+    default=None,
+    help="Validate all SUMD.md files in workspace subdirectories",
+)
+@click.option(
+    "--json", "as_json", is_flag=True, default=False, help="Output results as JSON"
+)
 def lint(files: tuple[Path, ...], workspace: Optional[Path], as_json: bool):
     """Validate SUMD.md files — check markdown structure and codeblock formats.
 
@@ -426,7 +565,10 @@ def lint(files: tuple[Path, ...], workspace: Optional[Path], as_json: bool):
     paths = _lint_collect_paths(files, workspace)
 
     if not paths:
-        click.echo("⚠️  No SUMD.md files specified. Use sumd lint SUMD.md or --workspace .", err=True)
+        click.echo(
+            "⚠️  No SUMD.md files specified. Use sumd lint SUMD.md or --workspace .",
+            err=True,
+        )
         sys.exit(1)
 
     all_results = []
@@ -436,7 +578,9 @@ def lint(files: tuple[Path, ...], workspace: Optional[Path], as_json: bool):
     for path in paths:
         r = validate_sumd_file(path)
         all_results.append(r)
-        errors = r["markdown"] + [c.message for c in r["codeblocks"] if c.kind == "error"]
+        errors = r["markdown"] + [
+            c.message for c in r["codeblocks"] if c.kind == "error"
+        ]
         warnings = [c for c in r["codeblocks"] if c.kind == "warning"]
         total_errors += len(errors)
         total_warnings += len(warnings)
@@ -448,9 +592,12 @@ def lint(files: tuple[Path, ...], workspace: Optional[Path], as_json: bool):
 
     if as_json:
         import json as _json
+
         click.echo(_json.dumps(all_results, indent=2, default=str))
     else:
-        click.echo(f"\n📊 {len(paths)} files | ❌ {total_errors} errors | ⚠ {total_warnings} warnings")
+        click.echo(
+            f"\n📊 {len(paths)} files | ❌ {total_errors} errors | ⚠ {total_warnings} warnings"
+        )
 
     sys.exit(0 if total_errors == 0 else 1)
 
@@ -476,7 +623,9 @@ def _lint_print_result(path: Path, r: dict) -> None:
     warnings = [c for c in r["codeblocks"] if c.kind == "warning"]
     status = "✅" if r["ok"] else "❌"
     cb_count = len(r["codeblocks"])
-    click.echo(f"{status} {path}  ({cb_count} blocks, {len(errors)} errors, {len(warnings)} warnings)")
+    click.echo(
+        f"{status} {path}  ({cb_count} blocks, {len(errors)} errors, {len(warnings)} warnings)"
+    )
     for issue in r["markdown"]:
         click.echo(f"    [markdown] ❌ {issue}")
     for cb in r["codeblocks"]:
@@ -492,7 +641,8 @@ def _setup_tools_venv(venv_dir: Path, tool_list: list[str], force: bool) -> Path
         tools_dir.mkdir(exist_ok=True)
         result = subprocess.run(
             [sys.executable, "-m", "venv", str(venv_dir)],
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
         )
         if result.returncode != 0:
             click.echo(f"❌ Failed to create venv: {result.stderr}", err=True)
@@ -515,18 +665,20 @@ def _run_code2llm_formats(bin_dir: Path, project: Path, project_output: Path) ->
     if not code2llm.exists():
         code2llm = bin_dir / "code2llm.exe"
     formats = [
-        ("toon",       "analysis.toon.yaml"),
-        ("evolution",  "evolution.toon.yaml"),
-        ("context",    "context.md"),
+        ("toon", "analysis.toon.yaml"),
+        ("evolution", "evolution.toon.yaml"),
+        ("context", "context.md"),
         ("calls_toon", "calls.toon.yaml"),
-        ("mermaid",    "flow.mmd, compact_flow.mmd"),
+        ("mermaid", "flow.mmd, compact_flow.mmd"),
     ]
     all_ok = True
     for fmt, output_files in formats:
         extra = ["--no-png"] if fmt in ("mermaid", "calls") else []
         r = subprocess.run(
             [str(code2llm), "./", "-f", fmt, "-o", str(project_output)] + extra,
-            capture_output=True, text=True, cwd=str(project),
+            capture_output=True,
+            text=True,
+            cwd=str(project),
         )
         if r.returncode != 0:
             click.echo(f"   ⚠️  code2llm -f {fmt} failed", err=True)
@@ -551,8 +703,17 @@ def _run_tool_subprocess(bin_dir: Path, tool: str, cmd_args: list[str]) -> bool:
 
 @cli.command()
 @click.argument("project", type=click.Path(exists=True, path_type=Path))
-@click.option("--tools", type=str, default="code2llm,redup,vallm", help="Comma-separated list of tools to run")
-@click.option("--force/--no-force", default=False, help="Force reinstall tools even if venv exists")
+@click.option(
+    "--tools",
+    type=str,
+    default="code2llm,redup,vallm",
+    help="Comma-separated list of tools to run",
+)
+@click.option(
+    "--force/--no-force",
+    default=False,
+    help="Force reinstall tools even if venv exists",
+)
 def analyze(project: Path, tools: str, force: bool):
     """Run analysis tools (code2llm, redup, vallm) on a project.
 
@@ -587,19 +748,33 @@ def analyze(project: Path, tools: str, force: bool):
 
     if "redup" in tool_list:
         click.echo("🔍 Running redup...")
-        if _run_tool_subprocess(bin_dir, "redup", [
-            "scan", str(project), "--format", "toon", "--output", str(project_output)
-        ]):
+        if _run_tool_subprocess(
+            bin_dir,
+            "redup",
+            ["scan", str(project), "--format", "toon", "--output", str(project_output)],
+        ):
             success_count += 1
 
     if "vallm" in tool_list:
         click.echo("✅ Running vallm...")
-        if _run_tool_subprocess(bin_dir, "vallm", [
-            "batch", str(project), "--recursive", "--format", "toon", "--output", str(project_output)
-        ]):
+        if _run_tool_subprocess(
+            bin_dir,
+            "vallm",
+            [
+                "batch",
+                str(project),
+                "--recursive",
+                "--format",
+                "toon",
+                "--output",
+                str(project_output),
+            ],
+        ):
             success_count += 1
 
-    click.echo(f"\n📊 Analysis complete: {success_count}/{len(tool_list)} tools succeeded")
+    click.echo(
+        f"\n📊 Analysis complete: {success_count}/{len(tool_list)} tools succeeded"
+    )
     click.echo(f"📁 Output: {project_output}/")
     sys.exit(0 if success_count == len(tool_list) else 1)
 
@@ -627,8 +802,9 @@ def _api_scenario_template(
     )
 
 
-def _scaffold_write(path: Path, content: str, force: bool,
-                    generated: list[str], skipped: list[str]) -> None:
+def _scaffold_write(
+    path: Path, content: str, force: bool, generated: list[str], skipped: list[str]
+) -> None:
     if path.exists() and not force:
         skipped.append(path.name)
     else:
@@ -637,10 +813,16 @@ def _scaffold_write(path: Path, content: str, force: bool,
 
 
 def _scaffold_smoke_scenario(
-    paths: dict, base: str, out_dir: Path, force: bool,
-    generated: list[str], skipped: list[str],
+    paths: dict,
+    base: str,
+    out_dir: Path,
+    force: bool,
+    generated: list[str],
+    skipped: list[str],
 ) -> None:
-    health_paths = [p for p in paths if any(k in p.lower() for k in ("health", "ping", "status"))]
+    health_paths = [
+        p for p in paths if any(k in p.lower() for k in ("health", "ping", "status"))
+    ]
     ep_block = (
         "\n".join(f"  GET,  {p},  200" for p in health_paths[:5])
         if health_paths
@@ -649,13 +831,19 @@ def _scaffold_smoke_scenario(
     _scaffold_write(
         out_dir / "smoke-health.testql.toon.yaml",
         _api_scenario_template("smoke-health", "smoke", ep_block, base),
-        force, generated, skipped,
+        force,
+        generated,
+        skipped,
     )
 
 
 def _scaffold_crud_scenarios(
-    groups: dict, base: str, out_dir: Path, force: bool,
-    generated: list[str], skipped: list[str],
+    groups: dict,
+    base: str,
+    out_dir: Path,
+    force: bool,
+    generated: list[str],
+    skipped: list[str],
 ) -> None:
     for resource, eps in sorted(groups.items()):
         if resource in ("health", "ping", "status"):
@@ -666,14 +854,22 @@ def _scaffold_crud_scenarios(
             continue
         _scaffold_write(
             out_dir / f"api-{safe_resource}.testql.toon.yaml",
-            _api_scenario_template(f"api-{safe_resource}", "api", "\n".join(ep_lines), base),
-            force, generated, skipped,
+            _api_scenario_template(
+                f"api-{safe_resource}", "api", "\n".join(ep_lines), base
+            ),
+            force,
+            generated,
+            skipped,
         )
 
 
 def _scaffold_from_openapi(
-    spec: dict, out_dir: Path, scenario_type: str, force: bool,
-    generated: list[str], skipped: list[str],
+    spec: dict,
+    out_dir: Path,
+    scenario_type: str,
+    force: bool,
+    generated: list[str],
+    skipped: list[str],
 ) -> int:
     """Generate scenarios from OpenAPI spec into out_dir. Returns number of path entries."""
     paths = spec.get("paths", {})
@@ -695,23 +891,39 @@ def _scaffold_from_openapi(
     return len(paths)
 
 
-def _scaffold_generic(out_dir: Path, force: bool, generated: list[str], skipped: list[str]) -> None:
+def _scaffold_generic(
+    out_dir: Path, force: bool, generated: list[str], skipped: list[str]
+) -> None:
     click.echo("⚠️  No openapi.yaml found — generating generic smoke scaffold")
     content = _api_scenario_template(
-        "smoke-generic", "smoke",
+        "smoke-generic",
+        "smoke",
         "  GET,  /health,  200  # TODO: adjust\n  GET,  /,  200       # TODO: adjust",
         "/api/v1  # TODO: adjust base_path",
     )
-    _scaffold_write(out_dir / "smoke-generic.testql.toon.yaml", content, force, generated, skipped)
+    _scaffold_write(
+        out_dir / "smoke-generic.testql.toon.yaml", content, force, generated, skipped
+    )
 
 
 @cli.command()
 @click.argument("project", type=click.Path(exists=True, path_type=Path))
-@click.option("--output", type=click.Path(path_type=Path), default=None,
-              help="Output directory for generated files (default: <project>/testql-scenarios/)")
-@click.option("--force/--no-force", default=False, help="Overwrite existing scenario files")
-@click.option("--type", "scenario_type", type=click.Choice(["api", "smoke", "crud", "all"]),
-              default="all", help="Type of scenarios to generate")
+@click.option(
+    "--output",
+    type=click.Path(path_type=Path),
+    default=None,
+    help="Output directory for generated files (default: <project>/testql-scenarios/)",
+)
+@click.option(
+    "--force/--no-force", default=False, help="Overwrite existing scenario files"
+)
+@click.option(
+    "--type",
+    "scenario_type",
+    type=click.Choice(["api", "smoke", "crud", "all"]),
+    default="all",
+    help="Type of scenarios to generate",
+)
 def scaffold(project: Path, output: Optional[Path], force: bool, scenario_type: str):
     """Generate testql scenario scaffolds from OpenAPI spec or SUMD.md.
 
@@ -741,16 +953,22 @@ def scaffold(project: Path, output: Optional[Path], force: bool, scenario_type: 
         except Exception as e:
             click.echo(f"❌ Failed to parse openapi.yaml: {e}", err=True)
             sys.exit(1)
-        n_paths = _scaffold_from_openapi(spec, out_dir, scenario_type, force, generated, skipped)
-        groups_count = len({
-            (path.strip("/").split("/")[0] or "root")
-            for path in spec.get("paths", {})
-        })
+        n_paths = _scaffold_from_openapi(
+            spec, out_dir, scenario_type, force, generated, skipped
+        )
+        groups_count = len(
+            {
+                (path.strip("/").split("/")[0] or "root")
+                for path in spec.get("paths", {})
+            }
+        )
         click.echo(f"   📋 {n_paths} paths → {groups_count} resource groups")
     else:
         _scaffold_generic(out_dir, force, generated, skipped)
 
-    click.echo(f"\n📊 scaffold: {len(generated)} generated | {len(skipped)} skipped (use --force to overwrite)")
+    click.echo(
+        f"\n📊 scaffold: {len(generated)} generated | {len(skipped)} skipped (use --force to overwrite)"
+    )
     for f in generated:
         click.echo(f"   ✅ {out_dir / f}")
     for f in skipped:
@@ -764,12 +982,21 @@ def scaffold(project: Path, output: Optional[Path], force: bool, scenario_type: 
 
 @cli.command(name="map")
 @click.argument("project", type=click.Path(exists=True, path_type=Path))
-@click.option("--output", type=click.Path(path_type=Path), default=None,
-              help="Output file path (default: <project>/project/map.toon.yaml)")
-@click.option("--force/--no-force", default=False,
-              help="Overwrite existing map.toon.yaml")
-@click.option("--stdout", is_flag=True, default=False,
-              help="Print to stdout instead of writing file")
+@click.option(
+    "--output",
+    type=click.Path(path_type=Path),
+    default=None,
+    help="Output file path (default: <project>/project/map.toon.yaml)",
+)
+@click.option(
+    "--force/--no-force", default=False, help="Overwrite existing map.toon.yaml"
+)
+@click.option(
+    "--stdout",
+    is_flag=True,
+    default=False,
+    help="Print to stdout instead of writing file",
+)
 def map_cmd(project: Path, output: Optional[Path], force: bool, stdout: bool):
     """Generate project/map.toon.yaml — static code map in toon format.
 
@@ -806,11 +1033,22 @@ def map_cmd(project: Path, output: Optional[Path], force: bool, stdout: bool):
 def main():
     """Main entry point — if first arg is a path, run 'scan <path> --fix'."""
     import sys as _sys
+
     args = _sys.argv[1:]
     # If first arg looks like a path (not a known command), treat as `scan <path> --fix`
     known_commands = {
-        "scan", "lint", "analyze", "map", "scaffold", "generate",
-        "validate", "export", "extract", "info", "--help", "--version",
+        "scan",
+        "lint",
+        "analyze",
+        "map",
+        "scaffold",
+        "generate",
+        "validate",
+        "export",
+        "extract",
+        "info",
+        "--help",
+        "--version",
     }
     if args and args[0] not in known_commands and not args[0].startswith("-"):
         _sys.argv = [_sys.argv[0], "scan", args[0], "--fix"] + args[1:]
@@ -825,6 +1063,7 @@ def main_sumr():
         sumr /path/to/project   # generate SUMR.md in specified project
     """
     import sys as _sys
+
     args = _sys.argv[1:]
     # Default to current dir if no path given
     path = "."

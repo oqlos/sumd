@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 
-import pytest
 
 from sumd.extractor import (
     extract_pyproject,
@@ -21,6 +19,7 @@ from sumd.extractor import (
 
 
 # ── extract_pyproject ────────────────────────────────────────────────────────
+
 
 class TestExtractPyproject:
     def test_missing_file_returns_empty(self, tmp_path):
@@ -53,7 +52,7 @@ class TestExtractPyproject:
         assert "pytest>=7" in result["dev_dependencies"]
 
     def test_fallback_name_is_dir_name(self, tmp_path):
-        (tmp_path / "pyproject.toml").write_text("[project]\nversion = \"0.1\"\n")
+        (tmp_path / "pyproject.toml").write_text('[project]\nversion = "0.1"\n')
         result = extract_pyproject(tmp_path)
         assert result["name"] == tmp_path.name
 
@@ -64,6 +63,7 @@ class TestExtractPyproject:
 
 
 # ── extract_taskfile ─────────────────────────────────────────────────────────
+
 
 class TestExtractTaskfile:
     def test_missing_returns_empty(self, tmp_path):
@@ -101,6 +101,7 @@ class TestExtractTaskfile:
 
 # ── extract_pyqual ────────────────────────────────────────────────────────────
 
+
 class TestExtractPyqual:
     def test_missing_returns_empty(self, tmp_path):
         assert extract_pyqual(tmp_path) == {}
@@ -123,18 +124,14 @@ class TestExtractPyqual:
 
     def test_flat_format(self, tmp_path):
         """pyqual.yaml without a `pipeline:` wrapper should still parse."""
-        yaml_text = (
-            "name: flat-pipeline\n"
-            "stages: []\n"
-            "metrics: {}\n"
-            "loop: {}\n"
-        )
+        yaml_text = "name: flat-pipeline\nstages: []\nmetrics: {}\nloop: {}\n"
         (tmp_path / "pyqual.yaml").write_text(yaml_text)
         result = extract_pyqual(tmp_path)
         assert result["name"] == "flat-pipeline"
 
 
 # ── extract_python_modules ────────────────────────────────────────────────────
+
 
 class TestExtractPythonModules:
     def test_missing_pkg_dir_returns_empty(self, tmp_path):
@@ -163,6 +160,7 @@ class TestExtractPythonModules:
 
 # ── extract_readme_title ──────────────────────────────────────────────────────
 
+
 class TestExtractReadmeTitle:
     def test_missing_returns_empty(self, tmp_path):
         assert extract_readme_title(tmp_path) == ""
@@ -181,6 +179,7 @@ class TestExtractReadmeTitle:
 
 
 # ── extract_env ───────────────────────────────────────────────────────────────
+
 
 class TestExtractEnv:
     def test_missing_returns_empty(self, tmp_path):
@@ -212,6 +211,7 @@ class TestExtractEnv:
 
 # ── extract_goal ──────────────────────────────────────────────────────────────
 
+
 class TestExtractGoal:
     def test_missing_returns_empty(self, tmp_path):
         assert extract_goal(tmp_path) == {}
@@ -232,6 +232,7 @@ class TestExtractGoal:
 
 
 # ── extract_project_analysis ──────────────────────────────────────────────────
+
 
 class TestExtractProjectAnalysis:
     def test_missing_project_dir_returns_empty(self, tmp_path):
@@ -271,6 +272,7 @@ class TestExtractProjectAnalysis:
 
 # ── extract_requirements ──────────────────────────────────────────────────────
 
+
 class TestExtractRequirements:
     def test_no_requirements_returns_empty(self, tmp_path):
         assert extract_requirements(tmp_path) == []
@@ -289,12 +291,15 @@ class TestExtractRequirements:
 
 # ── extract_makefile ──────────────────────────────────────────────────────────
 
+
 class TestExtractMakefile:
     def test_missing_returns_empty(self, tmp_path):
         assert extract_makefile(tmp_path) == []
 
     def test_parses_targets(self, tmp_path):
-        makefile = "## Run tests\ntest:\n\tpytest\n\n## Build project\nbuild:\n\tmake all\n"
+        makefile = (
+            "## Run tests\ntest:\n\tpytest\n\n## Build project\nbuild:\n\tmake all\n"
+        )
         (tmp_path / "Makefile").write_text(makefile)
         result = extract_makefile(tmp_path)
         names = [t["target"] for t in result]

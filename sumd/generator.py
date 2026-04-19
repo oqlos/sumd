@@ -9,7 +9,7 @@ This module re-exports everything for backwards compatibility.
 """
 
 from sumd.toon_parser import *  # noqa: F401,F403
-from sumd.extractor import *    # noqa: F401,F403
-from sumd.renderer import *     # noqa: F401,F403
+from sumd.extractor import *  # noqa: F401,F403
+from sumd.renderer import *  # noqa: F401,F403
 
 # Explicit re-exports for type checkers and direct imports

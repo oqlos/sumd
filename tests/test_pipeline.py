@@ -28,7 +28,7 @@ def test_pipeline_run_returns_string(proj_dir: Path) -> None:
 def test_pipeline_output_has_h1(proj_dir: Path) -> None:
     content = RenderPipeline(proj_dir).run(profile="rich")
     lines = content.splitlines()
-    h1_lines = [l for l in lines if l.startswith("# ") and not l.startswith("## ")]
+    h1_lines = [line for line in lines if line.startswith("# ") and not line.startswith("## ")]
     assert h1_lines, "output must have an H1 title"
 
 

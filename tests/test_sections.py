@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 
 from sumd.sections.base import RenderContext
 from sumd.sections.metadata import MetadataSection
@@ -12,15 +11,11 @@ from sumd.sections.architecture import ArchitectureSection
 from sumd.sections.dependencies import DependenciesSection
 from sumd.sections.workflows import WorkflowsSection
 from sumd.sections.quality import QualitySection
-from sumd.sections.interfaces import InterfacesSection
-from sumd.sections.deployment import DeploymentSection
 from sumd.sections.environment import EnvironmentSection
-from sumd.sections.extras import ExtrasSection
 from sumd.sections.call_graph import CallGraphSection
 from sumd.sections.code_analysis import CodeAnalysisSection
 from sumd.sections.source_snippets import SourceSnippetsSection
 from sumd.sections.refactor_analysis import RefactorAnalysisSection
-from sumd.sections.configuration import ConfigurationSection
 
 
 def make_ctx(**kwargs) -> RenderContext:
@@ -37,6 +32,7 @@ def make_ctx(**kwargs) -> RenderContext:
 
 
 # ── MetadataSection ──────────────────────────────────────────────────────────
+
 
 class TestMetadataSection:
     def test_always_renders(self):
@@ -63,13 +59,14 @@ class TestMetadataSection:
 
 # ── ArchitectureSection ──────────────────────────────────────────────────────
 
+
 class TestArchitectureSection:
     def test_always_renders(self):
         assert ArchitectureSection().should_render(make_ctx()) is True
 
     def test_header_present(self):
         lines = ArchitectureSection().render(make_ctx())
-        assert any("## Architecture" in l for l in lines)
+        assert any("## Architecture" in line for line in lines)
 
     def test_modules_listed(self):
         ctx = make_ctx(modules=["core", "utils"], name="mypkg")
@@ -86,6 +83,7 @@ class TestArchitectureSection:
 
 
 # ── DependenciesSection ──────────────────────────────────────────────────────
+
 
 class TestDependenciesSection:
     def test_renders_when_deps_present(self):
@@ -114,6 +112,7 @@ class TestDependenciesSection:
 
 # ── WorkflowsSection ─────────────────────────────────────────────────────────
 
+
 class TestWorkflowsSection:
     def test_no_render_when_empty(self):
         ctx = make_ctx(tasks=[], doql={})
@@ -134,12 +133,15 @@ class TestWorkflowsSection:
 
 # ── QualitySection ───────────────────────────────────────────────────────────
 
+
 class TestQualitySection:
     def test_no_render_when_empty(self):
         assert QualitySection().should_render(make_ctx(pyqual={})) is False
 
     def test_renders_with_pyqual(self):
-        ctx = make_ctx(pyqual={"name": "quality-loop", "stages": [], "metrics": {}, "loop": {}})
+        ctx = make_ctx(
+            pyqual={"name": "quality-loop", "stages": [], "metrics": {}, "loop": {}}
+        )
         assert QualitySection().should_render(ctx) is True
 
     def test_pipeline_name_in_output(self):
@@ -154,17 +156,22 @@ class TestQualitySection:
 
 # ── EnvironmentSection ────────────────────────────────────────────────────────
 
+
 class TestEnvironmentSection:
     def test_no_render_when_empty(self):
         assert EnvironmentSection().should_render(make_ctx(env_vars=[])) is False
 
     def test_renders_with_vars(self):
-        ctx = make_ctx(env_vars=[{"key": "API_KEY", "default": "", "comment": "API key"}])
+        ctx = make_ctx(
+            env_vars=[{"key": "API_KEY", "default": "", "comment": "API key"}]
+        )
         assert EnvironmentSection().should_render(ctx) is True
         lines = EnvironmentSection().render(ctx)
-        assert any("API_KEY" in l for l in lines)
+        assert any("API_KEY" in line for line in lines)
+
 
 # ── CallGraphSection ─────────────────────────────────────────────────────────
+
 
 class TestCallGraphSection:
     def test_no_render_without_calls(self):
@@ -172,45 +179,78 @@ class TestCallGraphSection:
         assert CallGraphSection().should_render(ctx) is False
 
     def test_no_render_without_calls_file(self):
-        ctx = make_ctx(project_analysis=[{"file": "project/map.toon.yaml", "lang": "toon", "content": "x"}])
+        ctx = make_ctx(
+            project_analysis=[
+                {"file": "project/map.toon.yaml", "lang": "toon", "content": "x"}
+            ]
+        )
         assert CallGraphSection().should_render(ctx) is False
 
     def test_renders_with_calls_file(self):
-        ctx = make_ctx(project_analysis=[
-            {"file": "project/calls.toon.yaml", "lang": "toon", "content": "HUBS[1]:\n  mod.func\n    CC=3  in:0  out:2  total:2\n"}
-        ])
+        ctx = make_ctx(
+            project_analysis=[
+                {
+                    "file": "project/calls.toon.yaml",
+                    "lang": "toon",
+                    "content": "HUBS[1]:\n  mod.func\n    CC=3  in:0  out:2  total:2\n",
+                }
+            ]
+        )
         assert CallGraphSection().should_render(ctx) is True
         lines = CallGraphSection().render(ctx)
-        assert any("Call Graph" in l for l in lines)
+        assert any("Call Graph" in line for line in lines)
 
 
 # ── CodeAnalysisSection ───────────────────────────────────────────────────────
 
+
 class TestCodeAnalysisSection:
     def test_no_render_when_only_calls(self):
-        ctx = make_ctx(project_analysis=[
-            {"file": "project/calls.toon.yaml", "lang": "toon", "content": "x"}
-        ])
+        ctx = make_ctx(
+            project_analysis=[
+                {"file": "project/calls.toon.yaml", "lang": "toon", "content": "x"}
+            ]
+        )
         assert CodeAnalysisSection().should_render(ctx) is False
 
     def test_renders_with_map(self):
-        ctx = make_ctx(project_analysis=[
-            {"file": "project/map.toon.yaml", "lang": "toon", "content": "MAP content"}
-        ])
+        ctx = make_ctx(
+            project_analysis=[
+                {
+                    "file": "project/map.toon.yaml",
+                    "lang": "toon",
+                    "content": "MAP content",
+                }
+            ]
+        )
         assert CodeAnalysisSection().should_render(ctx) is True
 
 
 # ── RefactorAnalysisSection ───────────────────────────────────────────────────
 
+
 class TestRefactorAnalysisSection:
     def test_no_render_when_empty(self):
-        assert RefactorAnalysisSection().should_render(make_ctx(project_analysis=[])) is False
+        assert (
+            RefactorAnalysisSection().should_render(make_ctx(project_analysis=[]))
+            is False
+        )
 
     def test_renders_with_analysis_files(self):
-        ctx = make_ctx(project_analysis=[
-            {"file": "project/calls.toon.yaml", "lang": "toon", "content": "HUBS[0]:"},
-            {"file": "project/analysis.toon.yaml", "lang": "toon", "content": "METRICS:"},
-        ])
+        ctx = make_ctx(
+            project_analysis=[
+                {
+                    "file": "project/calls.toon.yaml",
+                    "lang": "toon",
+                    "content": "HUBS[0]:",
+                },
+                {
+                    "file": "project/analysis.toon.yaml",
+                    "lang": "toon",
+                    "content": "METRICS:",
+                },
+            ]
+        )
         assert RefactorAnalysisSection().should_render(ctx) is True
         lines = RefactorAnalysisSection().render(ctx)
         joined = "\n".join(lines)
@@ -220,9 +260,11 @@ class TestRefactorAnalysisSection:
 
     def test_map_toon_excluded(self):
         """map.toon.yaml should not appear in refactoring analysis section."""
-        ctx = make_ctx(project_analysis=[
-            {"file": "project/map.toon.yaml", "lang": "toon", "content": "MAP"}
-        ])
+        ctx = make_ctx(
+            project_analysis=[
+                {"file": "project/map.toon.yaml", "lang": "toon", "content": "MAP"}
+            ]
+        )
         lines = RefactorAnalysisSection().render(ctx)
         joined = "\n".join(lines)
         assert "map.toon.yaml" not in joined
@@ -230,17 +272,24 @@ class TestRefactorAnalysisSection:
 
 # ── SourceSnippetsSection ─────────────────────────────────────────────────────
 
+
 class TestSourceSnippetsSection:
     def test_no_render_when_empty(self):
-        assert SourceSnippetsSection().should_render(make_ctx(source_snippets=[])) is False
+        assert (
+            SourceSnippetsSection().should_render(make_ctx(source_snippets=[])) is False
+        )
 
     def test_renders_with_snippets(self):
-        ctx = make_ctx(source_snippets=[{
-            "module": "mypkg.core",
-            "path": "mypkg/core.py",
-            "funcs": [{"name": "run", "args": [], "cc": 1, "fan": 2}],
-            "classes": [],
-        }])
+        ctx = make_ctx(
+            source_snippets=[
+                {
+                    "module": "mypkg.core",
+                    "path": "mypkg/core.py",
+                    "funcs": [{"name": "run", "args": [], "cc": 1, "fan": 2}],
+                    "classes": [],
+                }
+            ]
+        )
         assert SourceSnippetsSection().should_render(ctx) is True
         lines = SourceSnippetsSection().render(ctx)
         joined = "\n".join(lines)

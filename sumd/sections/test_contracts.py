@@ -3,6 +3,7 @@
 Renders testql scenarios as contract signatures: endpoint + key assertions.
 LLM sees what the system guarantees without reading full scenario files.
 """
+
 from __future__ import annotations
 
 from sumd.renderer import _render_test_contracts

@@ -1,4 +1,5 @@
 """sumd.sections.quality — QualitySection."""
+
 from __future__ import annotations
 
 from sumd.renderer import _render_quality

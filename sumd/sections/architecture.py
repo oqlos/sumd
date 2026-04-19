@@ -1,4 +1,5 @@
 """sumd.sections.architecture — ArchitectureSection."""
+
 from __future__ import annotations
 
 from sumd.renderer import _render_architecture
@@ -14,7 +15,9 @@ class ArchitectureSection:
         return True
 
     def render(self, ctx: RenderContext) -> list[str]:
-        return _render_architecture(ctx.doql, ctx.modules, ctx.name, ctx.proj_dir, ctx.raw_sources)
+        return _render_architecture(
+            ctx.doql, ctx.modules, ctx.name, ctx.proj_dir, ctx.raw_sources
+        )
 
 
 assert isinstance(ArchitectureSection(), Section)

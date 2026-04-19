@@ -4,11 +4,11 @@
 
 - **Project**: /home/tom/github/oqlos/sumd
 - **Primary Language**: python
-- **Languages**: python: 27, shell: 1
+- **Languages**: python: 27, shell: 2
 - **Analysis Mode**: static
 - **Total Functions**: 188
 - **Total Classes**: 23
-- **Modules**: 28
+- **Modules**: 29
 - **Entry Points**: 77
 
 ## Architecture by Module
@@ -172,11 +172,11 @@ FILE: Path to the SUMD markdown file
 > Assemble all section lines into final markdown.
 - **Calls**: a, a, a, self._build_registered_sections, a, a, a, a
 
-### sumd.sections.metadata.MetadataSection.render
-- **Calls**: a, a, a, a, a, ctx.openapi.get, a, a
-
 ### sumd.renderer._render_metadata_section
 - **Calls**: a, a, a, a, a, openapi.get, a, a
+
+### sumd.sections.metadata.MetadataSection.render
+- **Calls**: a, a, a, a, a, ctx.openapi.get, a, a
 
 ### sumd.parser.SUMDParser._parse_header
 > Parse the project header (H1).
@@ -380,13 +380,13 @@ Usage:
 - **Methods**: 2
 - **Key Methods**: sumd.sections.api_stubs.ApiStubsSection.should_render, sumd.sections.api_stubs.ApiStubsSection.render
 
-### sumd.sections.configuration.ConfigurationSection
-- **Methods**: 2
-- **Key Methods**: sumd.sections.configuration.ConfigurationSection.should_render, sumd.sections.configuration.ConfigurationSection.render
-
 ### sumd.sections.environment.EnvironmentSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.environment.EnvironmentSection.should_render, sumd.sections.environment.EnvironmentSection.render
+
+### sumd.sections.configuration.ConfigurationSection
+- **Methods**: 2
+- **Key Methods**: sumd.sections.configuration.ConfigurationSection.should_render, sumd.sections.configuration.ConfigurationSection.render
 
 ### sumd.sections.base.Section
 > Protocol for all SUMD section renderers.
@@ -487,7 +487,7 @@ FILE: Path to the SUMD markdown file
 
 ### sumd.renderer._parse_calls_header
 > Parse node/edge/module counts and CC average from header comments.
-- **Output to**: line.startswith, line.startswith, _re_calls.search, _re_calls.search, int
+- **Output to**: line.startswith, line.startswith, re.search, re.search, int
 
 ### sumd.renderer._parse_calls_hubs
 > Parse HUBS section into list of hub dicts.
@@ -502,9 +502,9 @@ FILE: Path to the SUMD markdown file
 
 Args:
     content: The markdown content to parse
-    
+
 Returns:
-    
+    SUMD
 - **Output to**: SUMDDocument, content.split, self._parse_header, self._parse_sections
 
 ### sumd.parser.SUMDParser.parse_file
@@ -512,9 +512,9 @@ Returns:
 
 Args:
     path: Path to the SUMD markdown file
-    
+
 Returns:
-    SUMDDocument: P
+    SUMDDocument: Parse
 - **Output to**: path.read_text, self.parse
 
 ### sumd.parser.SUMDParser._parse_header

@@ -13,17 +13,18 @@ calls.toon.yaml already captures the graph.
 
 Files that don't exist are silently skipped (non-blocking).
 """
+
 from __future__ import annotations
 
 from sumd.sections.base import RenderContext, Section
 
 # Display order and labels for refactor analysis files.
 _REFACTOR_FILE_LABELS: dict[str, str] = {
-    "calls.toon.yaml":       "Call Graph & Complexity",
-    "analysis.toon.yaml":    "Code Analysis",
+    "calls.toon.yaml": "Call Graph & Complexity",
+    "analysis.toon.yaml": "Code Analysis",
     "duplication.toon.yaml": "Duplication",
-    "evolution.toon.yaml":   "Evolution / Churn",
-    "validation.toon.yaml":  "Validation",
+    "evolution.toon.yaml": "Evolution / Churn",
+    "validation.toon.yaml": "Validation",
 }
 
 # map.toon.yaml is available in project_analysis for refactor profile but

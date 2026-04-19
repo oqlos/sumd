@@ -1,4 +1,5 @@
 """sumd.sections.deployment — DeploymentSection."""
+
 from __future__ import annotations
 
 from sumd.renderer import _render_deployment

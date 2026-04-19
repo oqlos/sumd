@@ -5,6 +5,7 @@ calls.toon.yaml in project/, followed by the full embed for LLM reference.
 
 Replaces the raw dump that would otherwise appear in CodeAnalysis.
 """
+
 from __future__ import annotations
 
 from sumd.renderer import _render_call_graph

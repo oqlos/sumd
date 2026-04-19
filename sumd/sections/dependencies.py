@@ -1,4 +1,5 @@
 """sumd.sections.dependencies — DependenciesSection."""
+
 from __future__ import annotations
 
 from sumd.renderer import _render_dependencies
@@ -12,7 +13,8 @@ class DependenciesSection:
 
     def should_render(self, ctx: RenderContext) -> bool:
         return bool(
-            ctx.deps or ctx.dev_deps
+            ctx.deps
+            or ctx.dev_deps
             or ctx.pkg_json.get("dependencies")
             or ctx.pkg_json.get("devDependencies")
         )

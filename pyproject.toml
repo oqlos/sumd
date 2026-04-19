@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sumd"
-version = "0.1.24"
+version = "0.2.0-rc1"
 description = "SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation"
 readme = "README.md"
 license = "Apache-2.0"
@@ -41,7 +41,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov=sumd --cov-report=term-missing --cov-report=json"
+addopts = "--cov=sumd --cov-branch --cov-report=term-missing --cov-report=json"
 testpaths = ["tests"]
 
 [project.scripts]

@@ -1,4 +1,5 @@
 """sumd.sections.environment — EnvironmentSection (env vars + goal/release)."""
+
 from __future__ import annotations
 
 from sumd.renderer import _render_env_section, _render_goal_section

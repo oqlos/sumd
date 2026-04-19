@@ -48,10 +48,17 @@ def _render_architecture(
     a("## Architecture")
     a("")
     a("```")
-    a("SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (verification)")
+    a(
+        "SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (verification)"
+    )
     a("```")
     a("")
-    if doql.get("app") or doql.get("entities") or doql.get("interfaces") or doql.get("workflows"):
+    if (
+        doql.get("app")
+        or doql.get("entities")
+        or doql.get("interfaces")
+        or doql.get("workflows")
+    ):
         _render_architecture_doql_section(doql, proj_dir, raw_sources, L)
     if modules:
         _render_architecture_modules(modules, name, L)
@@ -80,7 +87,9 @@ def _render_doql_entities(doql: dict, L: list[str]) -> None:
     for ent in doql["entities"]:
         attrs_str = ""
         if ent.get("attrs"):
-            attrs_str = " — " + ", ".join(f"`{k}: {v}`" for k, v in ent["attrs"].items())
+            attrs_str = " — " + ", ".join(
+                f"`{k}: {v}`" for k, v in ent["attrs"].items()
+            )
         page_str = f" page=`{ent['page']}`" if ent.get("page") else ""
         a(f"- `entity[{ent['name']}]`{page_str}{attrs_str}")
     a("")
@@ -94,7 +103,9 @@ def _render_doql_interfaces(doql: dict, L: list[str]) -> None:
     a("")
     for iface in list(doql["interfaces"]):
         sel = iface.get("selector", "")
-        attrs = ", ".join(f"{k}: {v}" for k, v in iface.items() if k not in ("selector", "page"))
+        attrs = ", ".join(
+            f"{k}: {v}" for k, v in iface.items() if k not in ("selector", "page")
+        )
         page_str = f" page=`{iface['page']}`" if iface.get("page") else ""
         a(f"- `interface[{sel}]`{page_str} — {attrs}")
     a("")
@@ -160,16 +171,16 @@ def _render_interfaces_openapi(
         a("|--------|------|-------------|---------|")
         for ep in openapi["endpoints"]:
             summary = ep.get("summary", "").replace("|", "\\|")
-            a(f"| `{ep['method']}` | `{ep['path']}` | `{ep['operationId']}` | {summary} |")
+            a(
+                f"| `{ep['method']}` | `{ep['path']}` | `{ep['operationId']}` | {summary} |"
+            )
         a("")
         if openapi.get("schemas"):
             a("**Schemas**: " + ", ".join(f"`{s}`" for s in openapi["schemas"]))
             a("")
 
 
-def _render_testql_raw(
-    scenarios: list, proj_dir: Path, L: list[str]
-) -> None:
+def _render_testql_raw(scenarios: list, proj_dir: Path, L: list[str]) -> None:
     a = L.append
     seen_scenario_files: set[str] = set()
     for sc in scenarios:
@@ -246,7 +257,9 @@ def _render_interfaces_testql(
 
 def _render_workflows_doql(doql: dict, L: list[str]) -> None:
     a = L.append
-    doql_sources_wf = ", ".join(f"`{s}`" for s in doql.get("sources", ["app.doql.less"]))
+    doql_sources_wf = ", ".join(
+        f"`{s}`" for s in doql.get("sources", ["app.doql.less"])
+    )
     a(f"### DOQL Workflows ({doql_sources_wf})")
     a("")
     for wf in doql["workflows"]:
@@ -255,7 +268,9 @@ def _render_workflows_doql(doql: dict, L: list[str]) -> None:
     a("")
 
 
-def _render_workflows_taskfile(tasks: list, proj_dir: Path, raw_sources: bool, L: list[str]) -> None:
+def _render_workflows_taskfile(
+    tasks: list, proj_dir: Path, raw_sources: bool, L: list[str]
+) -> None:
     a = L.append
     a("### Taskfile Tasks (`Taskfile.yml`)")
     a("")
@@ -280,7 +295,9 @@ def _render_workflows_taskfile(tasks: list, proj_dir: Path, raw_sources: bool, L
         a("")
 
 
-def _render_workflows(doql: dict, tasks: list, proj_dir: Path, raw_sources: bool) -> list[str]:
+def _render_workflows(
+    doql: dict, tasks: list, proj_dir: Path, raw_sources: bool
+) -> list[str]:
     L: list[str] = []
     a = L.append
     a("## Workflows")
@@ -391,7 +408,9 @@ def _render_deps_dev(dev_deps: list, node_dev: list, L: list[str]) -> None:
         a("")
 
 
-def _render_dependencies(deps: list, dev_deps: list, pkg_json: dict | None = None) -> list[str]:
+def _render_dependencies(
+    deps: list, dev_deps: list, pkg_json: dict | None = None
+) -> list[str]:
     pkg_json = pkg_json or {}
     L: list[str] = []
     a = L.append
@@ -430,7 +449,7 @@ def _render_deployment_reqs(reqs: list, L: list[str]) -> None:
         for dep in r["deps"][:20]:
             a(f"- `{dep}`")
         if len(r["deps"]) > 20:
-            a(f"- *(+{len(r['deps'])-20} more)*")
+            a(f"- *(+{len(r['deps']) - 20} more)*")
         a("")
 
 
@@ -452,9 +471,14 @@ def _render_deployment_docker(dockerfile: dict, compose: dict, L: list[str]) -> 
         a(f"### Docker Compose (`{compose['file']}`)")
         a("")
         for svc in compose["services"]:
-            ports_str = ", ".join(f"`{p}`" for p in svc["ports"]) if svc["ports"] else ""
+            ports_str = (
+                ", ".join(f"`{p}`" for p in svc["ports"]) if svc["ports"] else ""
+            )
             image_str = f" image=`{svc['image']}`" if svc["image"] else ""
-            a(f"- **{svc['name']}**{image_str}" + (f" ports: {ports_str}" if ports_str else ""))
+            a(
+                f"- **{svc['name']}**{image_str}"
+                + (f" ports: {ports_str}" if ports_str else "")
+            )
         a("")
 
 
@@ -491,7 +515,10 @@ def _render_extras(makefile: list, pkg_json: dict) -> list[str]:
             a(f"- `npm run {script}` — `{cmd}`")
         a("")
         if pkg_json.get("dependencies"):
-            a("**Runtime deps**: " + ", ".join(f"`{d}`" for d in pkg_json["dependencies"][:15]))
+            a(
+                "**Runtime deps**: "
+                + ", ".join(f"`{d}`" for d in pkg_json["dependencies"][:15])
+            )
             a("")
         if pkg_json.get("engines"):
             for eng, ver in pkg_json["engines"].items():
@@ -500,10 +527,16 @@ def _render_extras(makefile: list, pkg_json: dict) -> list[str]:
     return L
 
 
-def _render_code_analysis(project_analysis: list, skip_files: set[str] | None = None) -> list[str]:
+def _render_code_analysis(
+    project_analysis: list, skip_files: set[str] | None = None
+) -> list[str]:
     """Render Code Analysis section, optionally skipping files handled by other sections."""
     skip_files = skip_files or set()
-    entries = [e for e in project_analysis if not any(s in e.get("file", "") for s in skip_files)]
+    entries = [
+        e
+        for e in project_analysis
+        if not any(s in e.get("file", "") for s in skip_files)
+    ]
     if not entries:
         return []
     L: list[str] = []
@@ -536,7 +569,9 @@ def _render_source_snippets(source_snippets: list, top_n: int = 5) -> list[str]:
     a = L.append
     a("## Source Map")
     a("")
-    a(f"*Top {min(top_n, len(source_snippets))} modules by symbol density — signatures for LLM orientation.*")
+    a(
+        f"*Top {min(top_n, len(source_snippets))} modules by symbol density — signatures for LLM orientation.*"
+    )
     a("")
     for entry in source_snippets[:top_n]:
         a(f"### `{entry['module']}` (`{entry['path']}`)")
@@ -545,7 +580,9 @@ def _render_source_snippets(source_snippets: list, top_n: int = 5) -> list[str]:
         for fn in entry["funcs"]:
             args_str = ", ".join(fn["args"])
             cc_flag = " ⚠" if fn["cc"] >= 10 else ""
-            a(f"def {fn['name']}({args_str})  # CC={fn['cc']}, fan={fn['fan']}{cc_flag}")
+            a(
+                f"def {fn['name']}({args_str})  # CC={fn['cc']}, fan={fn['fan']}{cc_flag}"
+            )
         for cls in entry["classes"]:
             doc = cls["doc"]  # already formatted as "  # ..." or ""
             a(f"class {cls['name']}:{doc}")
@@ -584,10 +621,13 @@ def _render_api_stubs(openapi: dict) -> list[str]:
     for tag, eps in by_tag.items():
         a(f"# {tag}")
         for ep in eps:
-            op_id = ep.get("operationId") or f"{ep['method'].lower()}_{ep['path'].replace('/', '_').strip('_')}"
+            op_id = (
+                ep.get("operationId")
+                or f"{ep['method'].lower()}_{ep['path'].replace('/', '_').strip('_')}"
+            )
             summary = f"  # {ep['summary']}" if ep.get("summary") else ""
             a(f"def {op_id}() -> Response:{summary}")
-            a(f"    \"{ep['method']} {ep['path']}\"")
+            a(f'    "{ep["method"]} {ep["path"]}"')
         a("")
     a("```")
     a("")
@@ -636,20 +676,20 @@ def _render_test_contracts(scenarios: list) -> list[str]:
     return L
 
 
-import re as _re_calls
-
 def _parse_calls_header(lines: list[str]) -> dict:
     """Parse node/edge/module counts and CC average from header comments."""
     result = {"nodes": 0, "edges": 0, "modules_count": 0, "cc_avg": 0.0}
     for line in lines[:5]:
         if line.startswith("# nodes:"):
-            m = _re_calls.search(r"nodes:\s*(\d+).*edges:\s*(\d+).*modules:\s*(\d+)", line)
+            m = re.search(
+                r"nodes:\s*(\d+).*edges:\s*(\d+).*modules:\s*(\d+)", line
+            )
             if m:
                 result["nodes"] = int(m.group(1))
                 result["edges"] = int(m.group(2))
                 result["modules_count"] = int(m.group(3))
         if line.startswith("# CC"):
-            m = _re_calls.search(r"CC[̄=\u0304]=?\s*([\d.]+)", line)
+            m = re.search(r"CC[̄=\u0304]=?\s*([\d.]+)", line)
             if m:
                 result["cc_avg"] = float(m.group(1))
     return result
@@ -671,12 +711,16 @@ def _parse_calls_hubs(lines: list[str]) -> list[dict]:
                 hubs.append(current_hub)
             current_hub = {"name": line.strip()}
         elif in_hubs and line.startswith("    "):
-            m = _re_calls.search(r"CC=(\d+)\s+in:(\d+)\s+out:(\d+)\s+total:(\d+)", line)
+            m = re.search(r"CC=(\d+)\s+in:(\d+)\s+out:(\d+)\s+total:(\d+)", line)
             if m and current_hub:
-                current_hub.update({
-                    "cc": int(m.group(1)), "in": int(m.group(2)),
-                    "out": int(m.group(3)), "total": int(m.group(4)),
-                })
+                current_hub.update(
+                    {
+                        "cc": int(m.group(1)),
+                        "in": int(m.group(2)),
+                        "out": int(m.group(3)),
+                        "total": int(m.group(4)),
+                    }
+                )
     if current_hub:
         hubs.append(current_hub)
     return hubs
@@ -708,7 +752,9 @@ def _render_call_graph(project_analysis: list) -> list[str]:
     a = L.append
     a("## Call Graph")
     a("")
-    a(f"*{data['nodes']} nodes · {data['edges']} edges · {data['modules_count']} modules · CC̄={data['cc_avg']}*")
+    a(
+        f"*{data['nodes']} nodes · {data['edges']} edges · {data['modules_count']} modules · CC̄={data['cc_avg']}*"
+    )
     a("")
 
     # Top hubs table (top 8 by total degree)
@@ -721,7 +767,9 @@ def _render_call_graph(project_analysis: list) -> list[str]:
         name = hub["name"].split(".")[-1]  # short name
         module = ".".join(hub["name"].split(".")[:-1])
         cc_flag = " ⚠" if hub.get("cc", 0) >= 10 else ""
-        a(f"| `{name}` *(in {module})* | {hub.get('cc',0)}{cc_flag} | {hub.get('in',0)} | {hub.get('out',0)} | **{hub.get('total',0)}** |")
+        a(
+            f"| `{name}` *(in {module})* | {hub.get('cc', 0)}{cc_flag} | {hub.get('in', 0)} | {hub.get('out', 0)} | **{hub.get('total', 0)}** |"
+        )
     a("")
 
     # Full embed for LLM reference under markpact tag
@@ -739,8 +787,16 @@ def _render_call_graph(project_analysis: list) -> list[str]:
 
 
 def _collect_pkg_sources(
-    pyproj: dict, reqs: list, tasks: list, makefile: list, scenarios: list,
-    openapi: dict, doql: dict, pyqual: dict, goal: dict, env_vars: list,
+    pyproj: dict,
+    reqs: list,
+    tasks: list,
+    makefile: list,
+    scenarios: list,
+    openapi: dict,
+    doql: dict,
+    pyqual: dict,
+    goal: dict,
+    env_vars: list,
 ) -> list[str]:
     """Collect source labels for code/pipeline sources."""
     sources: list[str] = []
@@ -768,8 +824,11 @@ def _collect_pkg_sources(
 
 
 def _collect_infra_sources(
-    dockerfile: dict, compose: dict, pkg_json: dict,
-    modules: list, project_analysis: list,
+    dockerfile: dict,
+    compose: dict,
+    pkg_json: dict,
+    modules: list,
+    project_analysis: list,
 ) -> list[str]:
     """Collect source labels for infra/module sources."""
     sources: list[str] = []
@@ -787,23 +846,36 @@ def _collect_infra_sources(
 
 
 def _collect_sources(
-    pyproj: dict, reqs: list, tasks: list, makefile: list, scenarios: list,
-    openapi: dict, doql: dict, pyqual: dict, goal: dict, env_vars: list,
-    dockerfile: dict, compose: dict, pkg_json: dict, modules: list,
+    pyproj: dict,
+    reqs: list,
+    tasks: list,
+    makefile: list,
+    scenarios: list,
+    openapi: dict,
+    doql: dict,
+    pyqual: dict,
+    goal: dict,
+    env_vars: list,
+    dockerfile: dict,
+    compose: dict,
+    pkg_json: dict,
+    modules: list,
     project_analysis: list,
 ) -> list[str]:
     """Build the list of source labels that contributed data to this SUMD."""
-    return (
-        _collect_pkg_sources(
-            pyproj, reqs, tasks, makefile, scenarios, openapi, doql, pyqual, goal, env_vars
-        )
-        + _collect_infra_sources(dockerfile, compose, pkg_json, modules, project_analysis)
-    )
+    return _collect_pkg_sources(
+        pyproj, reqs, tasks, makefile, scenarios, openapi, doql, pyqual, goal, env_vars
+    ) + _collect_infra_sources(dockerfile, compose, pkg_json, modules, project_analysis)
 
 
 def _render_metadata_section(
-    name: str, version: str, py_req: str, license_: str, ai_model: str,
-    openapi: dict, sources_used: list[str],
+    name: str,
+    version: str,
+    py_req: str,
+    license_: str,
+    ai_model: str,
+    openapi: dict,
+    sources_used: list[str],
 ) -> list[str]:
     L: list[str] = []
     a = L.append
@@ -865,7 +937,9 @@ def _render_goal_section(goal: dict) -> list[str]:
     if goal.get("versioning_strategy"):
         a(f"- **versioning**: `{goal['versioning_strategy']}`")
     if goal.get("commit_strategy"):
-        a(f"- **commits**: `{goal['commit_strategy']}` scope=`{goal.get('commit_scope','')}`")
+        a(
+            f"- **commits**: `{goal['commit_strategy']}` scope=`{goal.get('commit_scope', '')}`"
+        )
     if goal.get("changelog_template"):
         a(f"- **changelog**: `{goal['changelog_template']}`")
     if goal.get("strategies"):
@@ -888,7 +962,9 @@ def _inject_toc(content: str) -> str:
         toc_lines.append(f"- [{sec}](#{anchor})")
     toc_lines.append("")
     toc_block = "\n".join(toc_lines)
-    return re.sub(r"(\n## Metadata\n)", f"\n{toc_block}\n## Metadata\n", content, count=1)
+    return re.sub(
+        r"(\n## Metadata\n)", f"\n{toc_block}\n## Metadata\n", content, count=1
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -907,6 +983,7 @@ def generate_sumd_content(
     Delegates to RenderPipeline — kept for backwards compatibility.
     """
     from sumd.pipeline import RenderPipeline  # local import to avoid circular
+
     return RenderPipeline(proj_dir, raw_sources=raw_sources).run(
         profile=profile, return_sources=return_sources
     )

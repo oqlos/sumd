@@ -19,6 +19,7 @@ from typing import Protocol, runtime_checkable
 # RenderContext — single immutable bag of all extracted project data
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class RenderContext:
     """All extracted data for a project, passed to every Section.render()."""
@@ -65,6 +66,7 @@ class RenderContext:
 # ---------------------------------------------------------------------------
 # Section Protocol
 # ---------------------------------------------------------------------------
+
 
 @runtime_checkable
 class Section(Protocol):

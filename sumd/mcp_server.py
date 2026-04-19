@@ -34,6 +34,7 @@ server = Server("sumd-mcp")
 # Helper
 # ---------------------------------------------------------------------------
 
+
 def _doc_to_dict(doc) -> dict[str, Any]:
     return {
         "project_name": doc.project_name,
@@ -61,6 +62,7 @@ def _resolve_path(path: str) -> Path:
 # ---------------------------------------------------------------------------
 # Tool listing
 # ---------------------------------------------------------------------------
+
 
 @server.list_tools()
 async def list_tools() -> list[types.Tool]:
@@ -188,10 +190,16 @@ async def list_tools() -> list[types.Tool]:
 # Tool handlers
 # ---------------------------------------------------------------------------
 
+
 async def _tool_parse_sumd(arguments: dict) -> list[types.TextContent]:
     path = _resolve_path(arguments["file"])
     doc = parse_file(path)
-    return [types.TextContent(type="text", text=json.dumps(_doc_to_dict(doc), indent=2, ensure_ascii=False))]
+    return [
+        types.TextContent(
+            type="text",
+            text=json.dumps(_doc_to_dict(doc), indent=2, ensure_ascii=False),
+        )
+    ]
 
 
 async def _tool_validate_sumd(arguments: dict) -> list[types.TextContent]:
@@ -213,9 +221,11 @@ async def _tool_export_sumd(arguments: dict) -> list[types.TextContent]:
         content = doc.raw_content
     elif fmt == "yaml":
         import yaml
+
         content = yaml.dump(data, default_flow_style=False, allow_unicode=True)
     elif fmt == "toml":
         import toml
+
         content = toml.dumps(data)
     else:
         content = json.dumps(data, indent=2, ensure_ascii=False)
@@ -229,8 +239,14 @@ async def _tool_export_sumd(arguments: dict) -> list[types.TextContent]:
 async def _tool_list_sections(arguments: dict) -> list[types.TextContent]:
     path = _resolve_path(arguments["file"])
     doc = parse_file(path)
-    sections = [{"name": s.name, "type": s.type.value, "level": s.level} for s in doc.sections]
-    return [types.TextContent(type="text", text=json.dumps(sections, indent=2, ensure_ascii=False))]
+    sections = [
+        {"name": s.name, "type": s.type.value, "level": s.level} for s in doc.sections
+    ]
+    return [
+        types.TextContent(
+            type="text", text=json.dumps(sections, indent=2, ensure_ascii=False)
+        )
+    ]
 
 
 async def _tool_get_section(arguments: dict) -> list[types.TextContent]:
@@ -242,9 +258,22 @@ async def _tool_get_section(arguments: dict) -> list[types.TextContent]:
         None,
     )
     if match is None:
-        return [types.TextContent(type="text", text=f'Section "{arguments["section"]}" not found.')]
-    result = {"name": match.name, "type": match.type.value, "level": match.level, "content": match.content}
-    return [types.TextContent(type="text", text=json.dumps(result, indent=2, ensure_ascii=False))]
+        return [
+            types.TextContent(
+                type="text", text=f'Section "{arguments["section"]}" not found.'
+            )
+        ]
+    result = {
+        "name": match.name,
+        "type": match.type.value,
+        "level": match.level,
+        "content": match.content,
+    }
+    return [
+        types.TextContent(
+            type="text", text=json.dumps(result, indent=2, ensure_ascii=False)
+        )
+    ]
 
 
 async def _tool_info_sumd(arguments: dict) -> list[types.TextContent]:
@@ -256,7 +285,11 @@ async def _tool_info_sumd(arguments: dict) -> list[types.TextContent]:
         "section_count": len(doc.sections),
         "section_types": [s.type.value for s in doc.sections],
     }
-    return [types.TextContent(type="text", text=json.dumps(info, indent=2, ensure_ascii=False))]
+    return [
+        types.TextContent(
+            type="text", text=json.dumps(info, indent=2, ensure_ascii=False)
+        )
+    ]
 
 
 async def _tool_generate_sumd(arguments: dict) -> list[types.TextContent]:
@@ -279,12 +312,12 @@ async def _tool_generate_sumd(arguments: dict) -> list[types.TextContent]:
 
 
 _TOOL_HANDLERS = {
-    "parse_sumd":    _tool_parse_sumd,
+    "parse_sumd": _tool_parse_sumd,
     "validate_sumd": _tool_validate_sumd,
-    "export_sumd":   _tool_export_sumd,
+    "export_sumd": _tool_export_sumd,
     "list_sections": _tool_list_sections,
-    "get_section":   _tool_get_section,
-    "info_sumd":     _tool_info_sumd,
+    "get_section": _tool_get_section,
+    "info_sumd": _tool_info_sumd,
     "generate_sumd": _tool_generate_sumd,
 }
 
@@ -292,6 +325,7 @@ _TOOL_HANDLERS = {
 # ---------------------------------------------------------------------------
 # Tool execution
 # ---------------------------------------------------------------------------
+
 
 @server.call_tool()
 async def call_tool(name: str, arguments: dict[str, Any]) -> list[types.TextContent]:
@@ -308,6 +342,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[types.TextCont
 # Entry point
 # ---------------------------------------------------------------------------
 
+
 async def main():
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
         await server.run(
@@ -319,4 +354,5 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())

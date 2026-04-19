@@ -1,58 +1,61 @@
-# code2llm | 28f 4397L | python:27,shell:1 | 2026-04-19
+# code2llm | 29f 5024L | python:27,shell:2 | 2026-04-19
 # CC̄=4.5 | critical:1/188 | dups:0 | cycles:0
 
-HEALTH[1]:
+HEALTH[2]:
+  🔴 GOD   sumd/parser.py = 543L, 5 classes, 23m, max CC=13
   🟡 CC    _parse_calls_hubs CC=15 (limit:15)
 
-REFACTOR[1]:
-  1. split 1 high-CC methods  (CC>15)
+REFACTOR[2]:
+  1. split sumd/parser.py  (god module)
+  2. split 1 high-CC methods  (CC>15)
 
 PIPELINES[69]:
-  [1] Src [__init__]: __init__
+  [1] Src [validate]: validate → parse_file
       PURITY: 100% pure
-  [2] Src [_collect]: _collect → extract_pyproject → _read_toml
+  [2] Src [export]: export → parse_file
       PURITY: 100% pure
-  [3] Src [_build_registered_sections]: _build_registered_sections
+  [3] Src [info]: info → parse_file
       PURITY: 100% pure
-  [4] Src [_assemble]: _assemble
+  [4] Src [generate]: generate
       PURITY: 100% pure
-  [5] Src [run]: run → _inject_toc
+  [5] Src [extract]: extract → parse_file
       PURITY: 100% pure
 
 LAYERS:
   sumd/                           CC̄=4.5    ←in:14  →out:0
-  │ !! renderer                   912L  0C   46m  CC=15     ←14
-  │ !! cli                        842L  0C   29m  CC=12     ←0
-  │ !! extractor                  782L  0C   32m  CC=13     ←2
-  │ parser                     491L  5C   23m  CC=13     ←2
-  │ mcp_server                 322L  0C   12m  CC=5      ←0
-  │ pipeline                   210L  1C    6m  CC=4      ←0
-  │ toon_parser                166L  0C    8m  CC=9      ←1
-  │ base                        91L  2C    2m  CC=1      ←0
-  │ __init__                    78L  0C    0m  CC=0.0    ←0
-  │ refactor_analysis           67L  1C    2m  CC=3      ←0
-  │ metadata                    47L  1C    2m  CC=5      ←0
+  │ !! cli                       1082L  0C   29m  CC=12     ←0
+  │ !! renderer                   989L  0C   46m  CC=15     ←14
+  │ !! extractor                  861L  0C   32m  CC=13     ←2
+  │ !! parser                     543L  5C   23m  CC=13     ←2
+  │ mcp_server                 358L  0C   12m  CC=5      ←0
+  │ pipeline                   226L  1C    6m  CC=4      ←0
+  │ toon_parser                173L  0C    8m  CC=9      ←1
+  │ __init__                   100L  0C    0m  CC=0.0    ←0
+  │ base                        93L  2C    2m  CC=1      ←0
+  │ refactor_analysis           68L  1C    2m  CC=3      ←0
+  │ metadata                    51L  1C    2m  CC=5      ←0
   │ __init__                    33L  0C    0m  CC=0.0    ←0
-  │ call_graph                  26L  1C    2m  CC=2      ←0
-  │ source_snippets             25L  1C    2m  CC=1      ←0
-  │ dependencies                24L  1C    2m  CC=4      ←0
-  │ api_stubs                   24L  1C    2m  CC=1      ←0
-  │ environment                 23L  1C    2m  CC=2      ←0
-  │ deployment                  22L  1C    2m  CC=1      ←0
-  │ code_analysis               22L  1C    2m  CC=3      ←0
-  │ interfaces                  20L  1C    2m  CC=3      ←0
-  │ quality                     20L  1C    2m  CC=1      ←0
-  │ architecture                20L  1C    2m  CC=1      ←0
-  │ workflows                   20L  1C    2m  CC=2      ←0
-  │ extras                      20L  1C    2m  CC=2      ←0
-  │ configuration               20L  1C    2m  CC=1      ←0
+  │ call_graph                  27L  1C    2m  CC=2      ←0
+  │ dependencies                26L  1C    2m  CC=4      ←0
+  │ source_snippets             26L  1C    2m  CC=1      ←0
+  │ code_analysis               25L  1C    2m  CC=3      ←0
+  │ api_stubs                   25L  1C    2m  CC=1      ←0
+  │ environment                 24L  1C    2m  CC=2      ←0
+  │ interfaces                  23L  1C    2m  CC=3      ←0
+  │ deployment                  23L  1C    2m  CC=1      ←0
+  │ architecture                23L  1C    2m  CC=1      ←0
+  │ quality                     21L  1C    2m  CC=1      ←0
+  │ workflows                   21L  1C    2m  CC=2      ←0
+  │ extras                      21L  1C    2m  CC=2      ←0
+  │ configuration               21L  1C    2m  CC=1      ←0
   │ generator                   15L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
   │ project.sh                  35L  0C    0m  CC=0.0    ←0
   │
   scripts/                        CC̄=0.0    ←in:0  →out:0
-  │ generate_all_sumd           20L  0C    0m  CC=0.0    ←0
+  │ bootstrap.sh                69L  0C    0m  CC=0.0    ←0
+  │ generate_all_sumd           22L  0C    0m  CC=0.0    ←0
   │
 
 COUPLING:

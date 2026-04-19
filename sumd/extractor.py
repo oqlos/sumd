@@ -11,7 +11,6 @@ from typing import Any
 import yaml
 
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -20,9 +19,11 @@ import yaml
 def _read_toml(path: Path) -> dict:
     try:
         import tomllib
+
         return tomllib.loads(path.read_text(encoding="utf-8"))
     except ImportError:
         import toml
+
         return toml.loads(path.read_text(encoding="utf-8"))
 
 
@@ -102,13 +103,15 @@ def extract_openapi(proj_dir: Path) -> dict[str, Any]:
                 if key in seen:
                     continue
                 seen.add(key)
-                endpoints.append({
-                    "method": method.upper(),
-                    "path": path,
-                    "operationId": spec.get("operationId", ""),
-                    "summary": spec.get("summary", ""),
-                    "tags": spec.get("tags", []),
-                })
+                endpoints.append(
+                    {
+                        "method": method.upper(),
+                        "path": path,
+                        "operationId": spec.get("operationId", ""),
+                        "summary": spec.get("summary", ""),
+                        "tags": spec.get("tags", []),
+                    }
+                )
         schemas = list((data.get("components", {}) or {}).get("schemas", {}).keys())
         return {
             "title": info.get("title", ""),
@@ -126,9 +129,10 @@ def _parse_doql_entities(content: str) -> list[dict[str, Any]]:
     entities: list[dict[str, Any]] = []
     for m in re.finditer(
         r'entity\[name="([^"]+)"\](?:\s*page\[name="([^"]+)"\])?\s*\{([^}]*)\}',
-        content, re.DOTALL,
+        content,
+        re.DOTALL,
     ):
-        attrs = dict(re.findall(r'(\w[\w-]*):\s*([^;]+);', m.group(3)))
+        attrs = dict(re.findall(r"(\w[\w-]*):\s*([^;]+);", m.group(3)))
         entry: dict[str, Any] = {"name": m.group(1)}
         if m.group(2):
             entry["page"] = m.group(2)
@@ -143,9 +147,10 @@ def _parse_doql_interfaces(content: str) -> list[dict[str, Any]]:
     interfaces: list[dict[str, Any]] = []
     for m in re.finditer(
         r'interface\[([^\]]+)\](?:\s*page\[name="([^"]+)"\])?\s*\{([^}]*)\}',
-        content, re.DOTALL,
+        content,
+        re.DOTALL,
     ):
-        attrs = dict(re.findall(r'(\w[\w-]*):\s*([^;]+);', m.group(3)))
+        attrs = dict(re.findall(r"(\w[\w-]*):\s*([^;]+);", m.group(3)))
         entry: dict[str, Any] = {"selector": m.group(1).strip()}
         if m.group(2):
             entry["page"] = m.group(2)
@@ -157,16 +162,22 @@ def _parse_doql_interfaces(content: str) -> list[dict[str, Any]]:
 def _parse_doql_workflows(content: str) -> list[dict[str, Any]]:
     """Parse workflow blocks from DOQL content, deduplicated by name."""
     # _BLOCK matches content allowing {{template}} and {single} brace expressions
-    _BLOCK = r'(?:[^{}]|\{\{[^}]*\}\}|\{[^}]*\})*'
+    _BLOCK = r"(?:[^{}]|\{\{[^}]*\}\}|\{[^}]*\})*"
     workflows_map: dict[str, dict[str, Any]] = {}
-    for m in re.finditer(r'workflow\[([^\]]+)\]\s*\{(' + _BLOCK + r')\}', content, re.DOTALL):
+    for m in re.finditer(
+        r"workflow\[([^\]]+)\]\s*\{(" + _BLOCK + r")\}", content, re.DOTALL
+    ):
         name_m = re.search(r'name="([^"]+)"', m.group(1))
         wf_name = name_m.group(1) if name_m else m.group(1).strip()
         body = m.group(2)
-        raw_steps = re.findall(r'step-\d+:\s*run cmd=(' + _BLOCK + r');', body, re.DOTALL)
+        raw_steps = re.findall(
+            r"step-\d+:\s*run cmd=(" + _BLOCK + r");", body, re.DOTALL
+        )
         steps = []
         for s in raw_steps:
-            first_line = next((line.strip() for line in s.splitlines() if line.strip()), s.strip())
+            first_line = next(
+                (line.strip() for line in s.splitlines() if line.strip()), s.strip()
+            )
             steps.append(first_line)
         trigger_m = re.search(r'trigger:\s*"?([^"\s;]+)"?;', body)
         workflows_map[wf_name] = {
@@ -188,8 +199,8 @@ def _parse_doql_content(content: str) -> dict[str, Any]:
                 app_meta[m.group(1)] = m.group(2).strip()
 
     integrations: list[dict[str, Any]] = []
-    for m in re.finditer(r'integration\[([^\]]+)\]\s*\{([^}]+)\}', content, re.DOTALL):
-        attrs = dict(re.findall(r'(\w[\w-]*):\s*([^;]+);', m.group(2)))
+    for m in re.finditer(r"integration\[([^\]]+)\]\s*\{([^}]+)\}", content, re.DOTALL):
+        attrs = dict(re.findall(r"(\w[\w-]*):\s*([^;]+);", m.group(2)))
         integrations.append({"selector": m.group(1).strip(), **attrs})
 
     interfaces = _parse_doql_interfaces(content)
@@ -345,11 +356,13 @@ def extract_env(proj_dir: Path) -> list[dict[str, str]]:
                 val_part = rest
                 comment = pending_comment
             val = val_part.strip()
-            vars_.append({
-                "key": key.strip(),
-                "default": val if val else "*(not set)*",
-                "comment": comment,
-            })
+            vars_.append(
+                {
+                    "key": key.strip(),
+                    "default": val if val else "*(not set)*",
+                    "comment": comment,
+                }
+            )
             pending_comment = ""
         else:
             pending_comment = ""
@@ -415,13 +428,19 @@ def extract_docker_compose(proj_dir: Path) -> dict[str, Any]:
             ports = []
             for p in svc.get("ports", []):
                 ports.append(str(p).strip())
-            env_vars = list(svc.get("environment", {}).keys()) if isinstance(svc.get("environment"), dict) else []
-            services.append({
-                "name": svc_name,
-                "image": svc.get("image", svc.get("build", "")),
-                "ports": ports,
-                "env_vars": env_vars,
-            })
+            env_vars = (
+                list(svc.get("environment", {}).keys())
+                if isinstance(svc.get("environment"), dict)
+                else []
+            )
+            services.append(
+                {
+                    "name": svc_name,
+                    "image": svc.get("image", svc.get("build", "")),
+                    "ports": ports,
+                    "env_vars": env_vars,
+                }
+            )
         return {"file": path.name, "services": services}
     except Exception:
         return {}
@@ -434,6 +453,7 @@ def extract_package_json(proj_dir: Path) -> dict[str, Any]:
         return {}
     try:
         import json
+
         data = json.loads(pkg.read_text(encoding="utf-8"))
         return {
             "name": data.get("name", ""),
@@ -454,18 +474,50 @@ def extract_package_json(proj_dir: Path) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 _LANG_EXT: dict[str, str] = {
-    ".py": "python", ".js": "javascript", ".ts": "typescript",
-    ".sh": "shell", ".bash": "shell", ".css": "css", ".less": "less",
-    ".html": "html", ".yaml": "yaml", ".yml": "yaml", ".json": "json",
-    ".toml": "toml", ".md": "markdown", ".rs": "rust", ".go": "go",
+    ".py": "python",
+    ".js": "javascript",
+    ".ts": "typescript",
+    ".sh": "shell",
+    ".bash": "shell",
+    ".css": "css",
+    ".less": "less",
+    ".html": "html",
+    ".yaml": "yaml",
+    ".yml": "yaml",
+    ".json": "json",
+    ".toml": "toml",
+    ".md": "markdown",
+    ".rs": "rust",
+    ".go": "go",
 }
 
-_IGNORE_DIRS = {".git", ".venv", "venv", "__pycache__", ".mypy_cache",
-                "node_modules", ".tox", "dist", "build", "*.egg-info",
-                ".sumd-tools", "project", "testql-scenarios"}
+_IGNORE_DIRS = {
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".mypy_cache",
+    "node_modules",
+    ".tox",
+    "dist",
+    "build",
+    "*.egg-info",
+    ".sumd-tools",
+    "project",
+    "testql-scenarios",
+}
 
 # Files to include in M[] (source code only, not docs/config/data)
-_SOURCE_LANGS = {"python", "javascript", "typescript", "shell", "css", "less", "rust", "go"}
+_SOURCE_LANGS = {
+    "python",
+    "javascript",
+    "typescript",
+    "shell",
+    "css",
+    "less",
+    "rust",
+    "go",
+}
 
 _CC_THRESHOLD = 10  # critical CC minimum
 
@@ -488,8 +540,16 @@ def _fan_out(func_node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
 
 def _cc_estimate(func_node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
     """Rough cyclomatic-complexity estimate: 1 + decision points."""
-    decision = {ast.If, ast.For, ast.While, ast.ExceptHandler,
-                ast.With, ast.AsyncFor, ast.AsyncWith, ast.Match}
+    decision = {
+        ast.If,
+        ast.For,
+        ast.While,
+        ast.ExceptHandler,
+        ast.With,
+        ast.AsyncFor,
+        ast.AsyncWith,
+        ast.Match,
+    }
     cc = 1
     for n in ast.walk(func_node):
         if type(n) in decision:
@@ -503,6 +563,7 @@ def _try_radon_cc(src: str) -> dict[str, int]:
     """Return {func_name: cc} using radon if available, else empty."""
     try:
         from radon.complexity import cc_visit  # type: ignore
+
         return {r.name: r.complexity for r in cc_visit(src)}
     except Exception:
         return {}
@@ -568,7 +629,9 @@ def _analyse_py_module(path: Path) -> dict[str, Any]:
     }
 
 
-def _collect_map_files(proj_dir: Path) -> tuple[dict[str, int], list[tuple[Path, int, str]]]:
+def _collect_map_files(
+    proj_dir: Path,
+) -> tuple[dict[str, int], list[tuple[Path, int, str]]]:
     """Collect source files for map generation. Returns (lang_counts, modules)."""
     lang_counts: dict[str, int] = {}
     modules: list[tuple[Path, int, str]] = []  # (path, lines, lang)
@@ -596,9 +659,9 @@ def _collect_map_files(proj_dir: Path) -> tuple[dict[str, int], list[tuple[Path,
     return lang_counts, modules
 
 
-def _render_map_detail(proj_dir: Path, modules: list[tuple[Path, int, str]]) -> tuple[
-    list[tuple[Path, dict]], list[dict], list[dict], int
-]:
+def _render_map_detail(
+    proj_dir: Path, modules: list[tuple[Path, int, str]]
+) -> tuple[list[tuple[Path, dict]], list[dict], list[dict], int]:
     """Analyse Python modules for map detail section. Returns (py_modules, all_funcs, all_classes, total_cls)."""
     py_modules: list[tuple[Path, dict]] = []
     all_funcs: list[dict] = []
@@ -656,7 +719,9 @@ def generate_map_toon(proj_dir: Path) -> str:
     total_files = len(modules)
     total_lines = sum(lines for _, lines, _ in modules)
 
-    py_modules, all_funcs, all_classes, total_cls = _render_map_detail(proj_dir, modules)
+    py_modules, all_funcs, all_classes, total_cls = _render_map_detail(
+        proj_dir, modules
+    )
 
     total_func = len(all_funcs)
     total_mod = len(modules)
@@ -667,16 +732,22 @@ def generate_map_toon(proj_dir: Path) -> str:
     L: list[str] = []
     a = L.append
 
-    lang_str = ",".join(f"{lang}:{cnt}"
-                        for lang, cnt in sorted(lang_counts.items(), key=lambda x: -x[1]))
+    lang_str = ",".join(
+        f"{lang}:{cnt}"
+        for lang, cnt in sorted(lang_counts.items(), key=lambda x: -x[1])
+    )
 
     a(f"# {proj_name} | {total_files}f {total_lines}L | {lang_str} | {today}")
-    a(f"# stats: {total_func} func | {total_cls} cls | {total_mod} mod"
-      f" | CC̄={avg_cc} | critical:{critical} | cycles:0")
+    a(
+        f"# stats: {total_func} func | {total_cls} cls | {total_mod} mod"
+        f" | CC̄={avg_cc} | critical:{critical} | cycles:0"
+    )
     a(f"# alerts[5]: {alerts}")
     a(f"# hotspots[5]: {hotspots}")
     a("# evolution: baseline")
-    a("# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods")
+    a(
+        "# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods"
+    )
 
     a(f"M[{total_mod}]:")
     for rel, lines, _lang in modules:
@@ -708,18 +779,18 @@ def generate_map_toon(proj_dir: Path) -> str:
 # ---------------------------------------------------------------------------
 
 _PROJECT_ANALYSIS_FILES = [
-    ("map.toon.yaml",        "toon"),
-    ("calls.toon.yaml",      "toon"),
+    ("map.toon.yaml", "toon"),
+    ("calls.toon.yaml", "toon"),
 ]
 
 # Files loaded only for the 'refactor' profile (pre-refactoring analysis).
 # map.toon.yaml is included here too — structural overview is still relevant.
 _REFACTOR_ANALYSIS_FILES = [
-    ("map.toon.yaml",        "toon"),
-    ("calls.toon.yaml",      "toon"),
-    ("analysis.toon.yaml",   "toon"),
-    ("duplication.toon.yaml","toon"),
-    ("evolution.toon.yaml",  "toon"),
+    ("map.toon.yaml", "toon"),
+    ("calls.toon.yaml", "toon"),
+    ("analysis.toon.yaml", "toon"),
+    ("duplication.toon.yaml", "toon"),
+    ("evolution.toon.yaml", "toon"),
     ("validation.toon.yaml", "toon"),
 ]
 
@@ -741,21 +812,27 @@ def extract_source_snippets(proj_dir: Path, pkg_name: str) -> list[dict]:
         if not analysis["funcs"] and not analysis["classes"]:
             continue
         rel = py_file.relative_to(proj_dir)
-        results.append({
-            "module": f"{pkg_name}.{py_file.stem}",
-            "path": str(rel),
-            "funcs": analysis["funcs"],
-            "classes": analysis["classes"],
-        })
+        results.append(
+            {
+                "module": f"{pkg_name}.{py_file.stem}",
+                "path": str(rel),
+                "funcs": analysis["funcs"],
+                "classes": analysis["classes"],
+            }
+        )
+
     # Sort by density: total public symbols (functions + all class methods)
     def _density(entry: dict) -> int:
         method_count = sum(len(c["methods"]) for c in entry["classes"])
         return len(entry["funcs"]) + method_count
+
     results.sort(key=_density, reverse=True)
     return results
 
 
-def extract_project_analysis(proj_dir: Path, refactor: bool = False) -> list[dict[str, str]]:
+def extract_project_analysis(
+    proj_dir: Path, refactor: bool = False
+) -> list[dict[str, str]]:
     """Return list of {file, lang, content} for files present in project/ subdir.
 
     Args:
@@ -774,9 +851,11 @@ def extract_project_analysis(proj_dir: Path, refactor: bool = False) -> list[dic
         seen.add(filename)
         fpath = project_dir / filename
         if fpath.exists():
-            results.append({
-                "file": f"project/{filename}",
-                "lang": lang,
-                "content": fpath.read_text(encoding="utf-8").rstrip(),
-            })
+            results.append(
+                {
+                    "file": f"project/{filename}",
+                    "lang": lang,
+                    "content": fpath.read_text(encoding="utf-8").rstrip(),
+                }
+            )
     return results

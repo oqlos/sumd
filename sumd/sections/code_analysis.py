@@ -1,4 +1,5 @@
 """sumd.sections.code_analysis — CodeAnalysisSection."""
+
 from __future__ import annotations
 
 from sumd.renderer import _render_code_analysis
@@ -12,7 +13,9 @@ class CodeAnalysisSection:
 
     def should_render(self, ctx: RenderContext) -> bool:
         # Skip if ALL entries are calls.toon (handled by CallGraphSection)
-        non_calls = [e for e in ctx.project_analysis if "calls.toon" not in e.get("file", "")]
+        non_calls = [
+            e for e in ctx.project_analysis if "calls.toon" not in e.get("file", "")
+        ]
         return bool(non_calls)
 
     def render(self, ctx: RenderContext) -> list[str]:

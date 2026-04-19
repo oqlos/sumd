@@ -35,13 +35,17 @@ class MetadataSection:
             a(f"- **ai_model**: `{ctx.ai_model}`")
         a("- **ecosystem**: SUMD + DOQL + testql + taskfile")
         if ctx.openapi.get("title"):
-            a(f"- **openapi_title**: {ctx.openapi['title']} v{ctx.openapi.get('version', '')}")
+            a(
+                f"- **openapi_title**: {ctx.openapi['title']} v{ctx.openapi.get('version', '')}"
+            )
         a(f"- **generated_from**: {', '.join(ctx.sources_used)}")
         a("")
         return L
 
 
 # Verify the class satisfies the Section protocol at import time
-assert isinstance(MetadataSection(), Section), "MetadataSection does not satisfy Section protocol"
+assert isinstance(MetadataSection(), Section), (
+    "MetadataSection does not satisfy Section protocol"
+)
 
 __all__ = ["MetadataSection"]

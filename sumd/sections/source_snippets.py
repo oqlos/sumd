@@ -4,6 +4,7 @@ Renders top-N modules with function/class signatures for LLM orientation.
 Gives the model a structural map of the codebase without requiring it
 to read full source files.
 """
+
 from __future__ import annotations
 
 from sumd.renderer import _render_source_snippets

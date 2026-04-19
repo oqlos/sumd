@@ -30,7 +30,8 @@ def _parse_toon_block_api(content: str) -> list[dict[str, Any]]:
     api_rows = re.findall(
         r"^\s+(GET|POST|PUT|DELETE|PATCH),\s+(/[^\s,]+),\s+(\d+)"
         r"(?:\s+#\s*(\S+)\s+-\s*(.+)|\s+#\s*(.+))?",
-        content, re.MULTILINE,
+        content,
+        re.MULTILINE,
     )
     endpoints: list[dict[str, Any]] = []
     for method, path, status, op_id, summary_a, summary_b in api_rows:
@@ -56,7 +57,13 @@ def _parse_toon_block_assert(lines: list[str]) -> list[dict[str, str]]:
             if re.match(r"^[A-Z_]+\[\d+\]", line) or line.startswith("#"):
                 in_block = False
             elif m := re.match(r"^\s{2}([a-z_]+),\s*([<>=!]+),\s*(.+)$", line):
-                rows.append({"field": m.group(1), "op": m.group(2), "expected": m.group(3).strip()})
+                rows.append(
+                    {
+                        "field": m.group(1),
+                        "op": m.group(2),
+                        "expected": m.group(3).strip(),
+                    }
+                )
     return rows
 
 
