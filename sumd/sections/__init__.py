@@ -94,6 +94,7 @@ PROFILES: dict[str, set[str]] = {
         "dependencies",
         "source_snippets",
         "refactor_analysis",
+        "test_contracts",
     },
 }
 
