@@ -223,29 +223,32 @@ _SKIP_DIRS = {
 }
 
 
+def _walk_projects(
+    path: Path, projects: list[Path], max_depth: int | None, depth: int
+) -> None:
+    """Recursively collect project directories (containing pyproject.toml)."""
+    if max_depth is not None and depth > max_depth:
+        return
+    try:
+        entries = sorted(path.iterdir(), key=lambda p: p.name)
+    except PermissionError:
+        return
+    for d in entries:
+        if not d.is_dir() or d.name.startswith(".") or d.name in _SKIP_DIRS:
+            continue
+        try:
+            if (d / "pyproject.toml").exists():
+                projects.append(d)
+            else:
+                _walk_projects(d, projects, max_depth, depth + 1)
+        except PermissionError:
+            continue
+
+
 def _detect_projects(workspace: Path, max_depth: int | None = None) -> list[Path]:
     """Return sorted list of subdirectories containing pyproject.toml (recursive)."""
     projects: list[Path] = []
-
-    def _walk(path: Path, depth: int) -> None:
-        if max_depth is not None and depth > max_depth:
-            return
-        try:
-            entries = sorted(path.iterdir(), key=lambda p: p.name)
-        except PermissionError:
-            return
-        for d in entries:
-            if not d.is_dir() or d.name.startswith(".") or d.name in _SKIP_DIRS:
-                continue
-            try:
-                if (d / "pyproject.toml").exists():
-                    projects.append(d)
-                else:
-                    _walk(d, depth + 1)
-            except PermissionError:
-                continue
-
-    _walk(workspace, 0)
+    _walk_projects(workspace, projects, max_depth, 0)
     return projects
 
 
@@ -356,6 +359,14 @@ def _render_write_validate(
     return doc, md_issues, cb_errors, cb_warnings, sources
 
 
+def _echo_scan_result(proj_dir: Path, doc, sources: list, cb_warnings: list) -> None:
+    """Print success line for a scanned project."""
+    warn_str = f" \u26a0 {len(cb_warnings)} warnings" if cb_warnings else ""
+    click.echo(
+        f"  \u2705 {proj_dir.name:<18} {'ok':<10} {len(doc.sections):<10} {', '.join(sources)}{warn_str}"
+    )
+
+
 def _scan_one_project(
     proj_dir: Path,
     fix: bool,
@@ -391,10 +402,7 @@ def _scan_one_project(
                 click.echo(f"       \u2193 {e}")
             return {"status": "INVALID", "errors": all_errors, "path": str(sumd_path)}
 
-        warn_str = f" \u26a0 {len(cb_warnings)} warnings" if cb_warnings else ""
-        click.echo(
-            f"  \u2705 {proj_dir.name:<18} {'ok':<10} {len(doc.sections):<10} {', '.join(sources)}{warn_str}"
-        )
+        _echo_scan_result(proj_dir, doc, sources, cb_warnings)
 
         if export_json:
             _export_sumd_json(proj_dir, doc)
