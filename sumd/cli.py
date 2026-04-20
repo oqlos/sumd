@@ -481,7 +481,9 @@ def _scan_one_project(
 
         # Generate doql.{project_name}.less if requested and doesn't exist
         if generate_doql:
-            doql_path = _generate_doql_less(proj_dir, doc.project_name, doc.version)
+            pyproj = extract_pyproject(proj_dir)
+            version = pyproj.get("version", "0.1.0")
+            doql_path = _generate_doql_less(proj_dir, doc.project_name, version)
             if doql_path:
                 click.echo(f"   📝 Generated {doql_path.name}")
 
