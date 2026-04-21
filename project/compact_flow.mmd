@@ -1,16 +1,18 @@
 flowchart TD
-    sumd__cli["sumd.cli<br/>29 funcs"]
-    sumd__extractor["sumd.extractor<br/>33 funcs"]
+    SUMD["SUMD<br/>188 funcs"]
+    SUMR["SUMR<br/>138 funcs"]
+    examples__llm["examples.llm<br/>5 funcs"]
+    examples__mcp["examples.mcp<br/>2 funcs"]
+    project__map["project.map<br/>214 funcs"]
+    sumd__cli["sumd.cli<br/>35 funcs"]
     sumd__mcp_server["sumd.mcp_server<br/>12 funcs"]
-    sumd__parser["sumd.parser<br/>23 funcs"]
-    sumd__pipeline["sumd.pipeline<br/>8 funcs"]
-    sumd__renderer["sumd.renderer<br/>46 funcs"]
+    sumd__pipeline["sumd.pipeline<br/>10 funcs"]
     sumd__sections["sumd.sections<br/>32 funcs"]
-    sumd__toon_parser["sumd.toon_parser<br/>8 funcs"]
-    sumd__pipeline ==>|18| sumd__extractor
-    sumd__sections ==>|14| sumd__renderer
-    sumd__cli ==>|8| sumd__parser
-    sumd__mcp_server ==>|7| sumd__parser
-    sumd__pipeline -->|2| sumd__renderer
-    sumd__cli -->|1| sumd__extractor
-    sumd__pipeline -->|1| sumd__toon_parser
+    examples__mcp ==>|31| project__map
+    sumd__pipeline ==>|20| SUMR
+    sumd__sections ==>|14| SUMR
+    examples__llm ==>|11| project__map
+    sumd__cli ==>|9| SUMR
+    sumd__mcp_server ==>|6| SUMR
+    sumd__pipeline -->|3| SUMD
+    examples__llm -->|2| SUMR

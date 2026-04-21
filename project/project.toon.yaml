@@ -1,57 +1,57 @@
-# sumd | 191 func | 23f | 6198L | python | 2026-04-19
+# sumd | 769 func | 33f | 20005L | python | 2026-04-21
 
 HEALTH:
-  CC̄=4.6  critical=21 (limit:10)  dup=1  cycles=0
+  CC̄=1.2  critical=10 (limit:10)  dup=5  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     RenderPipeline._collect = 22 (limit:10)
   !!  high_fan_out     scaffold = 19 (limit:10)
+  !!  high_fan_out     scan = 18 (limit:10)
   !!  high_fan_out     generate = 17 (limit:10)
-  !!  high_fan_out     scan = 17 (limit:10)
   !!  high_fan_out     analyze = 17 (limit:10)
-  !!  high_fan_out     extract_openapi = 16 (limit:10)
+  !!  high_fan_out     _scan_one_project = 16 (limit:10)
   !!  high_fan_out     _parse_doql_content = 15 (limit:10)
   !!  high_fan_out     extract_docker_compose = 15 (limit:10)
-  !   cc_exceeded      _run_analysis_tools = 15 (limit:15)
-  !   cc_exceeded      _parse_calls_hubs = 15 (limit:15)
+  !   cc_exceeded      _scan_one_project = 18 (limit:15)
+  !   high_fan_out     _parse_doql_workflows = 14 (limit:10)
 
-MODULES[28] (top by size):
-  M[sumd/cli.py] 1090L C:0 F:29 CC↑15 D:0 (python)
-  M[sumd/renderer.py] 989L C:0 F:46 CC↑15 D:14 (python)
-  M[sumd/extractor.py] 886L C:0 F:33 CC↑13 D:2 (python)
-  M[sumd/parser.py] 543L C:5 F:23 CC↑13 D:2 (python)
+MODULES[90] (top by size):
+  M[project/calls.yaml] 2466L C:0 F:0 CC↑0 D:0 (yaml)
+  M[SUMD.md] 1294L C:5 F:188 CC↑0 D:1 (md)
+  M[SUMR.md] 1235L C:5 F:138 CC↑0 D:18 (md)
+  M[sumd/cli.py] 1214L C:0 F:35 CC↑18 D:0 (python)
+  M[project/map.toon.yaml] 1117L C:0 F:214 CC↑0 D:3 (yaml)
+  M[sumd/renderer.py] 1036L C:0 F:54 CC↑11 D:0 (python)
+  M[sumd/extractor.py] 908L C:0 F:39 CC↑12 D:0 (python)
+  M[docs/README.md] 596L C:0 F:1 CC↑0 D:0 (md)
+  M[CHANGELOG.md] 570L C:0 F:0 CC↑0 D:0 (md)
+  M[project/context.md] 557L C:0 F:0 CC↑0 D:0 (md)
+  M[sumd/parser.py] 548L C:5 F:24 CC↑9 D:0 (python)
+  M[goal.yaml] 511L C:0 F:0 CC↑0 D:0 (yaml)
+  M[docs/USAGE.md] 486L C:0 F:1 CC↑0 D:0 (md)
+  M[SPEC.md] 423L C:0 F:0 CC↑0 D:0 (md)
   M[sumd/mcp_server.py] 358L C:0 F:12 CC↑5 D:0 (python)
-  M[sumd/pipeline.py] 318L C:1 F:8 CC↑11 D:0 (python)
-  M[sumd/toon_parser.py] 173L C:0 F:8 CC↑9 D:1 (python)
-  M[sumd/sections/__init__.py] 100L C:0 F:0 CC↑0 D:0 (python)
-  M[sumd/sections/base.py] 93L C:2 F:2 CC↑1 D:0 (python)
-  M[scripts/bootstrap.sh] 69L C:0 F:0 CC↑0 D:0 (shell)
-  M[sumd/sections/refactor_analysis.py] 68L C:1 F:2 CC↑3 D:0 (python)
-  M[sumd/sections/metadata.py] 51L C:1 F:2 CC↑5 D:0 (python)
-  M[project.sh] 35L C:0 F:0 CC↑0 D:0 (shell)
-  M[sumd/__init__.py] 33L C:0 F:0 CC↑0 D:0 (python)
-  M[sumd/sections/call_graph.py] 27L C:1 F:2 CC↑2 D:0 (python)
-  LANGS: python:26/shell:2
+  LANGS: python:29/yaml:19/md:19/json:7/yml:6/shell:5/toml:2/other:2/txt:1
 
 HOTSPOTS[10]:
   ★ RenderPipeline._collect fan=22  // Extract all project data and build RenderContext.
   ★ scaffold fan=19  // Generate testql scenario scaffolds from OpenAPI spec or SUMD.md.
 
 Reads openapi.
+  ★ scan fan=18  // Scan a workspace directory and generate SUMD.md for every project found.
+
+Detect
   ★ generate fan=17  // Generate a SUMD document from structured format.
 
 FILE: Path to the structured f
-  ★ scan fan=17  // Scan a workspace directory and generate SUMD.md for every project found.
-
-Detect
   ★ analyze fan=17  // Analysis pipeline, 17 stages
 
-REFACTOR[9]:
-  [1] H/H Split god module sumd/cli.py (1090L, 0 classes)
-  [2] H/H Split god module sumd/renderer.py (989L, 0 classes)
-  [3] H/H Split god module sumd/extractor.py (886L, 0 classes)
-  [4] H/H Split god module sumd/parser.py (543L, 5 classes)
-  [5] M/L Split _run_analysis_tools (CC=15)
+REFACTOR[15]:
+  [1] H/H Split god module sumd/cli.py (1214L, 0 classes)
+  [2] H/H Split god module sumd/extractor.py (908L, 0 classes)
+  [3] H/H Split god module sumd/renderer.py (1036L, 0 classes)
+  [4] H/H Split god module sumd/parser.py (548L, 5 classes)
+  [5] H/H Split god module CHANGELOG.md (570L, 0 classes)
 
 EVOLUTION:
-  2026-04-19 CC̄=4.6 crit=21 6198L // Automated analysis
+  2026-04-21 CC̄=1.2 crit=10 20005L // Automated analysis

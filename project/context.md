@@ -4,29 +4,43 @@
 
 - **Project**: /home/tom/github/oqlos/sumd
 - **Primary Language**: python
-- **Languages**: python: 29, shell: 5
+- **Languages**: python: 29, md: 19, yaml: 19, json: 7, yml: 6
 - **Analysis Mode**: static
-- **Total Functions**: 198
-- **Total Classes**: 23
-- **Modules**: 34
-- **Entry Points**: 80
+- **Total Functions**: 769
+- **Total Classes**: 33
+- **Modules**: 90
+- **Entry Points**: 627
 
 ## Architecture by Module
 
+### project.map.toon
+- **Functions**: 861
+- **File**: `map.toon.yaml`
+
+### SUMD
+- **Functions**: 336
+- **Classes**: 5
+- **File**: `SUMD.md`
+
+### SUMR
+- **Functions**: 143
+- **Classes**: 5
+- **File**: `SUMR.md`
+
 ### sumd.renderer
-- **Functions**: 46
+- **Functions**: 54
 - **File**: `renderer.py`
 
 ### sumd.extractor
-- **Functions**: 33
+- **Functions**: 39
 - **File**: `extractor.py`
 
 ### sumd.cli
-- **Functions**: 29
+- **Functions**: 35
 - **File**: `cli.py`
 
 ### sumd.parser
-- **Functions**: 23
+- **Functions**: 24
 - **Classes**: 5
 - **File**: `parser.py`
 
@@ -34,14 +48,22 @@
 - **Functions**: 12
 - **File**: `mcp_server.py`
 
+### sumd.pipeline
+- **Functions**: 10
+- **Classes**: 1
+- **File**: `pipeline.py`
+
 ### sumd.toon_parser
 - **Functions**: 8
 - **File**: `toon_parser.py`
 
-### sumd.pipeline
-- **Functions**: 8
-- **Classes**: 1
-- **File**: `pipeline.py`
+### docs.USAGE
+- **Functions**: 6
+- **File**: `USAGE.md`
+
+### TODO
+- **Functions**: 5
+- **File**: `TODO.md`
 
 ### examples.llm.openai_example
 - **Functions**: 3
@@ -55,55 +77,30 @@
 - **Functions**: 2
 - **File**: `mcp_client.py`
 
+### sumd.sections.base
+- **Functions**: 2
+- **Classes**: 2
+- **File**: `base.py`
+
 ### sumd.sections.interfaces
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `interfaces.py`
-
-### sumd.sections.quality
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `quality.py`
 
 ### sumd.sections.refactor_analysis
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `refactor_analysis.py`
 
+### sumd.sections.quality
+- **Functions**: 2
+- **Classes**: 1
+- **File**: `quality.py`
+
 ### sumd.sections.deployment
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `deployment.py`
-
-### sumd.sections.code_analysis
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `code_analysis.py`
-
-### sumd.sections.metadata
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `metadata.py`
-
-### sumd.sections.dependencies
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `dependencies.py`
-
-### sumd.sections.call_graph
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `call_graph.py`
-
-### sumd.sections.architecture
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `architecture.py`
-
-### sumd.sections.source_snippets
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `source_snippets.py`
 
 ## Key Entry Points
 
@@ -139,18 +136,34 @@ FILE: Path to the structured format file (json/yaml/toml)
 
 ### sumd.pipeline.RenderPipeline._collect
 > Extract all project data and build RenderContext.
-- **Calls**: sumd.extractor.extract_pyproject, sumd.extractor.extract_taskfile, sumd.toon_parser.extract_testql_scenarios, sumd.extractor.extract_openapi, sumd.extractor.extract_doql, sumd.extractor.extract_pyqual, sumd.extractor.extract_python_modules, sumd.extractor.extract_readme_title
+- **Calls**: SUMR.extract_pyproject, SUMR.extract_taskfile, SUMD.extract_testql_scenarios, SUMR.extract_openapi, SUMR.extract_doql, SUMR.extract_pyqual, SUMR.extract_python_modules, SUMR.extract_readme_title
 
-### sumd.renderer._render_test_contracts
-> Render test scenarios as contract signatures — endpoint + key assertions.
-- **Calls**: a, a, a, a, sorted, sc.get, None.append, by_type.items
+### sumd.renderer._render_call_graph
+> Render call graph summary from calls.toon.yaml in project_analysis.
+- **Calls**: next, sumd.renderer._parse_calls_toon, a, a, a, a, a, a
+
+### sumd.renderer._render_api_stubs
+> Render OpenAPI endpoints as Python-like typed stubs for LLM orientation.
+- **Calls**: openapi.get, openapi.get, a, a, openapi.get, openapi.get, a, by_tag.items
+
+### sumd.extractor.extract_goal
+> Parse goal.yaml — versioning strategy, git conventions, build strategies.
+- **Calls**: goal_path.exists, yaml.safe_load, data.get, data.get, data.get, data.get, data.get, goal_path.read_text
+
+### sumd.extractor.generate_map_toon
+> Generate project/map.toon.yaml content for proj_dir.
+- **Calls**: proj_dir.resolve, None.isoformat, sumd.extractor._collect_map_files, len, sum, sumd.extractor._render_map_detail, len, len
+
+### sumd.extractor.extract_docker_compose
+> Parse docker-compose*.yml — services with images, ports, environment.
+- **Calls**: sorted, yaml.safe_load, services_raw.items, list, list, path.read_text, data.get, svc.get
 
 ### sumd.cli.map_cmd
 > Generate project/map.toon.yaml — static code map in toon format.
 
 Analyses all source files in the project and produces a map.toon.yaml
 with module in
-- **Calls**: cli.command, click.argument, click.option, click.option, click.option, project.resolve, click.echo, sumd.extractor.generate_map_toon
+- **Calls**: cli.command, click.argument, click.option, click.option, click.option, project.resolve, click.echo, SUMR.generate_map_toon
 
 ### sumd.cli.lint
 > Validate SUMD.md files — check markdown structure and codeblock formats.
@@ -159,27 +172,35 @@ Validates:
   - Markdown structure (H1, required H2 sections, metadata fields
 - **Calls**: cli.command, click.argument, click.option, click.option, sumd.cli._lint_collect_paths, sys.exit, click.echo, sys.exit
 
+### sumd.extractor.extract_pyproject
+- **Calls**: toml_path.exists, sumd.extractor._read_toml, data.get, project.get, optional.get, None.get, project.get, project.get
+
+### sumd.renderer._render_goal_section
+- **Calls**: a, a, goal.get, goal.get, goal.get, goal.get, goal.get, a
+
 ### sumd.cli.export
 > Export a SUMD document to structured format.
 
 FILE: Path to the SUMD markdown file
-- **Calls**: cli.command, click.argument, click.option, click.option, sumd.parser.SUMDParser.parse_file, click.Path, click.Choice, click.Path
+- **Calls**: cli.command, click.argument, click.option, click.option, SUMR.parse_file, click.Path, click.Choice, click.Path
+
+### sumd.renderer._render_source_snippets
+> Render top-N modules with function/class signatures for LLM orientation.
+- **Calls**: a, a, a, a, a, a, a, a
 
 ### examples.llm.openai_example.main
-- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, print, print
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, project.map.toon.print, project.map.toon.print
+
+### sumd.extractor.extract_package_json
+> Parse package.json — name, version, scripts, dependencies.
+- **Calls**: pkg.exists, json.loads, pkg.read_text, data.get, data.get, data.get, data.get, data.get
+
+### sumd.renderer._render_code_analysis
+> Render Code Analysis section, optionally skipping files handled by other sections.
+- **Calls**: a, a, set, a, a, a, a, any
 
 ### examples.llm.anthropic_example.main
-- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, print, print
-
-### sumd.pipeline.RenderPipeline._assemble
-> Assemble all section lines into final markdown.
-- **Calls**: a, a, a, self._build_registered_sections, a, a, a, a
-
-### sumd.renderer._render_metadata_section
-- **Calls**: a, a, a, a, a, openapi.get, a, a
-
-### sumd.sections.metadata.MetadataSection.render
-- **Calls**: a, a, a, a, a, ctx.openapi.get, a, a
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, project.map.toon.print, project.map.toon.print
 
 ### sumd.parser.SUMDParser._parse_header
 > Parse the project header (H1).
@@ -188,65 +209,41 @@ Args:
     lines: List of document lines
 - **Calls**: enumerate, line.startswith, None.strip, header_content.split, None.strip, line.startswith, len, None.strip
 
+### sumd.renderer._render_test_contracts
+> Render test scenarios as contract signatures — endpoint + key assertions.
+- **Calls**: a, a, a, a, sorted, sc.get, None.append, by_type.items
+
+### sumd.renderer._render_metadata_section
+- **Calls**: a, a, a, a, a, openapi.get, a, a
+
+### sumd.pipeline.RenderPipeline._assemble
+> Assemble all section lines into final markdown.
+- **Calls**: a, a, a, self._build_registered_sections, a, a, a, a
+
+### sumd.sections.metadata.MetadataSection.render
+- **Calls**: a, a, a, a, a, ctx.openapi.get, a, a
+
 ### sumd.cli.validate
 > Validate a SUMD document.
 
 FILE: Path to the SUMD markdown file
-- **Calls**: cli.command, click.argument, sumd.parser.SUMDParser.parse_file, SUMDParser, parser.validate, click.Path, click.echo, sys.exit
+- **Calls**: cli.command, click.argument, SUMR.parse_file, SUMDParser, parser.validate, click.Path, click.echo, sys.exit
 
 ### sumd.cli.extract
 > Extract content from a SUMD document.
 
 FILE: Path to the SUMD markdown file
-- **Calls**: cli.command, click.argument, click.option, sumd.parser.SUMDParser.parse_file, click.Path, click.echo, sys.exit, click.echo
+- **Calls**: cli.command, click.argument, click.option, SUMR.parse_file, click.Path, click.echo, sys.exit, click.echo
+
+### sumd.extractor.extract_openapi
+- **Calls**: openapi_path.exists, yaml.safe_load, data.get, list, openapi_path.read_text, data.get, None.keys, info.get
+
+### sumd.extractor.extract_env
+> Parse .env.example — return list of {key, default, comment}.
+- **Calls**: None.splitlines, env_path.exists, line.strip, line_stripped.startswith, env_path.read_text, None.strip, line_stripped.partition, val_part.strip
 
 ### examples.mcp.mcp_client.main
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, asyncio.run, sumd_path.exists
-
-### sumd.mcp_server._tool_export_sumd
-- **Calls**: sumd.mcp_server._resolve_path, arguments.get, arguments.get, sumd.parser.SUMDParser.parse_file, sumd.mcp_server._doc_to_dict, sumd.mcp_server._resolve_path, out.write_text, types.TextContent
-
-### sumd.parser.SUMDParser._parse_sections
-> Parse all sections in the document.
-
-Args:
-    lines: List of document lines
-- **Calls**: line.startswith, None.strip, sections.append, None.lower, self.SECTION_MAPPING.get, Section, None.strip, sections.append
-
-### sumd.cli.info
-> Display information about a SUMD document.
-
-FILE: Path to the SUMD markdown file
-- **Calls**: cli.command, click.argument, sumd.parser.SUMDParser.parse_file, click.echo, click.echo, click.echo, click.Path, click.echo
-
-### sumd.mcp_server._tool_generate_sumd
-- **Calls**: arguments.get, data.get, data.get, None.join, section.get, sumd.mcp_server._resolve_path, out.write_text, types.TextContent
-
-### sumd.sections.refactor_analysis.RefactorAnalysisSection.render
-- **Calls**: a, a, a, a, None.replace, a, a, a
-
-### sumd.mcp_server.list_tools
-- **Calls**: server.list_tools, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool
-
-### sumd.mcp_server._tool_get_section
-- **Calls**: sumd.mcp_server._resolve_path, None.lower, sumd.parser.SUMDParser.parse_file, next, types.TextContent, types.TextContent, json.dumps, s.name.lower
-
-### sumd.mcp_server._tool_validate_sumd
-- **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, SUMDParser, parser.validate, json.dumps, types.TextContent, len
-
-### sumd.pipeline.RenderPipeline._build_registered_sections
-> Run all registered Section classes that match the profile.
-- **Calls**: PROFILES.get, set, cls, rendered.append, section.should_render, section.render
-
-### sumd.parser._validate_deps_body
-> Each line of a deps block should be a valid pip requirement or empty.
-- **Calls**: enumerate, body.splitlines, line.strip, line.startswith, re.match, issues.append
-
-### sumd.mcp_server._tool_parse_sumd
-- **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps, sumd.mcp_server._doc_to_dict
-
-### sumd.mcp_server._tool_info_sumd
-- **Calls**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, len, types.TextContent, json.dumps
 
 ## Process Flows
 
@@ -276,39 +273,47 @@ generate [sumd.cli]
 ```
 _collect [sumd.pipeline.RenderPipeline]
   └─ →> extract_pyproject
-      └─> _read_toml
   └─ →> extract_taskfile
   └─ →> extract_testql_scenarios
 ```
 
-### Flow 6: _render_test_contracts
+### Flow 6: _render_call_graph
 ```
-_render_test_contracts [sumd.renderer]
-```
-
-### Flow 7: map_cmd
-```
-map_cmd [sumd.cli]
-```
-
-### Flow 8: lint
-```
-lint [sumd.cli]
-  └─> _lint_collect_paths
+_render_call_graph [sumd.renderer]
+  └─> _parse_calls_toon
+      └─> _parse_calls_header
+      └─> _parse_calls_hubs
+          └─> _process_in_hubs_line
 ```
 
-### Flow 9: export
+### Flow 7: _render_api_stubs
 ```
-export [sumd.cli]
-  └─ →> parse_file
+_render_api_stubs [sumd.renderer]
 ```
 
-### Flow 10: main
+### Flow 8: extract_goal
 ```
-main [examples.llm.openai_example]
+extract_goal [sumd.extractor]
+```
+
+### Flow 9: generate_map_toon
+```
+generate_map_toon [sumd.extractor]
+  └─> _collect_map_files
+      └─> _lang_of
+```
+
+### Flow 10: extract_docker_compose
+```
+extract_docker_compose [sumd.extractor]
 ```
 
 ## Key Classes
+
+### sumd.parser.SUMDParser
+> Parser for SUMD markdown documents.
+- **Methods**: 6
+- **Key Methods**: sumd.parser.SUMDParser.__init__, sumd.parser.SUMDParser.parse, sumd.parser.SUMDParser.parse_file, sumd.parser.SUMDParser._parse_header, sumd.parser.SUMDParser._parse_sections, sumd.parser.SUMDParser.validate
 
 ### sumd.pipeline.RenderPipeline
 > Collect project data → build sections → render → inject TOC.
@@ -318,22 +323,26 @@ Usage:
 - **Methods**: 6
 - **Key Methods**: sumd.pipeline.RenderPipeline.__init__, sumd.pipeline.RenderPipeline._collect, sumd.pipeline.RenderPipeline._build_registered_sections, sumd.pipeline.RenderPipeline._render_legacy_sections, sumd.pipeline.RenderPipeline._assemble, sumd.pipeline.RenderPipeline.run
 
-### sumd.parser.SUMDParser
-> Parser for SUMD markdown documents.
-- **Methods**: 6
-- **Key Methods**: sumd.parser.SUMDParser.__init__, sumd.parser.SUMDParser.parse, sumd.parser.SUMDParser.parse_file, sumd.parser.SUMDParser._parse_header, sumd.parser.SUMDParser._parse_sections, sumd.parser.SUMDParser.validate
+### sumd.sections.base.Section
+> Protocol for all SUMD section renderers.
+
+Attributes:
+    name:     unique identifier used in PROFIL
+- **Methods**: 2
+- **Key Methods**: sumd.sections.base.Section.should_render, sumd.sections.base.Section.render
+- **Inherits**: Protocol
 
 ### sumd.sections.interfaces.InterfacesSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.interfaces.InterfacesSection.should_render, sumd.sections.interfaces.InterfacesSection.render
 
-### sumd.sections.quality.QualitySection
-- **Methods**: 2
-- **Key Methods**: sumd.sections.quality.QualitySection.should_render, sumd.sections.quality.QualitySection.render
-
 ### sumd.sections.refactor_analysis.RefactorAnalysisSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.refactor_analysis.RefactorAnalysisSection.should_render, sumd.sections.refactor_analysis.RefactorAnalysisSection.render
+
+### sumd.sections.quality.QualitySection
+- **Methods**: 2
+- **Key Methods**: sumd.sections.quality.QualitySection.should_render, sumd.sections.quality.QualitySection.render
 
 ### sumd.sections.deployment.DeploymentSection
 - **Methods**: 2
@@ -384,169 +393,98 @@ Usage:
 - **Methods**: 2
 - **Key Methods**: sumd.sections.configuration.ConfigurationSection.should_render, sumd.sections.configuration.ConfigurationSection.render
 
-### sumd.sections.base.Section
-> Protocol for all SUMD section renderers.
-
-Attributes:
-    name:     unique identifier used in PROFIL
-- **Methods**: 2
-- **Key Methods**: sumd.sections.base.Section.should_render, sumd.sections.base.Section.render
-- **Inherits**: Protocol
-
-### sumd.parser.SectionType
-> SUMD section types.
+### SUMR.SectionType
 - **Methods**: 0
-- **Inherits**: Enum
 
-### sumd.parser.Section
-> Represents a SUMD section.
+### SUMR.Section
 - **Methods**: 0
 
 ## Data Transformation Functions
 
 Key functions that process and transform data:
 
-### sumd.toon_parser._parse_toon_block_config
-> Extract CONFIG key-value pairs from toon file lines.
-- **Output to**: re.match, re.match, line.startswith, re.match, m.group
+### SUMR._render_architecture_doql_parsed
 
-### sumd.toon_parser._parse_toon_block_api
-> Extract API endpoint rows from toon content.
-- **Output to**: re.findall, None.strip, endpoints.append, int
+### SUMR._render_quality_parsed
 
-### sumd.toon_parser._parse_toon_block_assert
-> Extract ASSERT rows from toon file lines.
-- **Output to**: re.match, re.match, line.startswith, re.match, rows.append
+### SUMR._parse_calls_header
 
-### sumd.toon_parser._parse_toon_block_performance
-> Extract PERFORMANCE rows from toon file lines.
-- **Output to**: re.match, re.match, line.startswith, re.match, rows.append
+### SUMR._parse_calls_hubs
 
-### sumd.toon_parser._parse_toon_block_navigate
-> Extract NAVIGATE url rows from toon file lines.
-- **Output to**: re.match, re.match, line.startswith, line.strip, urls.append
+### SUMR._parse_calls_toon
 
-### sumd.toon_parser._parse_toon_block_gui
-> Extract GUI action rows from toon file lines.
-- **Output to**: re.match, re.match, line.startswith, re.match, actions.append
+### SUMR._parse_doql_entities
 
-### sumd.toon_parser._parse_toon_file
-> Parse a single *.testql.toon.yaml file into a scenario dict.
-- **Output to**: f.read_text, content.splitlines, re.search, str, _match
+### SUMR._parse_doql_interfaces
 
-### sumd.extractor._parse_doql_entities
-> Parse entity blocks from DOQL content.
-- **Output to**: re.finditer, dict, m.group, entities.append, re.findall
+### SUMR._parse_doql_workflows
 
-### sumd.extractor._parse_doql_interfaces
-> Parse interface and integration blocks from DOQL content.
-- **Output to**: re.finditer, dict, m.group, entry.update, interfaces.append
+### SUMR._parse_doql_content
 
-### sumd.extractor._parse_doql_workflows
-> Parse workflow blocks from DOQL content, deduplicated by name.
-- **Output to**: re.finditer, list, re.search, m.group, re.findall
+### SUMR.validate
 
-### sumd.extractor._parse_doql_content
-> Parse DOQL content from .less or .css file into structured data.
-- **Output to**: re.search, re.finditer, sumd.extractor._parse_doql_interfaces, None.splitlines, dict
+### SUMR._render_write_validate
 
-### sumd.cli.validate
-> Validate a SUMD document.
+### SUMR._run_code2llm_formats
 
-FILE: Path to the SUMD markdown file
-- **Output to**: cli.command, click.argument, sumd.parser.SUMDParser.parse_file, SUMDParser, parser.validate
+### SUMR._run_tool_subprocess
 
-### sumd.cli._render_write_validate
-> Render SUMD content, write file, validate. Returns (doc, md_issues, cb_errors, cb_warnings, sources)
-- **Output to**: None.run, sumd_path.write_text, sumd.parser.validate_sumd_file, sumd.parser.SUMDParser.parse_file, RenderPipeline
+### SUMR.parse
 
-### sumd.cli._run_code2llm_formats
-> Run code2llm for each format. Returns True if all succeeded.
-- **Output to**: code2llm.exists, subprocess.run, click.echo, click.echo, str
+### SUMR.parse_file
 
-### sumd.cli._run_tool_subprocess
-> Run a single analysis tool subprocess. Returns True on success.
-- **Output to**: subprocess.run, click.echo, exe.exists, click.echo, str
+### SUMR._validate_yaml_body
 
-### sumd.mcp_server._tool_parse_sumd
-- **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, types.TextContent, json.dumps, sumd.mcp_server._doc_to_dict
+### SUMR._validate_less_css_body
 
-### sumd.mcp_server._tool_validate_sumd
-- **Output to**: sumd.mcp_server._resolve_path, sumd.parser.SUMDParser.parse_file, SUMDParser, parser.validate, json.dumps
+### SUMR._validate_mermaid_body
 
-### sumd.renderer._render_architecture_doql_parsed
-> Render parsed DOQL blocks into L (mutates in place).
-- **Output to**: sumd.renderer._render_doql_app, sumd.renderer._render_doql_entities, sumd.renderer._render_doql_interfaces, sumd.renderer._render_doql_integrations
+### SUMR._validate_toon_body
 
-### sumd.renderer._render_quality_parsed
-- **Output to**: pyqual.get, pyqual.get, pyqual.get, pyqual.get, a
+### SUMR._validate_bash_body
 
-### sumd.renderer._parse_calls_header
-> Parse node/edge/module counts and CC average from header comments.
-- **Output to**: line.startswith, line.startswith, re.search, re.search, int
+### SUMR._validate_deps_body
 
-### sumd.renderer._parse_calls_hubs
-> Parse HUBS section into list of hub dicts.
-- **Output to**: line.startswith, hubs.append, line.startswith, line.startswith, line.startswith
+### SUMR.validate_codeblocks
 
-### sumd.renderer._parse_calls_toon
-> Parse calls.toon.yaml text into structured dict for rendering.
-- **Output to**: content.splitlines, sumd.renderer._parse_calls_header, sumd.renderer._parse_calls_hubs
+### SUMR.validate_markdown
 
-### sumd.parser.SUMDParser.parse
-> Parse a SUMD markdown document.
+### SUMR.validate_sumd_file
 
-Args:
-    content: The markdown content to parse
+### SUMR._parse_header
 
-Returns:
-    SUMD
-- **Output to**: SUMDDocument, content.split, self._parse_header, self._parse_sections
+## Behavioral Patterns
 
-### sumd.parser.SUMDParser.parse_file
-> Parse a SUMD file.
-
-Args:
-    path: Path to the SUMD markdown file
-
-Returns:
-    SUMDDocument: Parse
-- **Output to**: path.read_text, self.parse
-
-### sumd.parser.SUMDParser._parse_header
-> Parse the project header (H1).
-
-Args:
-    lines: List of document lines
-- **Output to**: enumerate, line.startswith, None.strip, header_content.split, None.strip
+### recursion__walk_projects
+- **Type**: recursion
+- **Confidence**: 0.90
+- **Functions**: sumd.cli._walk_projects
 
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
 - `examples.mcp.mcp_client.run` - 53 calls
-- `sumd.cli.scan` - 33 calls
+- `sumd.cli.scan` - 36 calls
 - `sumd.cli.analyze` - 33 calls
 - `sumd.cli.scaffold` - 33 calls
-- `sumd.extractor.generate_map_toon` - 32 calls
 - `sumd.cli.generate` - 30 calls
-- `sumd.parser.validate_codeblocks` - 25 calls
-- `sumd.extractor.extract_openapi` - 24 calls
 - `sumd.extractor.extract_goal` - 24 calls
-- `sumd.extractor.extract_dockerfile` - 22 calls
+- `sumd.extractor.generate_map_toon` - 24 calls
 - `sumd.extractor.extract_docker_compose` - 22 calls
 - `sumd.cli.map_cmd` - 20 calls
 - `sumd.cli.lint` - 19 calls
 - `sumd.extractor.extract_pyproject` - 17 calls
+- `sumd.parser.validate_codeblocks` - 17 calls
 - `sumd.cli.export` - 16 calls
 - `examples.llm.openai_example.main` - 15 calls
 - `sumd.extractor.extract_package_json` - 15 calls
 - `examples.llm.anthropic_example.main` - 14 calls
 - `sumd.sections.metadata.MetadataSection.render` - 14 calls
-- `sumd.extractor.extract_taskfile` - 13 calls
-- `sumd.extractor.extract_env` - 13 calls
 - `sumd.cli.validate` - 13 calls
 - `sumd.cli.extract` - 13 calls
+- `sumd.extractor.extract_openapi` - 13 calls
+- `sumd.extractor.extract_env` - 13 calls
 - `examples.mcp.mcp_client.main` - 12 calls
 - `sumd.toon_parser.extract_testql_scenarios` - 12 calls
 - `sumd.extractor.extract_pyqual` - 12 calls
@@ -554,16 +492,18 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_source_snippets` - 12 calls
 - `sumd.cli.info` - 11 calls
 - `sumd.sections.refactor_analysis.RefactorAnalysisSection.render` - 11 calls
+- `sumd.extractor.extract_taskfile` - 10 calls
 - `examples.llm.openai_example.build_context` - 9 calls
 - `sumd.extractor.extract_requirements` - 9 calls
 - `sumd.mcp_server.list_tools` - 8 calls
 - `sumd.extractor.extract_project_analysis` - 7 calls
 - `sumd.parser.validate_markdown` - 6 calls
 - `sumd.extractor.extract_readme_title` - 5 calls
-- `sumd.mcp_server.call_tool` - 5 calls
+- `sumd.extractor.extract_dockerfile` - 5 calls
 - `sumd.parser.validate_sumd_file` - 5 calls
+- `sumd.mcp_server.call_tool` - 5 calls
 - `sumd.extractor.extract_python_modules` - 4 calls
-- `sumd.sections.environment.EnvironmentSection.render` - 4 calls
+- `sumd.parser.SUMDParser.parse` - 4 calls
 
 ## System Interactions
 
@@ -590,17 +530,17 @@ graph TD
     _collect --> extract_testql_scena
     _collect --> extract_openapi
     _collect --> extract_doql
-    _render_test_contrac --> a
-    _render_test_contrac --> sorted
-    map_cmd --> command
-    map_cmd --> argument
-    map_cmd --> option
-    lint --> command
-    lint --> argument
-    lint --> option
-    lint --> _lint_collect_paths
-    export --> command
-    export --> argument
+    _render_call_graph --> next
+    _render_call_graph --> _parse_calls_toon
+    _render_call_graph --> a
+    _render_api_stubs --> get
+    _render_api_stubs --> a
+    extract_goal --> exists
+    extract_goal --> safe_load
+    extract_goal --> get
+    generate_map_toon --> resolve
+    generate_map_toon --> isoformat
+    generate_map_toon --> _collect_map_files
 ```
 
 ## Reverse Engineering Guidelines

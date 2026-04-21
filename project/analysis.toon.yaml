@@ -1,36 +1,39 @@
-# code2llm | 28f 5130L | python:26,shell:2 | 2026-04-19
-# CC̄=4.6 | critical:2/198 | dups:0 | cycles:0
+# code2llm | 90f 18328L | python:29,md:19,yaml:19,json:7,yml:6,shell:5,toml:2,txt:1 | 2026-04-21
+# CC̄=1.2 | critical:1/769 | dups:0 | cycles:0
 
-HEALTH[3]:
-  🔴 GOD   sumd/parser.py = 543L, 5 classes, 23m, max CC=13
-  🟡 CC    _run_analysis_tools CC=15 (limit:15)
-  🟡 CC    _parse_calls_hubs CC=15 (limit:15)
+HEALTH[4]:
+  🔴 GOD   SUMR.md = 1235L, 5 classes, 138m, max CC=0.0
+  🔴 GOD   SUMD.md = 1294L, 5 classes, 188m, max CC=0.0
+  🔴 GOD   sumd/parser.py = 548L, 5 classes, 24m, max CC=9
+  🟡 CC    _scan_one_project CC=18 (limit:15)
 
-REFACTOR[2]:
-  1. split sumd/parser.py  (god module)
-  2. split 2 high-CC methods  (CC>15)
+REFACTOR[4]:
+  1. split SUMR.md  (god module)
+  2. split SUMD.md  (god module)
+  3. split sumd/parser.py  (god module)
+  4. split 1 high-CC methods  (CC>15)
 
-PIPELINES[72]:
-  [1] Src [main]: main → ask → build_context → parse_file
+PIPELINES[109]:
+  [1] Src [main]: main → print
       PURITY: 100% pure
-  [2] Src [main]: main → ask → parse_file
+  [2] Src [main]: main → print
       PURITY: 100% pure
-  [3] Src [main]: main → run
+  [3] Src [main]: main → print
       PURITY: 100% pure
-  [4] Src [validate]: validate → parse_file
+  [4] Src [extract_testql_scenarios]: extract_testql_scenarios → _parse_toon_file → _parse_toon_block_config
       PURITY: 100% pure
-  [5] Src [export]: export → parse_file
+  [5] Src [validate]: validate → parse_file
       PURITY: 100% pure
 
 LAYERS:
-  sumd/                           CC̄=4.6    ←in:14  →out:0
-  │ !! cli                       1090L  0C   29m  CC=15     ←0
-  │ !! renderer                   989L  0C   46m  CC=15     ←14
-  │ !! extractor                  886L  0C   33m  CC=13     ←2
-  │ !! parser                     543L  5C   23m  CC=13     ←4
+  sumd/                           CC̄=4.3    ←in:0  →out:38  !! split
+  │ !! cli                       1214L  0C   35m  CC=18     ←0
+  │ !! renderer                  1036L  0C   54m  CC=11     ←0
+  │ !! extractor                  908L  0C   39m  CC=12     ←0
+  │ !! parser                     548L  5C   24m  CC=9      ←2
   │ mcp_server                 358L  0C   12m  CC=5      ←0
-  │ pipeline                   318L  1C    8m  CC=11     ←0
-  │ toon_parser                173L  0C    8m  CC=9      ←1
+  │ pipeline                   319L  1C   10m  CC=7      ←0
+  │ toon_parser                173L  0C    8m  CC=9      ←0
   │ __init__                   103L  0C    0m  CC=0.0    ←0
   │ base                        93L  2C    2m  CC=1      ←0
   │ refactor_analysis           68L  1C    2m  CC=3      ←0
@@ -51,20 +54,102 @@ LAYERS:
   │ configuration               21L  1C    2m  CC=1      ←0
   │ generator                   15L  0C    0m  CC=0.0    ←0
   │
+  examples/                       CC̄=3.6    ←in:0  →out:0
+  │ SUMD.md                    187L  0C    0m  CC=0.0    ←0
+  │ context_injection.md       173L  0C    0m  CC=0.0    ←0
+  │ mcp_client                 138L  0C    2m  CC=11     ←0
+  │ README.md                  125L  0C    0m  CC=0.0    ←0
+  │ openapi.yaml               102L  0C    0m  CC=0.0    ←0
+  │ openai_example              88L  0C    3m  CC=5      ←0
+  │ README.md                   79L  0C    0m  CC=0.0    ←0
+  │ SUMD.md                     67L  0C    0m  CC=0.0    ←0
+  │ vscode-tasks.json           62L  0C    0m  CC=0.0    ←0
+  │ anthropic_example           60L  0C    2m  CC=2      ←0
+  │ sumd.json                   60L  0C    0m  CC=0.0    ←0
+  │ README.md                   58L  0C    0m  CC=0.0    ←0
+  │ sumd.json                   54L  0C    0m  CC=0.0    ←0
+  │ taskfile.yml                54L  0C    0m  CC=0.0    ←0
+  │ github-actions.yml          52L  0C    0m  CC=0.0    ←0
+  │ demo.sh                     49L  0C    0m  CC=0.0    ←0
+  │ ollama_example.sh           37L  0C    0m  CC=0.0    ←0
+  │ llm_cli_example.sh          36L  0C    0m  CC=0.0    ←0
+  │ README.md                   36L  0C    0m  CC=0.0    ←0
+  │ README.md                   27L  0C    0m  CC=0.0    ←0
+  │ pre-commit-config.yaml      26L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml              17L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          16L  0C    0m  CC=0.0    ←0
+  │ continue_config.json        13L  0C    0m  CC=0.0    ←0
+  │ claude_desktop_config.json    12L  0C    0m  CC=0.0    ←0
+  │ Taskfile.yml                10L  0C    0m  CC=0.0    ←0
+  │ goal.yaml                    9L  0C    0m  CC=0.0    ←0
+  │ cursor_mcp.json              8L  0C    0m  CC=0.0    ←0
+  │ map.toon.yaml                8L  0C    0m  CC=0.0    ←0
+  │ README.md                    7L  0C    0m  CC=0.0    ←0
+  │ makefile                     0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │
   ./                              CC̄=0.0    ←in:0  →out:0
+  │ !! SUMD.md                   1294L  5C  188m  CC=0.0    ←1
+  │ !! SUMR.md                   1235L  5C  138m  CC=0.0    ←18
+  │ !! CHANGELOG.md               570L  0C    0m  CC=0.0    ←0
+  │ !! goal.yaml                  511L  0C    0m  CC=0.0    ←0
+  │ SPEC.md                    423L  0C    0m  CC=0.0    ←0
+  │ README.md                  249L  0C    1m  CC=0.0    ←0
+  │ Taskfile.yml               235L  0C    0m  CC=0.0    ←0
+  │ TODO.md                    124L  0C    5m  CC=0.0    ←0
+  │ pyproject.toml             101L  0C    0m  CC=0.0    ←0
+  │ Taskfile.guards.yml         90L  0C    0m  CC=0.0    ←0
+  │ pyqual.yaml                 67L  0C    0m  CC=0.0    ←0
   │ project.sh                  35L  0C    0m  CC=0.0    ←0
+  │ .pre-commit-config.yaml     33L  0C    0m  CC=0.0    ←0
+  │ mcp.json                    10L  0C    0m  CC=0.0    ←0
+  │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ !! calls.yaml                2466L  0C    0m  CC=0.0    ←0
+  │ !! map.toon.yaml             1117L  0C  214m  CC=0.0    ←3
+  │ !! context.md                 557L  0C    0m  CC=0.0    ←0
+  │ README.md                  339L  0C    0m  CC=0.0    ←0
+  │ calls.toon.yaml            218L  0C    0m  CC=0.0    ←0
+  │ validation.toon.yaml       192L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         156L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         58L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           57L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
+  │ duplication.toon.yaml       43L  0C    0m  CC=0.0    ←0
+  │
+  docs/                           CC̄=0.0    ←in:0  →out:0
+  │ !! README.md                  596L  0C    1m  CC=0.0    ←0
+  │ USAGE.md                   486L  0C    1m  CC=0.0    ←0
   │
   scripts/                        CC̄=0.0    ←in:0  →out:0
   │ bootstrap.sh                69L  0C    0m  CC=0.0    ←0
   │
+  testql-scenarios/               CC̄=0.0    ←in:0  →out:0
+  │ smoke-generic.testql.toon.yaml    18L  0C    0m  CC=0.0    ←0
+  │ generated-from-pytests.testql.toon.yaml    13L  0C    0m  CC=0.0    ←0
+  │ generated-cli-tests.testql.toon.yaml    12L  0C    0m  CC=0.0    ←0
+  │ generated-cli-tests.testql.toon.yaml    12L  0C    0m  CC=0.0    ←0
+  │
+  ── zero ──
+     examples/integrations/Dockerfile          0L
+     examples/integrations/makefile            0L
 
 COUPLING:
-                          sumd  sumd.sections
-           sumd             ──            ←14  hub
-  sumd.sections             14             ──  !! fan-out
+                          SUMR    project.map           sumd   examples.mcp  sumd.sections   examples.llm           SUMD
+           SUMR             ──                           ←35                           ←14             ←2                 hub
+    project.map                            ──                           ←31                           ←11                 hub
+           sumd             35                            ──                                                           3  !! fan-out
+   examples.mcp                            31                            ──                                               !! fan-out
+  sumd.sections             14                                                          ──                                !! fan-out
+   examples.llm              2             11                                                          ──                 !! fan-out
+           SUMD                                           ←3                                                          ──
   CYCLES: none
-  HUB: sumd/ (fan-in=14)
+  HUB: project.map/ (fan-in=42)
+  HUB: SUMR/ (fan-in=51)
+  SMELL: examples.mcp/ fan-out=31 → split needed
   SMELL: sumd.sections/ fan-out=14 → split needed
+  SMELL: sumd/ fan-out=38 → split needed
+  SMELL: examples.llm/ fan-out=13 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

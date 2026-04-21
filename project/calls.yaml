@@ -1,219 +1,16 @@
 project: /home/tom/github/oqlos/sumd
 generated_from: code2llm call graph analysis
 stats:
-  total_nodes: 133
-  total_edges: 121
-  modules_count: 20
+  total_nodes: 174
+  total_edges: 147
+  modules_count: 26
 nodes:
-  sumd.parser.validate_markdown:
-    name: validate_markdown
-    module: sumd.parser
-    line: 496
+  examples.llm.anthropic_example.ask:
+    name: ask
+    module: examples.llm.anthropic_example
+    line: 24
     cyclomatic_complexity: 1
-    calls_out: 6
-    calls_in: 1
-  sumd.renderer._inject_toc:
-    name: _inject_toc
-    module: sumd.renderer
-    line: 953
-    cyclomatic_complexity: 3
-    calls_out: 9
-    calls_in: 1
-  sumd.extractor.extract_taskfile:
-    name: extract_taskfile
-    module: sumd.extractor
-    line: 60
-    cyclomatic_complexity: 10
-    calls_out: 13
-    calls_in: 1
-  sumd.cli.cli:
-    name: cli
-    module: sumd.cli
-    line: 21
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 2
-  sumd.extractor.generate_map_toon:
-    name: generate_map_toon
-    module: sumd.extractor
-    line: 712
-    cyclomatic_complexity: 11
-    calls_out: 32
-    calls_in: 2
-  sumd.renderer._render_workflows:
-    name: _render_workflows
-    module: sumd.renderer
-    line: 298
-    cyclomatic_complexity: 4
-    calls_out: 5
-    calls_in: 1
-  sumd.renderer._render_extras:
-    name: _render_extras
-    module: sumd.renderer
-    line: 498
-    cyclomatic_complexity: 11
-    calls_out: 21
-    calls_in: 1
-  sumd.extractor._read_toml:
-    name: _read_toml
-    module: sumd.extractor
-    line: 19
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  sumd.renderer._render_testql_raw:
-    name: _render_testql_raw
-    module: sumd.renderer
-    line: 183
-    cyclomatic_complexity: 4
-    calls_out: 12
-    calls_in: 1
-  sumd.cli.main_sumr:
-    name: main_sumr
-    module: sumd.cli
-    line: 1067
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 0
-  sumd.renderer._render_workflows_taskfile:
-    name: _render_workflows_taskfile
-    module: sumd.renderer
-    line: 271
-    cyclomatic_complexity: 6
-    calls_out: 17
-    calls_in: 1
-  sumd.mcp_server._tool_export_sumd:
-    name: _tool_export_sumd
-    module: sumd.mcp_server
-    line: 214
-    cyclomatic_complexity: 5
-    calls_out: 12
-    calls_in: 0
-  sumd.renderer._collect_infra_sources:
-    name: _collect_infra_sources
-    module: sumd.renderer
-    line: 826
-    cyclomatic_complexity: 6
-    calls_out: 10
-    calls_in: 1
-  sumd.renderer._render_architecture_doql_section:
-    name: _render_architecture_doql_section
-    module: sumd.renderer
-    line: 14
-    cyclomatic_complexity: 6
-    calls_out: 14
-    calls_in: 1
-  sumd.renderer._render_doql_app:
-    name: _render_doql_app
-    module: sumd.renderer
-    line: 68
-    cyclomatic_complexity: 3
-    calls_out: 8
-    calls_in: 1
-  sumd.extractor.extract_pyqual:
-    name: extract_pyqual
-    module: sumd.extractor
-    line: 230
-    cyclomatic_complexity: 5
-    calls_out: 12
-    calls_in: 1
-  sumd.renderer._render_dependencies:
-    name: _render_dependencies
-    module: sumd.renderer
-    line: 411
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 1
-  sumd.renderer._render_doql_entities:
-    name: _render_doql_entities
-    module: sumd.renderer
-    line: 81
-    cyclomatic_complexity: 6
-    calls_out: 9
-    calls_in: 1
-  sumd.mcp_server._tool_info_sumd:
-    name: _tool_info_sumd
-    module: sumd.mcp_server
-    line: 279
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 0
-  sumd.pipeline._refresh_map_toon:
-    name: _refresh_map_toon
-    module: sumd.pipeline
-    line: 58
-    cyclomatic_complexity: 3
     calls_out: 3
-    calls_in: 1
-  sumd.pipeline._refresh_analysis_files:
-    name: _refresh_analysis_files
-    module: sumd.pipeline
-    line: 78
-    cyclomatic_complexity: 11
-    calls_out: 23
-    calls_in: 1
-  sumd.extractor.extract_source_snippets:
-    name: extract_source_snippets
-    module: sumd.extractor
-    line: 823
-    cyclomatic_complexity: 6
-    calls_out: 12
-    calls_in: 1
-  sumd.renderer._render_configuration_section:
-    name: _render_configuration_section
-    module: sumd.renderer
-    line: 900
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 1
-  sumd.mcp_server._tool_get_section:
-    name: _tool_get_section
-    module: sumd.mcp_server
-    line: 252
-    cyclomatic_complexity: 5
-    calls_out: 8
-    calls_in: 0
-  sumd.renderer._render_goal_section:
-    name: _render_goal_section
-    module: sumd.renderer
-    line: 930
-    cyclomatic_complexity: 9
-    calls_out: 17
-    calls_in: 1
-  sumd.extractor._parse_doql_entities:
-    name: _parse_doql_entities
-    module: sumd.extractor
-    line: 127
-    cyclomatic_complexity: 4
-    calls_out: 8
-    calls_in: 1
-  sumd.cli._scaffold_from_openapi:
-    name: _scaffold_from_openapi
-    module: sumd.cli
-    line: 875
-    cyclomatic_complexity: 7
-    calls_out: 14
-    calls_in: 1
-  sumd.renderer._render_interfaces_testql:
-    name: _render_interfaces_testql
-    module: sumd.renderer
-    line: 244
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 1
-  sumd.mcp_server._tool_list_sections:
-    name: _tool_list_sections
-    module: sumd.mcp_server
-    line: 239
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 0
-  sumd.renderer._render_deployment_docker:
-    name: _render_deployment_docker
-    module: sumd.renderer
-    line: 456
-    cyclomatic_complexity: 13
-    calls_out: 15
     calls_in: 1
   sumd.toon_parser.extract_testql_scenarios:
     name: extract_testql_scenarios
@@ -221,301 +18,28 @@ nodes:
     line: 143
     cyclomatic_complexity: 7
     calls_out: 12
-    calls_in: 1
-  sumd.extractor.extract_openapi:
-    name: extract_openapi
-    module: sumd.extractor
-    line: 84
-    cyclomatic_complexity: 12
-    calls_out: 24
-    calls_in: 1
-  sumd.renderer._render_quality:
-    name: _render_quality
-    module: sumd.renderer
-    line: 348
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 1
-  sumd.renderer._render_deployment_reqs:
-    name: _render_deployment_reqs
-    module: sumd.renderer
-    line: 440
-    cyclomatic_complexity: 5
-    calls_out: 9
-    calls_in: 1
-  sumd.extractor.extract_doql:
-    name: extract_doql
-    module: sumd.extractor
-    line: 219
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 1
-  sumd.parser._check_required_sections:
-    name: _check_required_sections
-    module: sumd.parser
-    line: 443
-    cyclomatic_complexity: 7
-    calls_out: 6
-    calls_in: 1
-  sumd.extractor._analyse_py_top_classes:
-    name: _analyse_py_top_classes
-    module: sumd.extractor
-    line: 589
-    cyclomatic_complexity: 11
-    calls_out: 14
-    calls_in: 1
-  sumd.cli._scaffold_write:
-    name: _scaffold_write
-    module: sumd.cli
-    line: 814
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 3
-  sumd.renderer._render_deps_runtime:
-    name: _render_deps_runtime
-    module: sumd.renderer
-    line: 362
-    cyclomatic_complexity: 6
-    calls_out: 19
-    calls_in: 1
-  sumd.extractor.extract_readme_title:
-    name: extract_readme_title
-    module: sumd.extractor
-    line: 264
-    cyclomatic_complexity: 4
-    calls_out: 5
-    calls_in: 1
-  sumd.extractor.extract_pyproject:
-    name: extract_pyproject
-    module: sumd.extractor
-    line: 35
-    cyclomatic_complexity: 3
-    calls_out: 17
-    calls_in: 1
-  sumd.cli._export_sumd_json:
-    name: _export_sumd_json
-    module: sumd.cli
-    line: 333
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 1
-  sumd.extractor.extract_requirements:
-    name: extract_requirements
-    module: sumd.extractor
-    line: 274
-    cyclomatic_complexity: 7
-    calls_out: 9
-    calls_in: 1
-  sumd.renderer._render_testql_one_structured:
-    name: _render_testql_one_structured
-    module: sumd.renderer
-    line: 222
-    cyclomatic_complexity: 7
-    calls_out: 13
-    calls_in: 1
-  sumd.renderer._render_code_analysis:
-    name: _render_code_analysis
-    module: sumd.renderer
-    line: 530
-    cyclomatic_complexity: 9
-    calls_out: 15
-    calls_in: 1
-  sumd.sections.environment.EnvironmentSection.render:
-    name: render
-    module: sumd.sections.environment
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 4
     calls_in: 0
-  sumd.parser._check_metadata_fields:
-    name: _check_metadata_fields
-    module: sumd.parser
-    line: 460
-    cyclomatic_complexity: 9
-    calls_out: 7
-    calls_in: 1
-  sumd.sections.architecture.ArchitectureSection.render:
-    name: render
-    module: sumd.sections.architecture
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  sumd.extractor._parse_doql_workflows:
-    name: _parse_doql_workflows
-    module: sumd.extractor
-    line: 162
-    cyclomatic_complexity: 7
-    calls_out: 18
-    calls_in: 1
-  sumd.cli._setup_tools_venv:
-    name: _setup_tools_venv
-    module: sumd.cli
-    line: 645
-    cyclomatic_complexity: 7
-    calls_out: 13
-    calls_in: 1
-  sumd.pipeline.RenderPipeline._collect:
-    name: _collect
-    module: sumd.pipeline
-    line: 155
-    cyclomatic_complexity: 3
-    calls_out: 30
-    calls_in: 0
-  sumd.mcp_server._resolve_path:
-    name: _resolve_path
-    module: sumd.mcp_server
-    line: 54
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 7
-  sumd.sections.source_snippets.SourceSnippetsSection.render:
-    name: render
-    module: sumd.sections.source_snippets
-    line: 22
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  sumd.renderer._render_quality_parsed:
-    name: _render_quality_parsed
-    module: sumd.renderer
-    line: 322
-    cyclomatic_complexity: 9
-    calls_out: 21
-    calls_in: 1
-  sumd.renderer._parse_calls_toon:
-    name: _parse_calls_toon
-    module: sumd.renderer
-    line: 729
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 1
-  sumd.toon_parser._parse_toon_block_api:
-    name: _parse_toon_block_api
-    module: sumd.toon_parser
-    line: 28
-    cyclomatic_complexity: 6
-    calls_out: 4
-    calls_in: 1
-  sumd.extractor._try_radon_cc:
-    name: _try_radon_cc
-    module: sumd.extractor
-    line: 562
-    cyclomatic_complexity: 3
-    calls_out: 1
-    calls_in: 1
   sumd.extractor._analyse_py_top_funcs:
     name: _analyse_py_top_funcs
     module: sumd.extractor
-    line: 572
+    line: 583
     cyclomatic_complexity: 5
     calls_out: 7
     calls_in: 1
-  sumd.cli._render_write_validate:
-    name: _render_write_validate
+  sumd.cli._scaffold_smoke_scenario:
+    name: _scaffold_smoke_scenario
     module: sumd.cli
-    line: 354
-    cyclomatic_complexity: 5
+    line: 948
+    cyclomatic_complexity: 6
     calls_out: 5
     calls_in: 1
-  sumd.pipeline.RenderPipeline.run:
-    name: run
-    module: sumd.pipeline
-    line: 296
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 0
-  sumd.cli.info:
-    name: info
-    module: sumd.cli
-    line: 110
-    cyclomatic_complexity: 3
-    calls_out: 11
-    calls_in: 0
-  sumd.cli.lint:
-    name: lint
-    module: sumd.cli
-    line: 561
-    cyclomatic_complexity: 10
-    calls_out: 19
-    calls_in: 0
-  sumd.extractor.required_tools_for_profile:
-    name: required_tools_for_profile
-    module: sumd.extractor
-    line: 808
-    cyclomatic_complexity: 4
-    calls_out: 0
-    calls_in: 1
-  sumd.cli._scan_one_project:
-    name: _scan_one_project
-    module: sumd.cli
-    line: 373
-    cyclomatic_complexity: 12
-    calls_out: 21
-    calls_in: 1
-  sumd.parser._check_h1:
-    name: _check_h1
+  sumd.parser._validate_markpact_meta:
+    name: _validate_markpact_meta
     module: sumd.parser
-    line: 436
-    cyclomatic_complexity: 3
-    calls_out: 2
+    line: 356
+    cyclomatic_complexity: 5
+    calls_out: 9
     calls_in: 1
-  sumd.cli._run_analysis_tools:
-    name: _run_analysis_tools
-    module: sumd.cli
-    line: 249
-    cyclomatic_complexity: 15
-    calls_out: 28
-    calls_in: 1
-  sumd.renderer._render_deployment_install:
-    name: _render_deployment_install
-    module: sumd.renderer
-    line: 424
-    cyclomatic_complexity: 2
-    calls_out: 11
-    calls_in: 1
-  sumd.cli._api_scenario_template:
-    name: _api_scenario_template
-    module: sumd.cli
-    line: 791
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 3
-  sumd.renderer._collect_sources:
-    name: _collect_sources
-    module: sumd.renderer
-    line: 848
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  sumd.mcp_server._tool_validate_sumd:
-    name: _tool_validate_sumd
-    module: sumd.mcp_server
-    line: 205
-    cyclomatic_complexity: 1
-    calls_out: 7
-    calls_in: 0
-  sumd.extractor._map_cc_stats:
-    name: _map_cc_stats
-    module: sumd.extractor
-    line: 685
-    cyclomatic_complexity: 12
-    calls_out: 13
-    calls_in: 1
-  sumd.extractor._analyse_py_module:
-    name: _analyse_py_module
-    module: sumd.extractor
-    line: 614
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 2
-  sumd.parser.SUMDParser.parse_file:
-    name: parse_file
-    module: sumd.parser
-    line: 84
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 11
   sumd.renderer._render_quality_raw:
     name: _render_quality_raw
     module: sumd.renderer
@@ -523,146 +47,48 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 7
     calls_in: 1
-  sumd.sections.deployment.DeploymentSection.render:
-    name: render
-    module: sumd.sections.deployment
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  sumd.renderer._render_deployment:
-    name: _render_deployment
-    module: sumd.renderer
-    line: 485
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 1
-  sumd.cli.map_cmd:
-    name: map_cmd
+  sumd.cli._tool_bin:
+    name: _tool_bin
     module: sumd.cli
-    line: 1009
-    cyclomatic_complexity: 7
-    calls_out: 20
-    calls_in: 0
-  sumd.sections.interfaces.InterfacesSection.render:
-    name: render
-    module: sumd.sections.interfaces
-    line: 17
-    cyclomatic_complexity: 1
+    line: 362
+    cyclomatic_complexity: 2
     calls_out: 1
-    calls_in: 0
-  sumd.renderer._parse_calls_header:
-    name: _parse_calls_header
-    module: sumd.renderer
-    line: 679
-    cyclomatic_complexity: 6
-    calls_out: 12
     calls_in: 1
-  sumd.cli.export:
-    name: export
-    module: sumd.cli
-    line: 60
-    cyclomatic_complexity: 8
-    calls_out: 16
-    calls_in: 0
-  sumd.extractor._lang_of:
-    name: _lang_of
+  SUMR.required_tools_for_profile:
+    name: required_tools_for_profile
+    module: SUMR
+    line: 474
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.renderer._render_workflows_doql:
+    name: _render_workflows_doql
+    module: sumd.renderer
+    line: 258
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 1
+  sumd.extractor._fan_out:
+    name: _fan_out
     module: sumd.extractor
-    line: 525
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  sumd.mcp_server._tool_generate_sumd:
-    name: _tool_generate_sumd
-    module: sumd.mcp_server
-    line: 295
+    line: 540
     cyclomatic_complexity: 5
-    calls_out: 11
-    calls_in: 0
-  sumd.extractor._parse_doql_interfaces:
-    name: _parse_doql_interfaces
-    module: sumd.extractor
-    line: 145
-    cyclomatic_complexity: 3
-    calls_out: 10
-    calls_in: 1
-  sumd.sections.call_graph.CallGraphSection.render:
-    name: render
-    module: sumd.sections.call_graph
-    line: 23
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  sumd.renderer._render_api_stubs:
-    name: _render_api_stubs
-    module: sumd.renderer
-    line: 598
-    cyclomatic_complexity: 11
-    calls_out: 27
-    calls_in: 1
-  sumd.sections.workflows.WorkflowsSection.render:
-    name: render
-    module: sumd.sections.workflows
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  sumd.toon_parser._parse_toon_block_config:
-    name: _parse_toon_block_config
-    module: sumd.toon_parser
-    line: 10
-    cyclomatic_complexity: 9
     calls_out: 8
+    calls_in: 2
+  sumd.extractor._is_map_ignored_path:
+    name: _is_map_ignored_path
+    module: sumd.extractor
+    line: 647
+    cyclomatic_complexity: 4
+    calls_out: 1
     calls_in: 1
-  sumd.cli._scaffold_generic:
-    name: _scaffold_generic
+  sumd.cli.validate:
+    name: validate
     module: sumd.cli
-    line: 903
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 1
-  sumd.sections.quality.QualitySection.render:
-    name: render
-    module: sumd.sections.quality
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 1
+    line: 122
+    cyclomatic_complexity: 4
+    calls_out: 13
     calls_in: 0
-  sumd.renderer._render_architecture:
-    name: _render_architecture
-    module: sumd.renderer
-    line: 43
-    cyclomatic_complexity: 6
-    calls_out: 12
-    calls_in: 1
-  sumd.sections.extras.ExtrasSection.render:
-    name: render
-    module: sumd.sections.extras
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  sumd.toon_parser._parse_toon_block_assert:
-    name: _parse_toon_block_assert
-    module: sumd.toon_parser
-    line: 48
-    cyclomatic_complexity: 7
-    calls_out: 9
-    calls_in: 1
-  sumd.renderer._parse_calls_hubs:
-    name: _parse_calls_hubs
-    module: sumd.renderer
-    line: 698
-    cyclomatic_complexity: 15
-    calls_out: 18
-    calls_in: 1
-  sumd.renderer._collect_pkg_sources:
-    name: _collect_pkg_sources
-    module: sumd.renderer
-    line: 789
-    cyclomatic_complexity: 14
-    calls_out: 19
-    calls_in: 1
   sumd.renderer._render_doql_interfaces:
     name: _render_doql_interfaces
     module: sumd.renderer
@@ -670,13 +96,41 @@ nodes:
     cyclomatic_complexity: 6
     calls_out: 10
     calls_in: 1
-  sumd.sections.configuration.ConfigurationSection.render:
-    name: render
-    module: sumd.sections.configuration
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
+  SUMR.extract_pyproject:
+    name: extract_pyproject
+    module: SUMR
+    line: 445
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 2
+  sumd.renderer._render_testql_one_structured:
+    name: _render_testql_one_structured
+    module: sumd.renderer
+    line: 222
+    cyclomatic_complexity: 7
+    calls_out: 13
+    calls_in: 1
+  SUMR._render_deployment:
+    name: _render_deployment
+    module: SUMR
+    line: 420
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.renderer._render_pkg_json_scripts:
+    name: _render_pkg_json_scripts
+    module: sumd.renderer
+    line: 513
+    cyclomatic_complexity: 7
+    calls_out: 16
+    calls_in: 1
+  SUMR._render_source_snippets:
+    name: _render_source_snippets
+    module: SUMR
+    line: 423
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
   sumd.sections.dependencies.DependenciesSection.render:
     name: render
     module: sumd.sections.dependencies
@@ -684,145 +138,19 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 1
     calls_in: 0
-  sumd.cli.extract:
-    name: extract
-    module: sumd.cli
-    line: 189
-    cyclomatic_complexity: 5
-    calls_out: 13
-    calls_in: 0
-  sumd.cli.main:
-    name: main
-    module: sumd.cli
-    line: 1042
-    cyclomatic_complexity: 4
-    calls_out: 2
-    calls_in: 0
-  sumd.mcp_server._tool_parse_sumd:
-    name: _tool_parse_sumd
-    module: sumd.mcp_server
-    line: 194
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  sumd.parser._check_empty_links:
-    name: _check_empty_links
-    module: sumd.parser
-    line: 488
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 1
-  sumd.renderer._render_interfaces:
-    name: _render_interfaces
-    module: sumd.renderer
-    line: 135
+  examples.llm.openai_example.build_context:
+    name: build_context
+    module: examples.llm.openai_example
+    line: 24
     cyclomatic_complexity: 5
     calls_out: 9
     calls_in: 1
-  sumd.extractor.extract_makefile:
-    name: extract_makefile
-    module: sumd.extractor
-    line: 288
-    cyclomatic_complexity: 7
-    calls_out: 12
-    calls_in: 1
-  sumd.cli._scaffold_smoke_scenario:
-    name: _scaffold_smoke_scenario
-    module: sumd.cli
-    line: 824
-    cyclomatic_complexity: 6
-    calls_out: 5
-    calls_in: 1
-  sumd.mcp_server._doc_to_dict:
-    name: _doc_to_dict
-    module: sumd.mcp_server
-    line: 38
-    cyclomatic_complexity: 2
-    calls_out: 0
-    calls_in: 2
-  sumd.renderer._render_env_section:
-    name: _render_env_section
-    module: sumd.renderer
-    line: 914
+  sumd.pipeline._refresh_map_toon:
+    name: _refresh_map_toon
+    module: sumd.pipeline
+    line: 58
     cyclomatic_complexity: 3
-    calls_out: 7
-    calls_in: 1
-  sumd.extractor._collect_map_files:
-    name: _collect_map_files
-    module: sumd.extractor
-    line: 632
-    cyclomatic_complexity: 7
-    calls_out: 12
-    calls_in: 1
-  sumd.sections.code_analysis.CodeAnalysisSection.render:
-    name: render
-    module: sumd.sections.code_analysis
-    line: 21
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  sumd.extractor._cc_estimate:
-    name: _cc_estimate
-    module: sumd.extractor
-    line: 541
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 2
-  sumd.toon_parser._parse_toon_block_performance:
-    name: _parse_toon_block_performance
-    module: sumd.toon_parser
-    line: 70
-    cyclomatic_complexity: 7
-    calls_out: 8
-    calls_in: 1
-  sumd.parser.validate_sumd_file:
-    name: validate_sumd_file
-    module: sumd.parser
-    line: 523
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 2
-  sumd.renderer._render_call_graph:
-    name: _render_call_graph
-    module: sumd.renderer
-    line: 739
-    cyclomatic_complexity: 7
-    calls_out: 28
-    calls_in: 1
-  sumd.renderer._render_architecture_doql_parsed:
-    name: _render_architecture_doql_parsed
-    module: sumd.renderer
-    line: 127
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 1
-  sumd.renderer._render_deps_dev:
-    name: _render_deps_dev
-    module: sumd.renderer
-    line: 389
-    cyclomatic_complexity: 6
-    calls_out: 15
-    calls_in: 1
-  sumd.parser.validate_codeblocks:
-    name: validate_codeblocks
-    module: sumd.parser
-    line: 356
-    cyclomatic_complexity: 13
-    calls_out: 25
-    calls_in: 1
-  sumd.extractor._parse_doql_content:
-    name: _parse_doql_content
-    module: sumd.extractor
-    line: 191
-    cyclomatic_complexity: 6
-    calls_out: 19
-    calls_in: 1
-  sumd.cli.validate:
-    name: validate
-    module: sumd.cli
-    line: 28
-    cyclomatic_complexity: 4
-    calls_out: 13
+    calls_out: 3
     calls_in: 0
   sumd.renderer._render_doql_integrations:
     name: _render_doql_integrations
@@ -831,18 +159,585 @@ nodes:
     cyclomatic_complexity: 5
     calls_out: 9
     calls_in: 1
-  sumd.parser.validate:
-    name: validate
+  examples.llm.anthropic_example.main:
+    name: main
+    module: examples.llm.anthropic_example
+    line: 37
+    cyclomatic_complexity: 2
+    calls_out: 14
+    calls_in: 0
+  SUMR._render_code_analysis:
+    name: _render_code_analysis
+    module: SUMR
+    line: 422
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.mcp_server._tool_info_sumd:
+    name: _tool_info_sumd
+    module: sumd.mcp_server
+    line: 279
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  examples.mcp.mcp_client.main:
+    name: main
+    module: examples.mcp.mcp_client
+    line: 121
+    cyclomatic_complexity: 3
+    calls_out: 12
+    calls_in: 0
+  sumd.pipeline._run_tool_if_present:
+    name: _run_tool_if_present
+    module: sumd.pipeline
+    line: 88
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 3
+  sumd.renderer._render_testql_extras:
+    name: _render_testql_extras
+    module: sumd.renderer
+    line: 207
+    cyclomatic_complexity: 7
+    calls_out: 9
+    calls_in: 1
+  SUMR._render_quality:
+    name: _render_quality
+    module: SUMR
+    line: 413
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.extractor._parse_doql_interfaces:
+    name: _parse_doql_interfaces
+    module: sumd.extractor
+    line: 155
+    cyclomatic_complexity: 3
+    calls_out: 10
+    calls_in: 1
+  sumd.parser._check_metadata_fields:
+    name: _check_metadata_fields
     module: sumd.parser
-    line: 214
+    line: 465
+    cyclomatic_complexity: 9
+    calls_out: 7
+    calls_in: 1
+  sumd.parser._check_required_sections:
+    name: _check_required_sections
+    module: sumd.parser
+    line: 448
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 1
+  SUMR._render_extras:
+    name: _render_extras
+    module: SUMR
+    line: 421
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.cli._scaffold_generic:
+    name: _scaffold_generic
+    module: sumd.cli
+    line: 1027
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  sumd.mcp_server._tool_list_sections:
+    name: _tool_list_sections
+    module: sumd.mcp_server
+    line: 239
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  sumd.sections.call_graph.CallGraphSection.render:
+    name: render
+    module: sumd.sections.call_graph
+    line: 23
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.renderer._render_interfaces:
+    name: _render_interfaces
+    module: sumd.renderer
+    line: 135
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 0
+  sumd.sections.configuration.ConfigurationSection.render:
+    name: render
+    module: sumd.sections.configuration
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.renderer._render_deployment_install:
+    name: _render_deployment_install
+    module: sumd.renderer
+    line: 424
+    cyclomatic_complexity: 2
+    calls_out: 11
+    calls_in: 1
+  sumd.cli.extract:
+    name: extract
+    module: sumd.cli
+    line: 283
+    cyclomatic_complexity: 5
+    calls_out: 13
+    calls_in: 0
+  sumd.cli.map_cmd:
+    name: map_cmd
+    module: sumd.cli
+    line: 1133
+    cyclomatic_complexity: 7
+    calls_out: 20
+    calls_in: 0
+  sumd.cli._scan_one_project:
+    name: _scan_one_project
+    module: sumd.cli
+    line: 464
+    cyclomatic_complexity: 18
+    calls_out: 32
+    calls_in: 1
+  sumd.sections.quality.QualitySection.render:
+    name: render
+    module: sumd.sections.quality
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.cli._scaffold_from_openapi:
+    name: _scaffold_from_openapi
+    module: sumd.cli
+    line: 999
+    cyclomatic_complexity: 7
+    calls_out: 14
+    calls_in: 1
+  SUMR._render_workflows:
+    name: _render_workflows
+    module: SUMR
+    line: 410
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.extractor._analyse_py_top_classes:
+    name: _analyse_py_top_classes
+    module: sumd.extractor
+    line: 612
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 1
+  sumd.toon_parser._parse_toon_file:
+    name: _parse_toon_file
+    module: sumd.toon_parser
+    line: 118
+    cyclomatic_complexity: 4
+    calls_out: 16
+    calls_in: 1
+  SUMR._render_architecture:
+    name: _render_architecture
+    module: SUMR
+    line: 395
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.renderer._collect_pkg_sources:
+    name: _collect_pkg_sources
+    module: sumd.renderer
+    line: 847
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 1
+  sumd.pipeline.RenderPipeline.run:
+    name: run
+    module: sumd.pipeline
+    line: 297
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  sumd.renderer._render_workflows_taskfile:
+    name: _render_workflows_taskfile
+    module: sumd.renderer
+    line: 271
+    cyclomatic_complexity: 6
+    calls_out: 17
+    calls_in: 1
+  examples.llm.openai_example.main:
+    name: main
+    module: examples.llm.openai_example
+    line: 63
+    cyclomatic_complexity: 2
+    calls_out: 15
+    calls_in: 0
+  sumd.renderer._render_workflows:
+    name: _render_workflows
+    module: sumd.renderer
+    line: 298
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 0
+  SUMR.extract_readme_title:
+    name: extract_readme_title
+    module: SUMR
+    line: 455
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.cli._setup_tools_venv:
+    name: _setup_tools_venv
+    module: sumd.cli
+    line: 769
+    cyclomatic_complexity: 7
+    calls_out: 13
+    calls_in: 1
+  sumd.extractor.extract_dockerfile:
+    name: extract_dockerfile
+    module: sumd.extractor
+    line: 398
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 0
+  sumd.extractor._collect_map_files:
+    name: _collect_map_files
+    module: sumd.extractor
+    line: 655
+    cyclomatic_complexity: 7
+    calls_out: 11
+    calls_in: 1
+  SUMR.validate_sumd_file:
+    name: validate_sumd_file
+    module: SUMR
+    line: 532
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 2
+  sumd.mcp_server._doc_to_dict:
+    name: _doc_to_dict
+    module: sumd.mcp_server
+    line: 38
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 2
+  sumd.toon_parser._parse_toon_block_performance:
+    name: _parse_toon_block_performance
+    module: sumd.toon_parser
+    line: 70
+    cyclomatic_complexity: 7
+    calls_out: 8
+    calls_in: 1
+  sumd.renderer._render_doql_entities:
+    name: _render_doql_entities
+    module: sumd.renderer
+    line: 81
+    cyclomatic_complexity: 6
+    calls_out: 9
+    calls_in: 1
+  sumd.sections.deployment.DeploymentSection.render:
+    name: render
+    module: sumd.sections.deployment
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  SUMR.generate_map_toon:
+    name: generate_map_toon
+    module: SUMR
+    line: 473
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 2
+  sumd.mcp_server._tool_parse_sumd:
+    name: _tool_parse_sumd
+    module: sumd.mcp_server
+    line: 194
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  SUMR._render_goal_section:
+    name: _render_goal_section
+    module: SUMR
+    line: 436
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.renderer._render_deps_dev:
+    name: _render_deps_dev
+    module: sumd.renderer
+    line: 389
+    cyclomatic_complexity: 6
+    calls_out: 15
+    calls_in: 1
+  SUMR.extract_pyqual:
+    name: extract_pyqual
+    module: SUMR
+    line: 453
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.cli.main:
+    name: main
+    module: sumd.cli
+    line: 1166
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  sumd.cli._scaffold_write:
+    name: _scaffold_write
+    module: sumd.cli
+    line: 938
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 3
+  sumd.renderer._render_dockerfile_info:
+    name: _render_dockerfile_info
+    module: sumd.renderer
+    line: 456
+    cyclomatic_complexity: 6
+    calls_out: 9
+    calls_in: 1
+  sumd.cli._scaffold_crud_scenarios:
+    name: _scaffold_crud_scenarios
+    module: sumd.cli
+    line: 973
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 1
+  sumd.extractor.extract_doql:
+    name: extract_doql
+    module: sumd.extractor
+    line: 229
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  SUMR._inject_toc:
+    name: _inject_toc
+    module: SUMR
+    line: 437
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.sections.architecture.ArchitectureSection.render:
+    name: render
+    module: sumd.sections.architecture
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.cli._api_scenario_template:
+    name: _api_scenario_template
+    module: sumd.cli
+    line: 915
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 3
+  sumd.extractor._lang_of:
+    name: _lang_of
+    module: sumd.extractor
+    line: 536
     cyclomatic_complexity: 1
     calls_out: 2
-    calls_in: 3
-  sumd.extractor._render_map_detail:
-    name: _render_map_detail
+    calls_in: 1
+  SUMR.extract_taskfile:
+    name: extract_taskfile
+    module: SUMR
+    line: 446
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  SUMR.extract_python_modules:
+    name: extract_python_modules
+    module: SUMR
+    line: 454
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  examples.llm.openai_example.ask:
+    name: ask
+    module: examples.llm.openai_example
+    line: 46
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  sumd.renderer._render_doql_app:
+    name: _render_doql_app
+    module: sumd.renderer
+    line: 68
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 1
+  sumd.renderer._render_deployment:
+    name: _render_deployment
+    module: sumd.renderer
+    line: 490
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  sumd.extractor._first_task_cmd:
+    name: _first_task_cmd
     module: sumd.extractor
-    line: 662
-    cyclomatic_complexity: 5
+    line: 60
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  sumd.renderer._collect_tool_sources:
+    name: _collect_tool_sources
+    module: sumd.renderer
+    line: 822
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 1
+  sumd.sections.workflows.WorkflowsSection.render:
+    name: render
+    module: sumd.sections.workflows
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.extractor._analyse_py_module:
+    name: _analyse_py_module
+    module: sumd.extractor
+    line: 629
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 2
+  sumd.extractor._analyse_class_methods:
+    name: _analyse_class_methods
+    module: sumd.extractor
+    line: 600
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
+  sumd.renderer._render_call_graph:
+    name: _render_call_graph
+    module: sumd.renderer
+    line: 772
+    cyclomatic_complexity: 7
+    calls_out: 28
+    calls_in: 0
+  sumd.cli.lint:
+    name: lint
+    module: sumd.cli
+    line: 685
+    cyclomatic_complexity: 10
+    calls_out: 19
+    calls_in: 0
+  sumd.toon_parser._parse_toon_block_api:
+    name: _parse_toon_block_api
+    module: sumd.toon_parser
+    line: 28
+    cyclomatic_complexity: 6
+    calls_out: 4
+    calls_in: 1
+  sumd.extractor._cc_estimate:
+    name: _cc_estimate
+    module: sumd.extractor
+    line: 552
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 2
+  sumd.pipeline.RenderPipeline._collect:
+    name: _collect
+    module: sumd.pipeline
+    line: 156
+    cyclomatic_complexity: 3
+    calls_out: 30
+    calls_in: 0
+  sumd.extractor._try_radon_cc:
+    name: _try_radon_cc
+    module: sumd.extractor
+    line: 573
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 1
+  sumd.cli._run_one_tool:
+    name: _run_one_tool
+    module: sumd.cli
+    line: 376
+    cyclomatic_complexity: 3
+    calls_out: 9
+    calls_in: 1
+  sumd.renderer._render_quality_parsed:
+    name: _render_quality_parsed
+    module: sumd.renderer
+    line: 322
+    cyclomatic_complexity: 9
+    calls_out: 21
+    calls_in: 1
+  SUMR._render_env_section:
+    name: _render_env_section
+    module: SUMR
+    line: 435
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.renderer._collect_infra_sources:
+    name: _collect_infra_sources
+    module: sumd.renderer
+    line: 873
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 1
+  sumd.extractor.extract_pyproject:
+    name: extract_pyproject
+    module: sumd.extractor
+    line: 35
+    cyclomatic_complexity: 3
+    calls_out: 17
+    calls_in: 0
+  sumd.cli._ensure_venv:
+    name: _ensure_venv
+    module: sumd.cli
+    line: 349
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 1
+  sumd.sections.code_analysis.CodeAnalysisSection.render:
+    name: render
+    module: sumd.sections.code_analysis
+    line: 21
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.parser.validate_codeblocks:
+    name: validate_codeblocks
+    module: sumd.parser
+    line: 385
+    cyclomatic_complexity: 9
+    calls_out: 17
+    calls_in: 1
+  sumd.extractor._parse_dockerfile_line:
+    name: _parse_dockerfile_line
+    module: sumd.extractor
+    line: 382
+    cyclomatic_complexity: 8
+    calls_out: 14
+    calls_in: 1
+  SUMR.extract_makefile:
+    name: extract_makefile
+    module: SUMR
+    line: 457
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.parser._check_h1:
+    name: _check_h1
+    module: sumd.parser
+    line: 441
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  SUMR._render_configuration_section:
+    name: _render_configuration_section
+    module: SUMR
+    line: 434
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.renderer._process_in_hubs_line:
+    name: _process_in_hubs_line
+    module: sumd.renderer
+    line: 731
+    cyclomatic_complexity: 6
     calls_out: 6
     calls_in: 1
   sumd.sections.api_stubs.ApiStubsSection.render:
@@ -852,82 +747,460 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 1
     calls_in: 0
-  sumd.renderer._render_interfaces_openapi:
-    name: _render_interfaces_openapi
+  sumd.renderer._render_deployment_docker:
+    name: _render_deployment_docker
     module: sumd.renderer
-    line: 155
-    cyclomatic_complexity: 6
-    calls_out: 19
+    line: 471
+    cyclomatic_complexity: 8
+    calls_out: 7
     calls_in: 1
-  sumd.extractor.extract_python_modules:
-    name: extract_python_modules
-    module: sumd.extractor
-    line: 257
-    cyclomatic_complexity: 4
+  sumd.renderer._render_extras:
+    name: _render_extras
+    module: sumd.renderer
+    line: 535
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  sumd.cli.info:
+    name: info
+    module: sumd.cli
+    line: 204
+    cyclomatic_complexity: 3
+    calls_out: 11
+    calls_in: 0
+  sumd.parser.validate_sumd_file:
+    name: validate_sumd_file
+    module: sumd.parser
+    line: 528
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 0
+  sumd.renderer._render_makefile_targets:
+    name: _render_makefile_targets
+    module: sumd.renderer
+    line: 503
+    cyclomatic_complexity: 3
     calls_out: 4
     calls_in: 1
-  sumd.renderer._render_testql_extras:
-    name: _render_testql_extras
-    module: sumd.renderer
-    line: 207
+  project.map.toon.print:
+    name: print
+    module: project.map.toon
+    line: 552
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 42
+  sumd.toon_parser._parse_toon_block_assert:
+    name: _parse_toon_block_assert
+    module: sumd.toon_parser
+    line: 48
     cyclomatic_complexity: 7
     calls_out: 9
     calls_in: 1
-  sumd.renderer._render_workflows_doql:
-    name: _render_workflows_doql
-    module: sumd.renderer
-    line: 258
-    cyclomatic_complexity: 4
-    calls_out: 7
+  SUMR._render_api_stubs:
+    name: _render_api_stubs
+    module: SUMR
+    line: 424
+    cyclomatic_complexity: 0
+    calls_out: 0
     calls_in: 1
-  sumd.cli.analyze:
-    name: analyze
-    module: sumd.cli
-    line: 726
-    cyclomatic_complexity: 11
-    calls_out: 33
-    calls_in: 0
-  sumd.renderer._render_source_snippets:
-    name: _render_source_snippets
-    module: sumd.renderer
-    line: 564
-    cyclomatic_complexity: 8
-    calls_out: 16
-    calls_in: 1
-  sumd.extractor._fan_out:
-    name: _fan_out
+  sumd.extractor._parse_doql_content:
+    name: _parse_doql_content
     module: sumd.extractor
-    line: 529
-    cyclomatic_complexity: 5
-    calls_out: 8
-    calls_in: 2
-  sumd.cli._lint_collect_paths:
-    name: _lint_collect_paths
-    module: sumd.cli
-    line: 614
+    line: 201
     cyclomatic_complexity: 6
-    calls_out: 7
+    calls_out: 19
     calls_in: 1
-  sumd.toon_parser._parse_toon_file:
-    name: _parse_toon_file
-    module: sumd.toon_parser
-    line: 118
-    cyclomatic_complexity: 4
-    calls_out: 16
+  sumd.extractor._map_cc_stats:
+    name: _map_cc_stats
+    module: sumd.extractor
+    line: 702
+    cyclomatic_complexity: 12
+    calls_out: 13
+    calls_in: 1
+  sumd.cli._generate_doql_less:
+    name: _generate_doql_less
+    module: sumd.cli
+    line: 20
+    cyclomatic_complexity: 6
+    calls_out: 6
     calls_in: 1
   sumd.parser._check_unclosed_fences:
     name: _check_unclosed_fences
     module: sumd.parser
-    line: 481
+    line: 486
     cyclomatic_complexity: 4
     calls_out: 2
     calls_in: 1
-  sumd.cli._scaffold_crud_scenarios:
-    name: _scaffold_crud_scenarios
+  sumd.cli.analyze:
+    name: analyze
     module: sumd.cli
-    line: 849
-    cyclomatic_complexity: 5
+    line: 850
+    cyclomatic_complexity: 11
+    calls_out: 33
+    calls_in: 0
+  sumd.renderer._render_architecture_doql_section:
+    name: _render_architecture_doql_section
+    module: sumd.renderer
+    line: 14
+    cyclomatic_complexity: 6
+    calls_out: 14
+    calls_in: 1
+  sumd.cli._detect_projects:
+    name: _detect_projects
+    module: sumd.cli
+    line: 342
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  SUMR.extract_doql:
+    name: extract_doql
+    module: SUMR
+    line: 452
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.parser._check_empty_links:
+    name: _check_empty_links
+    module: sumd.parser
+    line: 493
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  sumd.cli.export:
+    name: export
+    module: sumd.cli
+    line: 154
+    cyclomatic_complexity: 8
+    calls_out: 16
+    calls_in: 0
+  sumd.cli._lint_collect_paths:
+    name: _lint_collect_paths
+    module: sumd.cli
+    line: 738
+    cyclomatic_complexity: 6
     calls_out: 7
+    calls_in: 1
+  sumd.renderer._parse_calls_toon:
+    name: _parse_calls_toon
+    module: sumd.renderer
+    line: 762
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  sumd.renderer._collect_sources:
+    name: _collect_sources
+    module: sumd.renderer
+    line: 895
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  SUMR.parse_file:
+    name: parse_file
+    module: SUMR
+    line: 539
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 13
+  SUMR._render_interfaces:
+    name: _render_interfaces
+    module: SUMR
+    line: 401
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.cli.main_sumr:
+    name: main_sumr
+    module: sumd.cli
+    line: 1191
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  sumd.parser.validate_markdown:
+    name: validate_markdown
+    module: sumd.parser
+    line: 501
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 1
+  sumd.mcp_server._tool_validate_sumd:
+    name: _tool_validate_sumd
+    module: sumd.mcp_server
+    line: 205
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 0
+  sumd.extractor.extract_source_snippets:
+    name: extract_source_snippets
+    module: sumd.extractor
+    line: 845
+    cyclomatic_complexity: 6
+    calls_out: 12
+    calls_in: 0
+  sumd.cli.cli:
+    name: cli
+    module: sumd.cli
+    line: 115
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  sumd.cli._echo_scan_result:
+    name: _echo_scan_result
+    module: sumd.cli
+    line: 456
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  sumd.extractor.generate_map_toon:
+    name: generate_map_toon
+    module: sumd.extractor
+    line: 748
+    cyclomatic_complexity: 5
+    calls_out: 24
+    calls_in: 0
+  sumd.extractor._render_map_detail:
+    name: _render_map_detail
+    module: sumd.extractor
+    line: 679
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  SUMR._render_dependencies:
+    name: _render_dependencies
+    module: SUMR
+    line: 416
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.mcp_server._tool_generate_sumd:
+    name: _tool_generate_sumd
+    module: sumd.mcp_server
+    line: 295
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 0
+  sumd.mcp_server._tool_export_sumd:
+    name: _tool_export_sumd
+    module: sumd.mcp_server
+    line: 214
+    cyclomatic_complexity: 5
+    calls_out: 12
+    calls_in: 0
+  sumd.renderer._render_quality:
+    name: _render_quality
+    module: sumd.renderer
+    line: 348
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  sumd.renderer._doql_sources:
+    name: _doql_sources
+    module: sumd.renderer
+    line: 840
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  sumd.extractor._parse_doql_entities:
+    name: _parse_doql_entities
+    module: sumd.extractor
+    line: 137
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 1
+  sumd.sections.interfaces.InterfacesSection.render:
+    name: render
+    module: sumd.sections.interfaces
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.renderer._render_interfaces_testql:
+    name: _render_interfaces_testql
+    module: sumd.renderer
+    line: 244
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  sumd.pipeline._find_tools_bin_dir:
+    name: _find_tools_bin_dir
+    module: sumd.pipeline
+    line: 78
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 1
+  sumd.sections.environment.EnvironmentSection.render:
+    name: render
+    module: sumd.sections.environment
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  sumd.extractor._parse_doql_workflows:
+    name: _parse_doql_workflows
+    module: sumd.extractor
+    line: 172
+    cyclomatic_complexity: 7
+    calls_out: 18
+    calls_in: 1
+  SUMD.extract_testql_scenarios:
+    name: extract_testql_scenarios
+    module: SUMD
+    line: 791
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.sections.source_snippets.SourceSnippetsSection.render:
+    name: render
+    module: sumd.sections.source_snippets
+    line: 22
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.renderer._render_testql_raw:
+    name: _render_testql_raw
+    module: sumd.renderer
+    line: 183
+    cyclomatic_complexity: 4
+    calls_out: 12
+    calls_in: 1
+  sumd.renderer._render_dependencies:
+    name: _render_dependencies
+    module: sumd.renderer
+    line: 411
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  SUMR.extract_openapi:
+    name: extract_openapi
+    module: SUMR
+    line: 447
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.renderer._render_architecture_doql_parsed:
+    name: _render_architecture_doql_parsed
+    module: sumd.renderer
+    line: 127
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  sumd.renderer._parse_calls_header:
+    name: _parse_calls_header
+    module: sumd.renderer
+    line: 699
+    cyclomatic_complexity: 6
+    calls_out: 12
+    calls_in: 1
+  sumd.extractor.extract_taskfile:
+    name: extract_taskfile
+    module: sumd.extractor
+    line: 71
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 0
+  sumd.cli._walk_projects:
+    name: _walk_projects
+    module: sumd.cli
+    line: 320
+    cyclomatic_complexity: 10
+    calls_out: 7
+    calls_in: 2
+  sumd.toon_parser._parse_toon_block_config:
+    name: _parse_toon_block_config
+    module: sumd.toon_parser
+    line: 10
+    cyclomatic_complexity: 9
+    calls_out: 8
+    calls_in: 1
+  sumd.cli._run_analysis_tools:
+    name: _run_analysis_tools
+    module: sumd.cli
+    line: 388
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 1
+  sumd.renderer._render_deps_runtime:
+    name: _render_deps_runtime
+    module: sumd.renderer
+    line: 362
+    cyclomatic_complexity: 6
+    calls_out: 19
+    calls_in: 1
+  sumd.pipeline._refresh_analysis_files:
+    name: _refresh_analysis_files
+    module: sumd.pipeline
+    line: 97
+    cyclomatic_complexity: 7
+    calls_out: 11
+    calls_in: 0
+  SUMR._render_call_graph:
+    name: _render_call_graph
+    module: SUMR
+    line: 429
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.mcp_server._resolve_path:
+    name: _resolve_path
+    module: sumd.mcp_server
+    line: 54
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 8
+  sumd.sections.extras.ExtrasSection.render:
+    name: render
+    module: sumd.sections.extras
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  sumd.renderer._parse_hub_stat_line:
+    name: _parse_hub_stat_line
+    module: sumd.renderer
+    line: 718
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 1
+  sumd.renderer._render_deployment_reqs:
+    name: _render_deployment_reqs
+    module: sumd.renderer
+    line: 440
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 1
+  sumd.cli._render_write_validate:
+    name: _render_write_validate
+    module: sumd.cli
+    line: 437
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 1
+  SUMR.extract_requirements:
+    name: extract_requirements
+    module: SUMR
+    line: 456
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 1
+  sumd.renderer._parse_calls_hubs:
+    name: _parse_calls_hubs
+    module: sumd.renderer
+    line: 744
+    cyclomatic_complexity: 8
+    calls_out: 4
+    calls_in: 1
+  sumd.extractor._read_toml:
+    name: _read_toml
+    module: sumd.extractor
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  examples.mcp.mcp_client.run:
+    name: run
+    module: examples.mcp.mcp_client
+    line: 22
+    cyclomatic_complexity: 11
+    calls_out: 53
     calls_in: 1
   sumd.toon_parser._parse_toon_block_navigate:
     name: _parse_toon_block_navigate
@@ -936,7 +1209,45 @@ nodes:
     cyclomatic_complexity: 7
     calls_out: 5
     calls_in: 1
+  sumd.renderer._render_interfaces_openapi:
+    name: _render_interfaces_openapi
+    module: sumd.renderer
+    line: 155
+    cyclomatic_complexity: 6
+    calls_out: 19
+    calls_in: 1
+  sumd.mcp_server._tool_get_section:
+    name: _tool_get_section
+    module: sumd.mcp_server
+    line: 252
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 0
 edges:
+- caller: examples.llm.anthropic_example.ask
+  callee: SUMR.parse_file
+  call_type: resolved
+- caller: examples.llm.anthropic_example.main
+  callee: project.map.toon.print
+  call_type: resolved
+- caller: examples.llm.anthropic_example.main
+  callee: examples.llm.anthropic_example.ask
+  call_type: resolved
+- caller: examples.llm.openai_example.build_context
+  callee: SUMR.parse_file
+  call_type: resolved
+- caller: examples.llm.openai_example.ask
+  callee: examples.llm.openai_example.build_context
+  call_type: resolved
+- caller: examples.llm.openai_example.main
+  callee: project.map.toon.print
+  call_type: resolved
+- caller: examples.mcp.mcp_client.run
+  callee: project.map.toon.print
+  call_type: resolved
+- caller: examples.mcp.mcp_client.main
+  callee: project.map.toon.print
+  call_type: resolved
 - caller: sumd.toon_parser._parse_toon_file
   callee: sumd.toon_parser._parse_toon_block_config
   call_type: resolved
@@ -956,40 +1267,52 @@ edges:
   callee: sumd.toon_parser._parse_toon_file
   call_type: resolved
 - caller: sumd.cli.validate
-  callee: sumd.parser.SUMDParser.parse_file
-  call_type: resolved
-- caller: sumd.cli.validate
-  callee: sumd.parser.validate
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.cli.export
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.cli.info
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.cli.extract
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
+  call_type: resolved
+- caller: sumd.cli._detect_projects
+  callee: sumd.cli._walk_projects
+  call_type: resolved
+- caller: sumd.cli._run_one_tool
+  callee: sumd.cli._tool_bin
+  call_type: resolved
+- caller: sumd.cli._run_analysis_tools
+  callee: sumd.cli._ensure_venv
+  call_type: resolved
+- caller: sumd.cli._run_analysis_tools
+  callee: sumd.cli._run_one_tool
   call_type: resolved
 - caller: sumd.cli._render_write_validate
-  callee: sumd.parser.validate_sumd_file
+  callee: SUMR.validate_sumd_file
   call_type: resolved
 - caller: sumd.cli._render_write_validate
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.cli._scan_one_project
   callee: sumd.cli._render_write_validate
   call_type: resolved
 - caller: sumd.cli._scan_one_project
-  callee: sumd.cli._export_sumd_json
+  callee: sumd.cli._echo_scan_result
   call_type: resolved
 - caller: sumd.cli._scan_one_project
-  callee: sumd.cli._run_analysis_tools
+  callee: SUMR.extract_pyproject
+  call_type: resolved
+- caller: sumd.cli._scan_one_project
+  callee: sumd.cli._generate_doql_less
   call_type: resolved
 - caller: sumd.cli.lint
   callee: sumd.cli._lint_collect_paths
   call_type: resolved
 - caller: sumd.cli.lint
-  callee: sumd.parser.validate_sumd_file
+  callee: SUMR.validate_sumd_file
   call_type: resolved
 - caller: sumd.cli.analyze
   callee: sumd.cli._setup_tools_venv
@@ -1019,7 +1342,7 @@ edges:
   callee: sumd.cli._scaffold_write
   call_type: resolved
 - caller: sumd.cli.map_cmd
-  callee: sumd.extractor.generate_map_toon
+  callee: SUMR.generate_map_toon
   call_type: resolved
 - caller: sumd.cli.main
   callee: sumd.cli.cli
@@ -1029,6 +1352,9 @@ edges:
   call_type: resolved
 - caller: sumd.extractor.extract_pyproject
   callee: sumd.extractor._read_toml
+  call_type: resolved
+- caller: sumd.extractor.extract_taskfile
+  callee: sumd.extractor._first_task_cmd
   call_type: resolved
 - caller: sumd.extractor._parse_doql_content
   callee: sumd.extractor._parse_doql_interfaces
@@ -1042,14 +1368,23 @@ edges:
 - caller: sumd.extractor.extract_doql
   callee: sumd.extractor._parse_doql_content
   call_type: resolved
+- caller: sumd.extractor.extract_dockerfile
+  callee: sumd.extractor._parse_dockerfile_line
+  call_type: resolved
 - caller: sumd.extractor._analyse_py_top_funcs
   callee: sumd.extractor._fan_out
   call_type: resolved
 - caller: sumd.extractor._analyse_py_top_funcs
   callee: sumd.extractor._cc_estimate
   call_type: resolved
-- caller: sumd.extractor._analyse_py_top_classes
+- caller: sumd.extractor._analyse_class_methods
   callee: sumd.extractor._fan_out
+  call_type: resolved
+- caller: sumd.extractor._analyse_class_methods
+  callee: sumd.extractor._cc_estimate
+  call_type: resolved
+- caller: sumd.extractor._analyse_py_top_classes
+  callee: sumd.extractor._analyse_class_methods
   call_type: resolved
 - caller: sumd.extractor._analyse_py_module
   callee: sumd.extractor._try_radon_cc
@@ -1062,6 +1397,9 @@ edges:
   call_type: resolved
 - caller: sumd.extractor._collect_map_files
   callee: sumd.extractor._lang_of
+  call_type: resolved
+- caller: sumd.extractor._collect_map_files
+  callee: sumd.extractor._is_map_ignored_path
   call_type: resolved
 - caller: sumd.extractor._render_map_detail
   callee: sumd.extractor._analyse_py_module
@@ -1078,44 +1416,29 @@ edges:
 - caller: sumd.extractor.extract_source_snippets
   callee: sumd.extractor._analyse_py_module
   call_type: resolved
-- caller: sumd.pipeline._refresh_map_toon
-  callee: sumd.extractor.generate_map_toon
+- caller: sumd.parser.validate_codeblocks
+  callee: sumd.parser._validate_markpact_meta
   call_type: resolved
-- caller: sumd.pipeline._refresh_analysis_files
-  callee: sumd.extractor.required_tools_for_profile
+- caller: sumd.parser.validate_markdown
+  callee: sumd.parser._check_empty_links
   call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_pyproject
+- caller: sumd.parser.validate_markdown
+  callee: sumd.parser._check_unclosed_fences
   call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_taskfile
+- caller: sumd.parser.validate_markdown
+  callee: sumd.parser._check_metadata_fields
   call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.toon_parser.extract_testql_scenarios
+- caller: sumd.parser.validate_markdown
+  callee: sumd.parser._check_h1
   call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_openapi
+- caller: sumd.parser.validate_markdown
+  callee: sumd.parser._check_required_sections
   call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_doql
+- caller: sumd.parser.validate_sumd_file
+  callee: sumd.parser.validate_markdown
   call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_pyqual
-  call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_python_modules
-  call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_readme_title
-  call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_requirements
-  call_type: resolved
-- caller: sumd.pipeline.RenderPipeline._collect
-  callee: sumd.extractor.extract_makefile
-  call_type: resolved
-- caller: sumd.pipeline.RenderPipeline.run
-  callee: sumd.renderer._inject_toc
+- caller: sumd.parser.validate_sumd_file
+  callee: sumd.parser.validate_codeblocks
   call_type: resolved
 - caller: sumd.renderer._render_architecture_doql_section
   callee: sumd.renderer._render_architecture_doql_parsed
@@ -1165,6 +1488,9 @@ edges:
 - caller: sumd.renderer._render_dependencies
   callee: sumd.renderer._render_deps_dev
   call_type: resolved
+- caller: sumd.renderer._render_deployment_docker
+  callee: sumd.renderer._render_dockerfile_info
+  call_type: resolved
 - caller: sumd.renderer._render_deployment
   callee: sumd.renderer._render_deployment_install
   call_type: resolved
@@ -1173,6 +1499,18 @@ edges:
   call_type: resolved
 - caller: sumd.renderer._render_deployment
   callee: sumd.renderer._render_deployment_docker
+  call_type: resolved
+- caller: sumd.renderer._render_extras
+  callee: sumd.renderer._render_makefile_targets
+  call_type: resolved
+- caller: sumd.renderer._render_extras
+  callee: sumd.renderer._render_pkg_json_scripts
+  call_type: resolved
+- caller: sumd.renderer._process_in_hubs_line
+  callee: sumd.renderer._parse_hub_stat_line
+  call_type: resolved
+- caller: sumd.renderer._parse_calls_hubs
+  callee: sumd.renderer._process_in_hubs_line
   call_type: resolved
 - caller: sumd.renderer._parse_calls_toon
   callee: sumd.renderer._parse_calls_header
@@ -1183,20 +1521,68 @@ edges:
 - caller: sumd.renderer._render_call_graph
   callee: sumd.renderer._parse_calls_toon
   call_type: resolved
+- caller: sumd.renderer._collect_pkg_sources
+  callee: sumd.renderer._collect_tool_sources
+  call_type: resolved
+- caller: sumd.renderer._collect_pkg_sources
+  callee: sumd.renderer._doql_sources
+  call_type: resolved
 - caller: sumd.renderer._collect_sources
   callee: sumd.renderer._collect_pkg_sources
   call_type: resolved
 - caller: sumd.renderer._collect_sources
   callee: sumd.renderer._collect_infra_sources
   call_type: resolved
-- caller: sumd.sections.interfaces.InterfacesSection.render
-  callee: sumd.renderer._render_interfaces
+- caller: sumd.pipeline._refresh_map_toon
+  callee: SUMR.generate_map_toon
+  call_type: resolved
+- caller: sumd.pipeline._refresh_analysis_files
+  callee: SUMR.required_tools_for_profile
+  call_type: resolved
+- caller: sumd.pipeline._refresh_analysis_files
+  callee: sumd.pipeline._find_tools_bin_dir
+  call_type: resolved
+- caller: sumd.pipeline._refresh_analysis_files
+  callee: sumd.pipeline._run_tool_if_present
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_pyproject
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_taskfile
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMD.extract_testql_scenarios
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_openapi
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_doql
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_pyqual
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_python_modules
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_readme_title
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_requirements
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline._collect
+  callee: SUMR.extract_makefile
+  call_type: resolved
+- caller: sumd.pipeline.RenderPipeline.run
+  callee: SUMR._inject_toc
   call_type: resolved
 - caller: sumd.mcp_server._tool_parse_sumd
   callee: sumd.mcp_server._resolve_path
   call_type: resolved
 - caller: sumd.mcp_server._tool_parse_sumd
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.mcp_server._tool_parse_sumd
   callee: sumd.mcp_server._doc_to_dict
@@ -1205,16 +1591,13 @@ edges:
   callee: sumd.mcp_server._resolve_path
   call_type: resolved
 - caller: sumd.mcp_server._tool_validate_sumd
-  callee: sumd.parser.SUMDParser.parse_file
-  call_type: resolved
-- caller: sumd.mcp_server._tool_validate_sumd
-  callee: sumd.parser.validate
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.mcp_server._tool_export_sumd
   callee: sumd.mcp_server._resolve_path
   call_type: resolved
 - caller: sumd.mcp_server._tool_export_sumd
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.mcp_server._tool_export_sumd
   callee: sumd.mcp_server._doc_to_dict
@@ -1223,90 +1606,119 @@ edges:
   callee: sumd.mcp_server._resolve_path
   call_type: resolved
 - caller: sumd.mcp_server._tool_list_sections
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.mcp_server._tool_get_section
   callee: sumd.mcp_server._resolve_path
   call_type: resolved
 - caller: sumd.mcp_server._tool_get_section
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.mcp_server._tool_info_sumd
   callee: sumd.mcp_server._resolve_path
   call_type: resolved
 - caller: sumd.mcp_server._tool_info_sumd
-  callee: sumd.parser.SUMDParser.parse_file
+  callee: SUMR.parse_file
   call_type: resolved
 - caller: sumd.mcp_server._tool_generate_sumd
   callee: sumd.mcp_server._resolve_path
   call_type: resolved
+- caller: sumd.sections.interfaces.InterfacesSection.render
+  callee: SUMR._render_interfaces
+  call_type: resolved
 - caller: sumd.sections.quality.QualitySection.render
-  callee: sumd.renderer._render_quality
+  callee: SUMR._render_quality
   call_type: resolved
 - caller: sumd.sections.deployment.DeploymentSection.render
-  callee: sumd.renderer._render_deployment
+  callee: SUMR._render_deployment
   call_type: resolved
 - caller: sumd.sections.code_analysis.CodeAnalysisSection.render
-  callee: sumd.renderer._render_code_analysis
+  callee: SUMR._render_code_analysis
   call_type: resolved
 - caller: sumd.sections.dependencies.DependenciesSection.render
-  callee: sumd.renderer._render_dependencies
+  callee: SUMR._render_dependencies
   call_type: resolved
 - caller: sumd.sections.call_graph.CallGraphSection.render
-  callee: sumd.renderer._render_call_graph
+  callee: SUMR._render_call_graph
   call_type: resolved
 - caller: sumd.sections.architecture.ArchitectureSection.render
-  callee: sumd.renderer._render_architecture
+  callee: SUMR._render_architecture
   call_type: resolved
 - caller: sumd.sections.source_snippets.SourceSnippetsSection.render
-  callee: sumd.renderer._render_source_snippets
-  call_type: resolved
-- caller: sumd.sections.extras.ExtrasSection.render
-  callee: sumd.renderer._render_extras
+  callee: SUMR._render_source_snippets
   call_type: resolved
 - caller: sumd.sections.workflows.WorkflowsSection.render
-  callee: sumd.renderer._render_workflows
+  callee: SUMR._render_workflows
+  call_type: resolved
+- caller: sumd.sections.extras.ExtrasSection.render
+  callee: SUMR._render_extras
   call_type: resolved
 - caller: sumd.sections.api_stubs.ApiStubsSection.render
-  callee: sumd.renderer._render_api_stubs
+  callee: SUMR._render_api_stubs
   call_type: resolved
 - caller: sumd.sections.environment.EnvironmentSection.render
-  callee: sumd.renderer._render_env_section
+  callee: SUMR._render_env_section
   call_type: resolved
 - caller: sumd.sections.environment.EnvironmentSection.render
-  callee: sumd.renderer._render_goal_section
+  callee: SUMR._render_goal_section
   call_type: resolved
 - caller: sumd.sections.configuration.ConfigurationSection.render
-  callee: sumd.renderer._render_configuration_section
-  call_type: resolved
-- caller: sumd.parser.validate_markdown
-  callee: sumd.parser._check_empty_links
-  call_type: resolved
-- caller: sumd.parser.validate_markdown
-  callee: sumd.parser._check_unclosed_fences
-  call_type: resolved
-- caller: sumd.parser.validate_markdown
-  callee: sumd.parser._check_metadata_fields
-  call_type: resolved
-- caller: sumd.parser.validate_markdown
-  callee: sumd.parser._check_h1
-  call_type: resolved
-- caller: sumd.parser.validate_markdown
-  callee: sumd.parser._check_required_sections
-  call_type: resolved
-- caller: sumd.parser.validate_sumd_file
-  callee: sumd.parser.validate_markdown
-  call_type: resolved
-- caller: sumd.parser.validate_sumd_file
-  callee: sumd.parser.validate_codeblocks
+  callee: SUMR._render_configuration_section
   call_type: resolved
 modules:
+  SUMD:
+  - SUMD.extract_testql_scenarios
+  SUMR:
+  - SUMR._inject_toc
+  - SUMR._render_api_stubs
+  - SUMR._render_architecture
+  - SUMR._render_call_graph
+  - SUMR._render_code_analysis
+  - SUMR._render_configuration_section
+  - SUMR._render_dependencies
+  - SUMR._render_deployment
+  - SUMR._render_env_section
+  - SUMR._render_extras
+  - SUMR._render_goal_section
+  - SUMR._render_interfaces
+  - SUMR._render_quality
+  - SUMR._render_source_snippets
+  - SUMR._render_workflows
+  - SUMR.extract_doql
+  - SUMR.extract_makefile
+  - SUMR.extract_openapi
+  - SUMR.extract_pyproject
+  - SUMR.extract_pyqual
+  - SUMR.extract_python_modules
+  - SUMR.extract_readme_title
+  - SUMR.extract_requirements
+  - SUMR.extract_taskfile
+  - SUMR.generate_map_toon
+  - SUMR.parse_file
+  - SUMR.required_tools_for_profile
+  - SUMR.validate_sumd_file
+  examples.llm.anthropic_example:
+  - examples.llm.anthropic_example.ask
+  - examples.llm.anthropic_example.main
+  examples.llm.openai_example:
+  - examples.llm.openai_example.ask
+  - examples.llm.openai_example.build_context
+  - examples.llm.openai_example.main
+  examples.mcp.mcp_client:
+  - examples.mcp.mcp_client.main
+  - examples.mcp.mcp_client.run
+  project.map.toon:
+  - project.map.toon.print
   sumd.cli:
   - sumd.cli._api_scenario_template
-  - sumd.cli._export_sumd_json
+  - sumd.cli._detect_projects
+  - sumd.cli._echo_scan_result
+  - sumd.cli._ensure_venv
+  - sumd.cli._generate_doql_less
   - sumd.cli._lint_collect_paths
   - sumd.cli._render_write_validate
   - sumd.cli._run_analysis_tools
+  - sumd.cli._run_one_tool
   - sumd.cli._scaffold_crud_scenarios
   - sumd.cli._scaffold_from_openapi
   - sumd.cli._scaffold_generic
@@ -1314,6 +1726,8 @@ modules:
   - sumd.cli._scaffold_write
   - sumd.cli._scan_one_project
   - sumd.cli._setup_tools_venv
+  - sumd.cli._tool_bin
+  - sumd.cli._walk_projects
   - sumd.cli.analyze
   - sumd.cli.cli
   - sumd.cli.export
@@ -1325,14 +1739,18 @@ modules:
   - sumd.cli.map_cmd
   - sumd.cli.validate
   sumd.extractor:
+  - sumd.extractor._analyse_class_methods
   - sumd.extractor._analyse_py_module
   - sumd.extractor._analyse_py_top_classes
   - sumd.extractor._analyse_py_top_funcs
   - sumd.extractor._cc_estimate
   - sumd.extractor._collect_map_files
   - sumd.extractor._fan_out
+  - sumd.extractor._first_task_cmd
+  - sumd.extractor._is_map_ignored_path
   - sumd.extractor._lang_of
   - sumd.extractor._map_cc_stats
+  - sumd.extractor._parse_dockerfile_line
   - sumd.extractor._parse_doql_content
   - sumd.extractor._parse_doql_entities
   - sumd.extractor._parse_doql_interfaces
@@ -1340,18 +1758,12 @@ modules:
   - sumd.extractor._read_toml
   - sumd.extractor._render_map_detail
   - sumd.extractor._try_radon_cc
+  - sumd.extractor.extract_dockerfile
   - sumd.extractor.extract_doql
-  - sumd.extractor.extract_makefile
-  - sumd.extractor.extract_openapi
   - sumd.extractor.extract_pyproject
-  - sumd.extractor.extract_pyqual
-  - sumd.extractor.extract_python_modules
-  - sumd.extractor.extract_readme_title
-  - sumd.extractor.extract_requirements
   - sumd.extractor.extract_source_snippets
   - sumd.extractor.extract_taskfile
   - sumd.extractor.generate_map_toon
-  - sumd.extractor.required_tools_for_profile
   sumd.mcp_server:
   - sumd.mcp_server._doc_to_dict
   - sumd.mcp_server._resolve_path
@@ -1363,36 +1775,36 @@ modules:
   - sumd.mcp_server._tool_parse_sumd
   - sumd.mcp_server._tool_validate_sumd
   sumd.parser:
-  - sumd.parser.SUMDParser.parse_file
   - sumd.parser._check_empty_links
   - sumd.parser._check_h1
   - sumd.parser._check_metadata_fields
   - sumd.parser._check_required_sections
   - sumd.parser._check_unclosed_fences
-  - sumd.parser.validate
+  - sumd.parser._validate_markpact_meta
   - sumd.parser.validate_codeblocks
   - sumd.parser.validate_markdown
   - sumd.parser.validate_sumd_file
   sumd.pipeline:
   - sumd.pipeline.RenderPipeline._collect
   - sumd.pipeline.RenderPipeline.run
+  - sumd.pipeline._find_tools_bin_dir
   - sumd.pipeline._refresh_analysis_files
   - sumd.pipeline._refresh_map_toon
+  - sumd.pipeline._run_tool_if_present
   sumd.renderer:
   - sumd.renderer._collect_infra_sources
   - sumd.renderer._collect_pkg_sources
   - sumd.renderer._collect_sources
-  - sumd.renderer._inject_toc
+  - sumd.renderer._collect_tool_sources
+  - sumd.renderer._doql_sources
   - sumd.renderer._parse_calls_header
   - sumd.renderer._parse_calls_hubs
   - sumd.renderer._parse_calls_toon
-  - sumd.renderer._render_api_stubs
-  - sumd.renderer._render_architecture
+  - sumd.renderer._parse_hub_stat_line
+  - sumd.renderer._process_in_hubs_line
   - sumd.renderer._render_architecture_doql_parsed
   - sumd.renderer._render_architecture_doql_section
   - sumd.renderer._render_call_graph
-  - sumd.renderer._render_code_analysis
-  - sumd.renderer._render_configuration_section
   - sumd.renderer._render_dependencies
   - sumd.renderer._render_deployment
   - sumd.renderer._render_deployment_docker
@@ -1400,20 +1812,20 @@ modules:
   - sumd.renderer._render_deployment_reqs
   - sumd.renderer._render_deps_dev
   - sumd.renderer._render_deps_runtime
+  - sumd.renderer._render_dockerfile_info
   - sumd.renderer._render_doql_app
   - sumd.renderer._render_doql_entities
   - sumd.renderer._render_doql_integrations
   - sumd.renderer._render_doql_interfaces
-  - sumd.renderer._render_env_section
   - sumd.renderer._render_extras
-  - sumd.renderer._render_goal_section
   - sumd.renderer._render_interfaces
   - sumd.renderer._render_interfaces_openapi
   - sumd.renderer._render_interfaces_testql
+  - sumd.renderer._render_makefile_targets
+  - sumd.renderer._render_pkg_json_scripts
   - sumd.renderer._render_quality
   - sumd.renderer._render_quality_parsed
   - sumd.renderer._render_quality_raw
-  - sumd.renderer._render_source_snippets
   - sumd.renderer._render_testql_extras
   - sumd.renderer._render_testql_one_structured
   - sumd.renderer._render_testql_raw
@@ -1455,6 +1867,517 @@ modules:
   - sumd.toon_parser._parse_toon_file
   - sumd.toon_parser.extract_testql_scenarios
 entry_points:
+- README.print
+- SUMD.__init__
+- SUMD._analyse_py_module
+- SUMD._analyse_py_top_classes
+- SUMD._analyse_py_top_funcs
+- SUMD._api_scenario_template
+- SUMD._cc_estimate
+- SUMD._check_empty_links
+- SUMD._check_h1
+- SUMD._check_metadata_fields
+- SUMD._check_required_sections
+- SUMD._check_unclosed_fences
+- SUMD._collect_infra_sources
+- SUMD._collect_map_files
+- SUMD._collect_pkg_sources
+- SUMD._collect_sources
+- SUMD._detect_projects
+- SUMD._doc_to_dict
+- SUMD._export_sumd_json
+- SUMD._fan_out
+- SUMD._inject_toc
+- SUMD._lang_of
+- SUMD._lint_collect_paths
+- SUMD._lint_print_result
+- SUMD._map_cc_stats
+- SUMD._parse_calls_header
+- SUMD._parse_calls_hubs
+- SUMD._parse_calls_toon
+- SUMD._parse_doql_content
+- SUMD._parse_doql_entities
+- SUMD._parse_doql_interfaces
+- SUMD._parse_doql_workflows
+- SUMD._parse_header
+- SUMD._parse_sections
+- SUMD._parse_toon_block_api
+- SUMD._parse_toon_block_assert
+- SUMD._parse_toon_block_config
+- SUMD._parse_toon_block_gui
+- SUMD._parse_toon_block_navigate
+- SUMD._parse_toon_block_performance
+- SUMD._parse_toon_file
+- SUMD._read_toml
+- SUMD._render_api_stubs
+- SUMD._render_architecture
+- SUMD._render_architecture_doql_parsed
+- SUMD._render_architecture_doql_section
+- SUMD._render_architecture_modules
+- SUMD._render_call_graph
+- SUMD._render_code_analysis
+- SUMD._render_configuration_section
+- SUMD._render_dependencies
+- SUMD._render_deployment
+- SUMD._render_deployment_docker
+- SUMD._render_deployment_install
+- SUMD._render_deployment_reqs
+- SUMD._render_deps_dev
+- SUMD._render_deps_runtime
+- SUMD._render_doql_app
+- SUMD._render_doql_entities
+- SUMD._render_doql_integrations
+- SUMD._render_doql_interfaces
+- SUMD._render_env_section
+- SUMD._render_extras
+- SUMD._render_goal_section
+- SUMD._render_interfaces
+- SUMD._render_interfaces_openapi
+- SUMD._render_interfaces_testql
+- SUMD._render_map_detail
+- SUMD._render_metadata_section
+- SUMD._render_quality
+- SUMD._render_quality_parsed
+- SUMD._render_quality_raw
+- SUMD._render_source_snippets
+- SUMD._render_test_contracts
+- SUMD._render_testql_endpoint
+- SUMD._render_testql_extras
+- SUMD._render_testql_one_structured
+- SUMD._render_testql_raw
+- SUMD._render_workflows
+- SUMD._render_workflows_doql
+- SUMD._render_workflows_taskfile
+- SUMD._render_write_validate
+- SUMD._resolve_path
+- SUMD._run
+- SUMD._run_analysis_tools
+- SUMD._run_code2llm_formats
+- SUMD._run_tool_subprocess
+- SUMD._scaffold_crud_scenarios
+- SUMD._scaffold_from_openapi
+- SUMD._scaffold_generic
+- SUMD._scaffold_smoke_scenario
+- SUMD._scaffold_write
+- SUMD._scan_one_project
+- SUMD._setup_tools_venv
+- SUMD._tool_export_sumd
+- SUMD._tool_generate_sumd
+- SUMD._tool_get_section
+- SUMD._tool_info_sumd
+- SUMD._tool_list_sections
+- SUMD._tool_parse_sumd
+- SUMD._tool_validate_sumd
+- SUMD._try_radon_cc
+- SUMD._validate_bash_body
+- SUMD._validate_deps_body
+- SUMD._validate_less_css_body
+- SUMD._validate_mermaid_body
+- SUMD._validate_toon_body
+- SUMD._validate_yaml_body
+- SUMD.analyze
+- SUMD.ask
+- SUMD.build_context
+- SUMD.call_tool
+- SUMD.cli
+- SUMD.export
+- SUMD.extract
+- SUMD.extract_docker_compose
+- SUMD.extract_dockerfile
+- SUMD.extract_doql
+- SUMD.extract_env
+- SUMD.extract_goal
+- SUMD.extract_makefile
+- SUMD.extract_openapi
+- SUMD.extract_package_json
+- SUMD.extract_project_analysis
+- SUMD.extract_pyproject
+- SUMD.extract_pyqual
+- SUMD.extract_python_modules
+- SUMD.extract_readme_title
+- SUMD.extract_requirements
+- SUMD.extract_source_snippets
+- SUMD.extract_taskfile
+- SUMD.generate
+- SUMD.generate_map_toon
+- SUMD.generate_sumd_content
+- SUMD.info
+- SUMD.lint
+- SUMD.list_tools
+- SUMD.main
+- SUMD.main_sumr
+- SUMD.make_ctx
+- SUMD.map_cmd
+- SUMD.parse
+- SUMD.parse_file
+- SUMD.proj_dir
+- SUMD.project_copy
+- SUMD.required_tools_for_profile
+- SUMD.run
+- SUMD.scaffold
+- SUMD.scan
+- SUMD.sumd_file
+- SUMD.test_import
+- SUMD.test_markpact_missing_path_error
+- SUMD.test_markpact_semantic_kinds_valid
+- SUMD.test_markpact_unknown_kind_error
+- SUMD.test_parse_basic
+- SUMD.test_parse_file
+- SUMD.test_parse_sections
+- SUMD.test_parser_class
+- SUMD.test_pipeline_injects_toc
+- SUMD.test_pipeline_output_has_h1
+- SUMD.test_pipeline_output_has_metadata
+- SUMD.test_pipeline_profile_minimal
+- SUMD.test_pipeline_profile_refactor
+- SUMD.test_pipeline_return_sources
+- SUMD.test_pipeline_run_returns_string
+- SUMD.test_pipeline_with_dependencies
+- SUMD.test_pipeline_with_modules
+- SUMD.test_pipeline_with_taskfile
+- SUMD.test_placeholder
+- SUMD.test_refresh_analysis_files_noop_without_tools
+- SUMD.test_refresh_map_toon_writes_file
+- SUMD.test_required_tools_minimal
+- SUMD.test_required_tools_refactor
+- SUMD.test_required_tools_rich
+- SUMD.test_sumd_lint_passes_on_generated_output
+- SUMD.test_sumd_scan_produces_no_unhandled_exceptions
+- SUMD.test_sumd_scans_all_profiles
+- SUMD.test_sumd_scans_itself
+- SUMD.test_sumd_version_flag
+- SUMD.test_sumr_generates_sumr_md
+- SUMD.test_validate_missing_intent
+- SUMD.test_validate_valid_document
+- SUMD.validate
+- SUMD.validate_codeblocks
+- SUMD.validate_markdown
+- SUMD.validate_sumd_file
+- SUMR.__init__
+- SUMR._analyse_py_module
+- SUMR._analyse_py_top_classes
+- SUMR._analyse_py_top_funcs
+- SUMR._api_scenario_template
+- SUMR._cc_estimate
+- SUMR._check_empty_links
+- SUMR._check_h1
+- SUMR._check_metadata_fields
+- SUMR._check_required_sections
+- SUMR._check_unclosed_fences
+- SUMR._collect_infra_sources
+- SUMR._collect_map_files
+- SUMR._collect_pkg_sources
+- SUMR._detect_projects
+- SUMR._doc_to_dict
+- SUMR._export_sumd_json
+- SUMR._fan_out
+- SUMR._lang_of
+- SUMR._lint_collect_paths
+- SUMR._lint_print_result
+- SUMR._map_cc_stats
+- SUMR._parse_calls_header
+- SUMR._parse_calls_hubs
+- SUMR._parse_calls_toon
+- SUMR._parse_doql_content
+- SUMR._parse_doql_entities
+- SUMR._parse_doql_interfaces
+- SUMR._parse_doql_workflows
+- SUMR._parse_header
+- SUMR._parse_sections
+- SUMR._read_toml
+- SUMR._render_architecture_doql_parsed
+- SUMR._render_architecture_doql_section
+- SUMR._render_architecture_modules
+- SUMR._render_deployment_docker
+- SUMR._render_deployment_install
+- SUMR._render_deployment_reqs
+- SUMR._render_deps_dev
+- SUMR._render_deps_runtime
+- SUMR._render_doql_app
+- SUMR._render_doql_entities
+- SUMR._render_doql_integrations
+- SUMR._render_doql_interfaces
+- SUMR._render_interfaces_openapi
+- SUMR._render_interfaces_testql
+- SUMR._render_map_detail
+- SUMR._render_metadata_section
+- SUMR._render_quality_parsed
+- SUMR._render_quality_raw
+- SUMR._render_test_contracts
+- SUMR._render_testql_endpoint
+- SUMR._render_testql_extras
+- SUMR._render_testql_one_structured
+- SUMR._render_testql_raw
+- SUMR._render_workflows_doql
+- SUMR._render_workflows_taskfile
+- SUMR._render_write_validate
+- SUMR._resolve_path
+- SUMR._run_analysis_tools
+- SUMR._run_code2llm_formats
+- SUMR._run_tool_subprocess
+- SUMR._scaffold_crud_scenarios
+- SUMR._scaffold_from_openapi
+- SUMR._scaffold_generic
+- SUMR._scaffold_smoke_scenario
+- SUMR._scaffold_write
+- SUMR._scan_one_project
+- SUMR._setup_tools_venv
+- SUMR._tool_export_sumd
+- SUMR._tool_generate_sumd
+- SUMR._tool_get_section
+- SUMR._tool_info_sumd
+- SUMR._tool_list_sections
+- SUMR._tool_parse_sumd
+- SUMR._tool_validate_sumd
+- SUMR._try_radon_cc
+- SUMR._validate_bash_body
+- SUMR._validate_deps_body
+- SUMR._validate_less_css_body
+- SUMR._validate_mermaid_body
+- SUMR._validate_toon_body
+- SUMR._validate_yaml_body
+- SUMR.analyze
+- SUMR.call_tool
+- SUMR.cli
+- SUMR.export
+- SUMR.extract
+- SUMR.generate
+- SUMR.generate_sumd_content
+- SUMR.info
+- SUMR.lint
+- SUMR.list_tools
+- SUMR.main
+- SUMR.main_sumr
+- SUMR.map_cmd
+- SUMR.parse
+- SUMR.scaffold
+- SUMR.scan
+- SUMR.validate
+- SUMR.validate_codeblocks
+- SUMR.validate_markdown
+- TODO.test_mcp_main_no_crash
+- TODO.test_mcp_tools_registered
+- TODO.test_sumd_scans_all_profiles
+- TODO.test_sumd_scans_itself
+- TODO.test_sumr_generates_sumr_md
+- docs.README.generate_readme
+- docs.USAGE.print
+- examples.llm.anthropic_example.main
+- examples.llm.openai_example.main
+- examples.mcp.mcp_client.main
+- project.map.toon.__init__
+- project.map.toon._analyse_class_methods
+- project.map.toon._analyse_py_module
+- project.map.toon._analyse_py_top_classes
+- project.map.toon._analyse_py_top_funcs
+- project.map.toon._api_scenario_template
+- project.map.toon._cc_estimate
+- project.map.toon._check_empty_links
+- project.map.toon._check_h1
+- project.map.toon._check_metadata_fields
+- project.map.toon._check_required_sections
+- project.map.toon._check_unclosed_fences
+- project.map.toon._collect_infra_sources
+- project.map.toon._collect_map_files
+- project.map.toon._collect_pkg_sources
+- project.map.toon._collect_sources
+- project.map.toon._collect_tool_sources
+- project.map.toon._detect_projects
+- project.map.toon._doc_to_dict
+- project.map.toon._doql_sources
+- project.map.toon._echo_scan_result
+- project.map.toon._ensure_venv
+- project.map.toon._export_sumd_json
+- project.map.toon._fan_out
+- project.map.toon._find_tools_bin_dir
+- project.map.toon._first_task_cmd
+- project.map.toon._generate_doql_less
+- project.map.toon._inject_toc
+- project.map.toon._is_map_ignored_path
+- project.map.toon._lang_of
+- project.map.toon._lint_collect_paths
+- project.map.toon._lint_print_result
+- project.map.toon._map_cc_stats
+- project.map.toon._parse_calls_header
+- project.map.toon._parse_calls_hubs
+- project.map.toon._parse_calls_toon
+- project.map.toon._parse_dockerfile_line
+- project.map.toon._parse_doql_content
+- project.map.toon._parse_doql_entities
+- project.map.toon._parse_doql_interfaces
+- project.map.toon._parse_doql_workflows
+- project.map.toon._parse_header
+- project.map.toon._parse_hub_stat_line
+- project.map.toon._parse_openapi_endpoints
+- project.map.toon._parse_sections
+- project.map.toon._parse_toon_block_api
+- project.map.toon._parse_toon_block_assert
+- project.map.toon._parse_toon_block_config
+- project.map.toon._parse_toon_block_gui
+- project.map.toon._parse_toon_block_navigate
+- project.map.toon._parse_toon_block_performance
+- project.map.toon._parse_toon_file
+- project.map.toon._process_in_hubs_line
+- project.map.toon._read_toml
+- project.map.toon._refresh_analysis_files
+- project.map.toon._refresh_map_toon
+- project.map.toon._render_api_stubs
+- project.map.toon._render_architecture
+- project.map.toon._render_architecture_doql_parsed
+- project.map.toon._render_architecture_doql_section
+- project.map.toon._render_architecture_modules
+- project.map.toon._render_call_graph
+- project.map.toon._render_code_analysis
+- project.map.toon._render_configuration_section
+- project.map.toon._render_dependencies
+- project.map.toon._render_deployment
+- project.map.toon._render_deployment_docker
+- project.map.toon._render_deployment_install
+- project.map.toon._render_deployment_reqs
+- project.map.toon._render_deps_dev
+- project.map.toon._render_deps_runtime
+- project.map.toon._render_dockerfile_info
+- project.map.toon._render_doql_app
+- project.map.toon._render_doql_entities
+- project.map.toon._render_doql_integrations
+- project.map.toon._render_doql_interfaces
+- project.map.toon._render_env_section
+- project.map.toon._render_extras
+- project.map.toon._render_goal_section
+- project.map.toon._render_interfaces
+- project.map.toon._render_interfaces_openapi
+- project.map.toon._render_interfaces_testql
+- project.map.toon._render_makefile_targets
+- project.map.toon._render_map_detail
+- project.map.toon._render_metadata_section
+- project.map.toon._render_pkg_json_scripts
+- project.map.toon._render_py_module_detail
+- project.map.toon._render_quality
+- project.map.toon._render_quality_parsed
+- project.map.toon._render_quality_raw
+- project.map.toon._render_scenario_contract
+- project.map.toon._render_source_snippets
+- project.map.toon._render_test_contracts
+- project.map.toon._render_testql_endpoint
+- project.map.toon._render_testql_extras
+- project.map.toon._render_testql_one_structured
+- project.map.toon._render_testql_raw
+- project.map.toon._render_workflows
+- project.map.toon._render_workflows_doql
+- project.map.toon._render_workflows_taskfile
+- project.map.toon._render_write_validate
+- project.map.toon._resolve_path
+- project.map.toon._run
+- project.map.toon._run_analysis_tools
+- project.map.toon._run_code2llm_formats
+- project.map.toon._run_one_tool
+- project.map.toon._run_tool_if_present
+- project.map.toon._run_tool_subprocess
+- project.map.toon._scaffold_crud_scenarios
+- project.map.toon._scaffold_from_openapi
+- project.map.toon._scaffold_generic
+- project.map.toon._scaffold_smoke_scenario
+- project.map.toon._scaffold_write
+- project.map.toon._scan_one_project
+- project.map.toon._setup_tools_venv
+- project.map.toon._tool_bin
+- project.map.toon._tool_export_sumd
+- project.map.toon._tool_generate_sumd
+- project.map.toon._tool_get_section
+- project.map.toon._tool_info_sumd
+- project.map.toon._tool_list_sections
+- project.map.toon._tool_parse_sumd
+- project.map.toon._tool_validate_sumd
+- project.map.toon._try_radon_cc
+- project.map.toon._validate_bash_body
+- project.map.toon._validate_deps_body
+- project.map.toon._validate_less_css_body
+- project.map.toon._validate_markpact_meta
+- project.map.toon._validate_mermaid_body
+- project.map.toon._validate_toon_body
+- project.map.toon._validate_yaml_body
+- project.map.toon._walk_projects
+- project.map.toon.analyze
+- project.map.toon.ask
+- project.map.toon.build_context
+- project.map.toon.call_tool
+- project.map.toon.cli
+- project.map.toon.export
+- project.map.toon.extract
+- project.map.toon.extract_docker_compose
+- project.map.toon.extract_dockerfile
+- project.map.toon.extract_doql
+- project.map.toon.extract_env
+- project.map.toon.extract_goal
+- project.map.toon.extract_makefile
+- project.map.toon.extract_openapi
+- project.map.toon.extract_package_json
+- project.map.toon.extract_project_analysis
+- project.map.toon.extract_pyproject
+- project.map.toon.extract_pyqual
+- project.map.toon.extract_python_modules
+- project.map.toon.extract_readme_title
+- project.map.toon.extract_requirements
+- project.map.toon.extract_source_snippets
+- project.map.toon.extract_taskfile
+- project.map.toon.extract_testql_scenarios
+- project.map.toon.generate
+- project.map.toon.generate_map_toon
+- project.map.toon.generate_sumd_content
+- project.map.toon.info
+- project.map.toon.lint
+- project.map.toon.list_tools
+- project.map.toon.main
+- project.map.toon.main_sumr
+- project.map.toon.make_ctx
+- project.map.toon.map_cmd
+- project.map.toon.parse
+- project.map.toon.parse_file
+- project.map.toon.proj_dir
+- project.map.toon.project_copy
+- project.map.toon.required_tools_for_profile
+- project.map.toon.run
+- project.map.toon.scaffold
+- project.map.toon.scan
+- project.map.toon.sumd_file
+- project.map.toon.test_import
+- project.map.toon.test_markpact_missing_path_error
+- project.map.toon.test_markpact_semantic_kinds_valid
+- project.map.toon.test_markpact_unknown_kind_error
+- project.map.toon.test_mcp_main_no_crash
+- project.map.toon.test_mcp_tools_registered
+- project.map.toon.test_parse_basic
+- project.map.toon.test_parse_file
+- project.map.toon.test_parse_sections
+- project.map.toon.test_parser_class
+- project.map.toon.test_pipeline_injects_toc
+- project.map.toon.test_pipeline_output_has_h1
+- project.map.toon.test_pipeline_output_has_metadata
+- project.map.toon.test_pipeline_profile_minimal
+- project.map.toon.test_pipeline_profile_refactor
+- project.map.toon.test_pipeline_return_sources
+- project.map.toon.test_pipeline_run_returns_string
+- project.map.toon.test_pipeline_with_dependencies
+- project.map.toon.test_pipeline_with_modules
+- project.map.toon.test_pipeline_with_taskfile
+- project.map.toon.test_placeholder
+- project.map.toon.test_refresh_analysis_files_noop_without_tools
+- project.map.toon.test_refresh_map_toon_writes_file
+- project.map.toon.test_required_tools_minimal
+- project.map.toon.test_required_tools_refactor
+- project.map.toon.test_required_tools_rich
+- project.map.toon.test_sumd_lint_passes_on_generated_output
+- project.map.toon.test_sumd_scan_produces_no_unhandled_exceptions
+- project.map.toon.test_sumd_scans_all_profiles
+- project.map.toon.test_sumd_scans_itself
+- project.map.toon.test_sumd_version_flag
+- project.map.toon.test_sumr_generates_sumr_md
+- project.map.toon.test_validate_missing_intent
+- project.map.toon.test_validate_valid_document
+- project.map.toon.validate
+- project.map.toon.validate_codeblocks
+- project.map.toon.validate_markdown
+- project.map.toon.validate_sumd_file
 - sumd.cli.analyze
 - sumd.cli.export
 - sumd.cli.extract
@@ -1467,6 +2390,24 @@ entry_points:
 - sumd.cli.scaffold
 - sumd.cli.scan
 - sumd.cli.validate
+- sumd.extractor.extract_docker_compose
+- sumd.extractor.extract_dockerfile
+- sumd.extractor.extract_doql
+- sumd.extractor.extract_env
+- sumd.extractor.extract_goal
+- sumd.extractor.extract_makefile
+- sumd.extractor.extract_openapi
+- sumd.extractor.extract_package_json
+- sumd.extractor.extract_project_analysis
+- sumd.extractor.extract_pyproject
+- sumd.extractor.extract_pyqual
+- sumd.extractor.extract_python_modules
+- sumd.extractor.extract_readme_title
+- sumd.extractor.extract_requirements
+- sumd.extractor.extract_source_snippets
+- sumd.extractor.extract_taskfile
+- sumd.extractor.generate_map_toon
+- sumd.extractor.required_tools_for_profile
 - sumd.mcp_server._tool_export_sumd
 - sumd.mcp_server._tool_generate_sumd
 - sumd.mcp_server._tool_get_section
@@ -1481,6 +2422,7 @@ entry_points:
 - sumd.parser.SUMDParser._parse_header
 - sumd.parser.SUMDParser._parse_sections
 - sumd.parser.SUMDParser.parse
+- sumd.parser.SUMDParser.parse_file
 - sumd.parser.SUMDParser.validate
 - sumd.parser._validate_bash_body
 - sumd.parser._validate_deps_body
@@ -1491,14 +2433,33 @@ entry_points:
 - sumd.parser.parse
 - sumd.parser.parse_file
 - sumd.parser.validate
+- sumd.parser.validate_sumd_file
 - sumd.pipeline.RenderPipeline.__init__
 - sumd.pipeline.RenderPipeline._assemble
 - sumd.pipeline.RenderPipeline._build_registered_sections
 - sumd.pipeline.RenderPipeline._collect
 - sumd.pipeline.RenderPipeline._render_legacy_sections
 - sumd.pipeline.RenderPipeline.run
+- sumd.pipeline._refresh_analysis_files
+- sumd.pipeline._refresh_map_toon
+- sumd.renderer._collect_sources
+- sumd.renderer._inject_toc
+- sumd.renderer._render_api_stubs
+- sumd.renderer._render_architecture
+- sumd.renderer._render_call_graph
+- sumd.renderer._render_code_analysis
+- sumd.renderer._render_configuration_section
+- sumd.renderer._render_dependencies
+- sumd.renderer._render_deployment
+- sumd.renderer._render_env_section
+- sumd.renderer._render_extras
+- sumd.renderer._render_goal_section
+- sumd.renderer._render_interfaces
 - sumd.renderer._render_metadata_section
+- sumd.renderer._render_quality
+- sumd.renderer._render_source_snippets
 - sumd.renderer._render_test_contracts
+- sumd.renderer._render_workflows
 - sumd.renderer.generate_sumd_content
 - sumd.sections.api_stubs.ApiStubsSection.render
 - sumd.sections.api_stubs.ApiStubsSection.should_render
@@ -1532,3 +2493,4 @@ entry_points:
 - sumd.sections.source_snippets.SourceSnippetsSection.should_render
 - sumd.sections.workflows.WorkflowsSection.render
 - sumd.sections.workflows.WorkflowsSection.should_render
+- sumd.toon_parser.extract_testql_scenarios

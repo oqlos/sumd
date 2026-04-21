@@ -4,45 +4,54 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
+        sumd__cli___generate_doql_less["_generate_doql_less"]
         sumd__cli__cli["cli"]
         sumd__cli__validate["validate"]
         sumd__cli__export["export"]
         sumd__cli__info["info"]
         sumd__cli__generate["generate"]
         sumd__cli__extract["extract"]
+        sumd__cli___walk_projects["_walk_projects"]
         sumd__cli___detect_projects["_detect_projects"]
+        sumd__cli___ensure_venv["_ensure_venv"]
+        sumd__cli___tool_bin["_tool_bin"]
+        sumd__cli___run_one_tool["_run_one_tool"]
         sumd__cli___run_analysis_tools["_run_analysis_tools"]
         sumd__cli___export_sumd_json["_export_sumd_json"]
         sumd__cli___render_write_validate["_render_write_validate"]
-        sumd__cli___scan_one_project["_scan_one_project"]
-        sumd__cli__scan["scan"]
-        sumd__cli__lint["lint"]
-        sumd__cli___lint_collect_paths["_lint_collect_paths"]
-        sumd__cli___lint_print_result["_lint_print_result"]
-        ...["+14 more"]
+        ...["+20 more"]
     end
 
     subgraph Core
-        sumd__extractor___fan_out["_fan_out"]
-        sumd__extractor___analyse_py_top_funcs["_analyse_py_top_funcs"]
-        sumd__extractor___analyse_py_module["_analyse_py_module"]
-        sumd__extractor___render_map_detail["_render_map_detail"]
-        sumd__extractor__generate_map_toon("generate_map_toon CC=11")
-        sumd__pipeline___refresh_map_toon["_refresh_map_toon"]
-        sumd__pipeline__RenderPipeline___collect["_collect"]
-        sumd__pipeline__RenderPipeline___build_registered_sections["_build_registered_sections"]
-        sumd__pipeline__RenderPipeline___render_legacy_sections["_render_legacy_sections"]
-        sumd__pipeline__RenderPipeline___assemble["_assemble"]
-        sumd__pipeline__RenderPipeline__run["run"]
-        sumd__renderer___render_test_contracts["_render_test_contracts"]
-        sumd__renderer___parse_calls_hubs{{_parse_calls_hubs CC=15}}
-        sumd__renderer___render_metadata_section["_render_metadata_section"]
-        sumd__renderer__generate_sumd_content["generate_sumd_content"]
-        ...["+54 more"]
+        SUMR___render_architecture_doql_section["_render_architecture_doql_sect"]
+        SUMR___render_architecture_modules["_render_architecture_modules"]
+        SUMR___render_doql_app["_render_doql_app"]
+        SUMR___render_doql_entities["_render_doql_entities"]
+        SUMR___render_doql_interfaces["_render_doql_interfaces"]
+        SUMR___render_doql_integrations["_render_doql_integrations"]
+        SUMR___render_architecture_doql_parsed["_render_architecture_doql_pars"]
+        SUMR___render_interfaces_openapi["_render_interfaces_openapi"]
+        SUMR___render_testql_raw["_render_testql_raw"]
+        SUMR___render_testql_endpoint["_render_testql_endpoint"]
+        SUMR___render_testql_extras["_render_testql_extras"]
+        SUMR___render_testql_one_structured["_render_testql_one_structured"]
+        SUMR___render_interfaces_testql["_render_interfaces_testql"]
+        SUMR___render_workflows_doql["_render_workflows_doql"]
+        SUMR___render_workflows_taskfile["_render_workflows_taskfile"]
+        ...["+587 more"]
     end
 
     subgraph Exporters
+        SUMR__export["export"]
+        SUMR___export_sumd_json["_export_sumd_json"]
+        SUMR___tool_export_sumd["_tool_export_sumd"]
+        SUMD__export["export"]
+        SUMD___export_sumd_json["_export_sumd_json"]
+        SUMD___tool_export_sumd["_tool_export_sumd"]
         sumd__mcp_server___tool_export_sumd["_tool_export_sumd"]
+        project__map__toon__export["export"]
+        project__map__toon___export_sumd_json["_export_sumd_json"]
+        project__map__toon___tool_export_sumd["_tool_export_sumd"]
     end
 
-    class sumd__cli__cli,sumd__cli__validate,sumd__cli__export,sumd__cli__info,sumd__cli__generate,sumd__cli__extract,sumd__cli___detect_projects,sumd__cli___run_analysis_tools,sumd__cli___export_sumd_json,sumd__cli___render_write_validate entry
+    class SUMR___render_architecture_doql_section,SUMR___render_architecture_modules,SUMR___render_doql_app,SUMR___render_doql_entities,SUMR___render_doql_interfaces,SUMR___render_doql_integrations,SUMR___render_architecture_doql_parsed,SUMR___render_interfaces_openapi,SUMR___render_testql_raw,SUMR___render_testql_endpoint entry

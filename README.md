@@ -3,17 +3,17 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.3.20-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-16.5h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.3.21-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-16.7h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $7.5000 (50 commits)
-- 👤 **Human dev:** ~$1655 (16.5h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.5000 (51 commits)
+- 👤 **Human dev:** ~$1670 (16.7h @ $100/h, 30min dedup)
 
 Generated on 2026-04-21 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
-![Version](https://img.shields.io/badge/version-0.3.20-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![Version](https://img.shields.io/badge/version-0.3.21-blue) ![Python](https://img.shields.io/badge/python-3.10+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
 
 **SUMD** (Structured Unified Markdown Descriptor) is a semantic project descriptor format in Markdown.  
 It defines intent, structure, execution entry points, and the mental model of a system for both humans and LLMs.
@@ -78,11 +78,13 @@ sumd /path/to/project           # scan a specific directory
 # Scan a workspace — auto-generate SUMD.md for every project found
 sumd scan .                     # skip projects that already have SUMD.md
 sumd scan . --fix               # overwrite existing SUMD.md
+sumd reload .                   # shorthand: scan + refresh app.doql.less + doql sync
 sumd scan . --fix --no-raw      # convert sources to structured Markdown instead of raw code blocks
 sumd scan . --fix --analyze     # also run analysis tools (code2llm, redup, vallm)
 sumd scan . --fix --analyze --tools code2llm,redup  # only selected tools
 sumd scan . --fix --depth 2     # limit recursive search depth (default: unlimited)
 sumd scan . --fix --no-generate-doql  # skip auto-generation of app.doql.less (enabled by default)
+sumd scan . --fix --doql-sync        # refresh app.doql.less metadata, then run `doql sync` for cache-aware rebuild
 
 # Section profiles — control how much is rendered in SUMD.md
 sumd scan . --fix --profile minimal  # core sections only (metadata, architecture, workflows, dependencies, deployment)
@@ -91,7 +93,7 @@ sumd scan . --fix --profile rich     # + code analysis, source snippets, call gr
 
 # Generate SUMR.md (pre-refactoring analysis report for AI-aware refactorization)
 sumd scan . --profile refactor       # creates SUMR.md — use sumr alias below
-sumr .                               # shorthand: sumr <path> ≡ sumd scan <path> --profile refactor
+sumr .                               # shorthand: sumr <path> ≡ sumd scan <path> --fix --profile refactor
 
 # Lint / validate SUMD files
 sumd lint SUMD.md               # validate a single file
@@ -210,6 +212,38 @@ SUMD is part of a three-layer system:
 - **SUMD → opis (description)**: Defines what the system is and how it should work
 - **DOQL → wykonanie (execution)**: Provides the language to manipulate and execute operations
 - **Taskfile → runtime**: Manages the actual execution of workflows and tasks
+
+## DOQL Integration
+
+SUMD can refresh `app.doql.less` metadata and optionally trigger DOQL's cache-aware rebuild.
+
+### `app.doql.less` refresh behaviour
+
+When `sumd scan . --fix` runs (or the shorthand `sumd .`):
+
+| State | Action |
+|-------|--------|
+| File missing | Generates boilerplate `app.doql.less` with `app { }`, default workflows, deploy and environment blocks |
+| File exists, `--fix` **not** set | Skips — existing content is preserved |
+| File exists, `--fix` **set** | **Only** the `app { name; version; }` block is updated from `pyproject.toml`. All user-defined entities, interfaces, workflows, deploy and environment blocks are **preserved**. |
+
+This means `sumd . --fix` is safe to run repeatedly — it will not destroy your custom DOQL specification.
+
+### `doql sync` trigger
+
+Add `--doql-sync` to run `doql sync` after SUMD generation:
+
+```bash
+sumd . --fix --doql-sync
+```
+
+Flow:
+1. SUMD refreshes `app.doql.less` metadata (name/version)
+2. DOQL reads the updated spec and compares it against `doql.lock`
+3. If nothing changed → `✅ No changes detected — everything up to date.`
+4. If sections changed → DOQL regenerates **only** the affected generators (API, web, documents, etc.)
+
+This gives you a single command that keeps both documentation and generated code in sync, without unnecessary rebuilds.
 
 ## License
 

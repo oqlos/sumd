@@ -73,12 +73,14 @@ sumd /path/to/project
 # Explicit scan subcommand
 sumd scan .                              # skip projects that already have SUMD.md
 sumd scan . --fix                        # overwrite existing SUMD.md
+sumd reload .                            # shorthand: scan + refresh app.doql.less + doql sync
 sumd scan . --fix --no-raw               # render sources as structured Markdown (not raw code blocks)
 sumd scan . --fix --report summary.json  # write scan report to JSON
 sumd scan . --fix --analyze              # also run code2llm, redup, vallm analysis
 sumd scan . --fix --analyze --tools code2llm,redup  # run only selected tools
 sumd scan . --fix --depth 2              # limit recursive search depth (default: unlimited)
 sumd scan . --fix --no-generate-doql     # skip auto-generation of app.doql.less
+sumd scan . --fix --doql-sync            # refresh app.doql.less metadata, then run `doql sync` for cache-aware rebuild
 
 # Profile selection
 sumd scan . --fix --profile minimal
@@ -467,6 +469,8 @@ docker run --rm -v "$PWD:/project" python:3.12-slim \
 | `app.doql.less` / `.css` | DOQL bindings | raw Less/CSS |
 
 **Auto-generated:** If `app.doql.less` doesn't exist, `sumd scan` generates it automatically with standard workflows (install, dev, build, test, lint, fmt, clean, help). Use `--no-generate-doql` to disable.
+
+**Refresh behaviour:** With `--fix` (or the shorthand `sumd .`), if `app.doql.less` already exists, only the `app { name; version; }` block is updated from `pyproject.toml`. All custom entities, interfaces, workflows, deploy and environment blocks are preserved.
 | `pyqual.yaml` | quality pipeline config | raw YAML |
 | `goal.yaml` | project intent | rendered prose |
 | `.env.example` | env variable list | bulleted list |
