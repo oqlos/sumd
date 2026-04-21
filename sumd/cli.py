@@ -17,13 +17,13 @@ from sumd.extractor import extract_pyproject
 from sumd import __version__
 
 
-def _generate_doql_less(proj_dir: Path, project_name: str, version: str = "0.1.0") -> Path | None:
+def _generate_doql_less(proj_dir: Path, project_name: str, version: str = "0.1.0", force: bool = False) -> Path | None:
     """Generate app.doql.less file if it doesn't exist.
 
     Returns the path to the generated file, or None if skipped.
     """
     doql_path = proj_dir / "app.doql.less"
-    if doql_path.exists():
+    if doql_path.exists() and not force:
         return None  # Don't overwrite existing files
 
     content = f'''// LESS format — define @variables here as needed
@@ -451,6 +451,7 @@ def _scan_one_project(
     parser_inst: "SUMDParser",
     profile: str = "rich",
     generate_doql: bool = False,
+    doql_sync: bool = False,
 ) -> dict:
     """Generate SUMD.md (or SUMR.md for refactor profile) for one project."""
     output_name = "SUMR.md" if profile == "refactor" else "SUMD.md"
@@ -469,7 +470,7 @@ def _scan_one_project(
             pyproj = extract_pyproject(proj_dir)
             project_name = pyproj.get("name", proj_dir.name)
             version = pyproj.get("version", "0.1.0")
-            doql_path = _generate_doql_less(proj_dir, project_name, version)
+            doql_path = _generate_doql_less(proj_dir, project_name, version, force=fix)
             if doql_path:
                 click.echo(f"   📝 Generated {doql_path.name}")
 
@@ -495,6 +496,19 @@ def _scan_one_project(
             click.echo("   \U0001f52c Running analysis...")
             _run_analysis_tools(proj_dir, tool_list)
             click.echo(f"   \u2705 Analysis complete \u2192 {proj_dir / 'project'}/")
+
+        if doql_sync and ((proj_dir / "app.doql.less").exists() or (proj_dir / "app.doql.css").exists()):
+            click.echo("   \u2699\ufe0f  Syncing DOQL...")
+            r = subprocess.run(
+                ["doql", "sync"],
+                cwd=str(proj_dir),
+                capture_output=True,
+                text=True,
+            )
+            if r.returncode == 0:
+                click.echo("   \u2705 DOQL sync complete")
+            else:
+                click.echo(f"   \u26a0\ufe0f  DOQL sync failed: {r.stderr.strip() or r.stdout.strip()}", err=True)
 
         return {
             "status": "OK",
@@ -562,6 +576,11 @@ def _scan_one_project(
     default=True,
     help="Generate app.doql.less file for each project if it doesn't exist (default: enabled)",
 )
+@click.option(
+    "--doql-sync/--no-doql-sync",
+    default=False,
+    help="Run 'doql sync' after generating SUMD.md (only in projects with app.doql.less/css)",
+)
 def scan(
     workspace: Path,
     export_json: bool,
@@ -573,6 +592,7 @@ def scan(
     profile: str,
     depth: Optional[int],
     generate_doql: bool,
+    doql_sync: bool,
 ):
     """Scan a workspace directory and generate SUMD.md for every project found.
 
@@ -607,7 +627,7 @@ def scan(
     for proj_dir in project_dirs:
         total += 1
         result = _scan_one_project(
-            proj_dir, fix, raw, export_json, analyze, tool_list, parser_inst, profile, generate_doql
+            proj_dir, fix, raw, export_json, analyze, tool_list, parser_inst, profile, generate_doql, doql_sync
         )
         results[proj_dir.name] = result
         if result["status"] == "SKIP":
