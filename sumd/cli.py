@@ -590,9 +590,9 @@ def scan(
 
     project_dirs = _detect_projects(workspace, max_depth=depth)
 
-    # If workspace itself is a project (has pyproject.toml at root), scan it directly
-    if not project_dirs and (workspace / "pyproject.toml").exists():
-        project_dirs = [workspace]
+    # If workspace itself is a project (has pyproject.toml at root), include it
+    if (workspace / "pyproject.toml").exists():
+        project_dirs.insert(0, workspace)
 
     if not project_dirs:
         click.echo(
