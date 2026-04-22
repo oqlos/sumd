@@ -8,9 +8,13 @@ import pytest
 from click.testing import CliRunner
 
 from sumd.cli import (
+    _DOQL_AUTOGEN_MARKER,
     _detect_project_type,
     _detect_projects,
+    _generate_doql_less,
     _is_project_dir,
+    _node_framework,
+    _node_spec_from_package_json,
     cli,
 )
 
@@ -193,3 +197,127 @@ class TestProjectDetection:
 
         found = {p.name for p in _detect_projects(tmp_path)}
         assert found == {"py-app", "node-app", "rust-app"}
+
+
+class TestNodeSpecFromPackageJson:
+    """Node DOQL spec must mirror real package.json (scripts + framework)."""
+
+    @pytest.mark.parametrize("deps,expected", [
+        ({"react"},                        "react"),
+        ({"react", "typescript"},          "react+typescript"),
+        ({"next", "react"},                "next"),
+        ({"next", "react", "typescript"},  "next+typescript"),
+        ({"vue"},                          "vue"),
+        ({"@sveltejs/kit", "svelte"},      "sveltekit"),
+        ({"svelte"},                       "svelte"),
+        ({"astro"},                        "astro"),
+        ({"vite", "typescript"},           "vite+typescript"),
+        ({"@angular/core"},                "angular"),
+        ({"@nestjs/core"},                 "nestjs"),
+        ({"express"},                      "express"),
+        ({"typescript"},                   "typescript"),
+        (set(),                            "node"),
+    ])
+    def test_framework_detection(self, deps: set[str], expected: str):
+        assert _node_framework(deps) == expected
+
+    def test_spec_uses_real_scripts_and_extras(self):
+        pkg = {
+            "name": "demo",
+            "scripts": {
+                "dev": "vite",
+                "build": "vite build",
+                "test": "vitest",
+                "lint:fix": "eslint --fix",
+                "icons:generate": "python gen.py",
+                "test:e2e": "playwright test",
+            },
+            "dependencies": ["react"],
+            "dev_dependencies": ["vite", "typescript"],
+        }
+        spec, extras = _node_spec_from_package_json(pkg)
+
+        # Framework reflects deps + TS.
+        assert spec["interface"] == 'interface[type="web"] {\n  framework: react+typescript;\n}'
+
+        # Canonical workflows point at actual scripts when available.
+        assert spec["install"] == "npm install"
+        assert spec["dev"]     == "npm run dev"
+        assert spec["build"]   == "npm run build"
+        assert spec["test"]    == "npm test"          # "test" script present
+        assert spec["fmt"]     == "npm run lint:fix"  # picks lint:fix as fmt
+
+        # Non-canonical scripts surface as extras, canonical ones don't.
+        assert extras == {
+            "icons:generate": "npm run icons:generate",
+            "test:e2e":       "npm run test:e2e",
+        }
+
+    def test_spec_falls_back_without_scripts(self):
+        spec, extras = _node_spec_from_package_json({})
+        assert extras == {}
+        assert spec["install"] == "npm install"
+        assert spec["dev"]     == "npm run dev"
+        assert spec["test"]    == "npm test"
+        assert spec["interface"] == 'interface[type="web"] {\n  framework: node;\n}'
+
+
+class TestGenerateDoqlLess:
+    """Refresh behaviour for app.doql.less generation."""
+
+    def _pkg(self, tmp_path: Path, **overrides) -> None:
+        data = {"name": "demo", "version": "0.1.0", "scripts": {}}
+        data.update(overrides)
+        (tmp_path / "package.json").write_text(json.dumps(data), encoding="utf-8")
+
+    def test_fresh_generation_for_node_uses_real_scripts(self, tmp_path: Path):
+        self._pkg(tmp_path, scripts={"dev": "vite", "icons:gen": "python x.py"},
+                  devDependencies={"vite": "^7", "typescript": "^5"})
+        _generate_doql_less(tmp_path, "demo", "0.1.0", force=True, project_type="node")
+        content = (tmp_path / "app.doql.less").read_text()
+        assert _DOQL_AUTOGEN_MARKER in content
+        assert "framework: vite+typescript" in content
+        assert 'workflow[name="dev"]' in content
+        assert 'workflow[name="icons:gen"]' in content
+        # exactly one app{} block
+        assert content.count("app {") == 1
+
+    def test_force_regenerates_autogen_file_without_duplicating(self, tmp_path: Path):
+        """Regression: previously the force path prepended a second app{}
+        block when the existing block was identical to the new one."""
+        self._pkg(tmp_path)
+        _generate_doql_less(tmp_path, "demo", "0.1.0", force=True, project_type="node")
+        # Re-run: file is auto-generated → full regeneration, still one app{}.
+        self._pkg(tmp_path, version="0.2.0")
+        _generate_doql_less(tmp_path, "demo", "0.2.0", force=True, project_type="node")
+        content = (tmp_path / "app.doql.less").read_text()
+        assert content.count("app {") == 1
+        assert "version: 0.2.0" in content
+        assert "version: 0.1.0" not in content
+
+    def test_force_preserves_user_authored_file(self, tmp_path: Path):
+        """User-authored files keep their body; only the app{} block is refreshed."""
+        self._pkg(tmp_path)
+        user_doql = (
+            "app {\n  name: old-name;\n  version: 0.0.1;\n}\n\n"
+            'entity[name="User"] {\n  id: uuid;\n}\n'
+        )
+        (tmp_path / "app.doql.less").write_text(user_doql, encoding="utf-8")
+        _generate_doql_less(tmp_path, "demo", "9.9.9", force=True, project_type="node")
+        content = (tmp_path / "app.doql.less").read_text()
+        # User-defined entity is still there.
+        assert 'entity[name="User"]' in content
+        # Metadata block was refreshed, not duplicated.
+        assert content.count("app {") == 1
+        assert "version: 9.9.9" in content
+        # Auto-gen marker NOT added (file remains user-authored).
+        assert _DOQL_AUTOGEN_MARKER not in content
+
+    def test_no_force_skips_existing(self, tmp_path: Path):
+        self._pkg(tmp_path)
+        (tmp_path / "app.doql.less").write_text("// existing\n", encoding="utf-8")
+        result = _generate_doql_less(
+            tmp_path, "demo", "0.1.0", force=False, project_type="node",
+        )
+        assert result is None
+        assert (tmp_path / "app.doql.less").read_text() == "// existing\n"
