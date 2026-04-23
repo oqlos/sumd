@@ -1,7 +1,7 @@
 <!-- code2docs:start --># sumd
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-844-green)
-> **844** functions | **26** classes | **95** files | CC̄ = 4.3
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-810-green)
+> **810** functions | **27** classes | **95** files | CC̄ = 4.3
 
 > Auto-generated project documentation from source code analysis.
 
@@ -160,11 +160,11 @@ sumd/
 ├── README
 ├── CHANGELOG
         ├── toon
+        ├── toon
+        ├── toon
+        ├── toon
     ├── context
-        ├── toon
-        ├── toon
     ├── README
-        ├── toon
     ├── calls
         ├── toon
 ```
@@ -175,6 +175,7 @@ sumd/
 
 - **`RenderPipeline`** — —
 - **`CodeBlockIssue`** — —
+- **`RenderPipeline`** — —
 - **`CodeBlockIssue`** — —
 - **`CodeBlockIssue`** — —
 - **`SUMDParser`** — Parser for SUMD markdown documents.
@@ -202,7 +203,6 @@ sumd/
 
 ### Functions
 
-- `generate_sumd_content()` — —
 - `cli()` — —
 - `validate()` — —
 - `export()` — —
@@ -238,6 +238,8 @@ sumd/
 - `validate_codeblocks()` — —
 - `validate_markdown()` — —
 - `validate_sumd_file()` — —
+- `list_tools()` — —
+- `call_tool()` — —
 - `ask()` — —
 - `main()` — —
 - `build_context()` — —
@@ -473,8 +475,8 @@ sumd/
 📄 `CHANGELOG`
 📄 `README` (1 functions)
 📄 `SPEC`
-📄 `SUMD` (387 functions, 1 classes)
-📄 `SUMR` (167 functions, 2 classes)
+📄 `SUMD` (348 functions, 2 classes)
+📄 `SUMR` (125 functions, 2 classes)
 📄 `TODO` (5 functions)
 📄 `Taskfile`
 📄 `Taskfile.guards`
@@ -524,7 +526,7 @@ sumd/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (987 functions)
+📄 `project.map.toon` (905 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `project.validation.toon`

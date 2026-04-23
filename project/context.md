@@ -74,15 +74,15 @@
 - **Classes**: 1
 - **File**: `dependencies.py`
 
-### sumd.sections.workflows
-- **Functions**: 5
-- **Classes**: 1
-- **File**: `workflows.py`
-
 ### sumd.sections.extras
 - **Functions**: 5
 - **Classes**: 1
 - **File**: `extras.py`
+
+### sumd.sections.workflows
+- **Functions**: 5
+- **Classes**: 1
+- **File**: `workflows.py`
 
 ### sumd.sections.environment
 - **Functions**: 4
@@ -338,13 +338,13 @@ Usage:
 - **Methods**: 2
 - **Key Methods**: sumd.sections.quality.QualitySection.should_render, sumd.sections.quality.QualitySection.render
 
-### sumd.sections.code_analysis.CodeAnalysisSection
-- **Methods**: 2
-- **Key Methods**: sumd.sections.code_analysis.CodeAnalysisSection.should_render, sumd.sections.code_analysis.CodeAnalysisSection.render
-
 ### sumd.sections.deployment.DeploymentSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.deployment.DeploymentSection.should_render, sumd.sections.deployment.DeploymentSection.render
+
+### sumd.sections.code_analysis.CodeAnalysisSection
+- **Methods**: 2
+- **Key Methods**: sumd.sections.code_analysis.CodeAnalysisSection.should_render, sumd.sections.code_analysis.CodeAnalysisSection.render
 
 ### sumd.sections.metadata.MetadataSection
 > Render ## Metadata — always present, all profiles.
@@ -367,13 +367,13 @@ Usage:
 - **Methods**: 2
 - **Key Methods**: sumd.sections.architecture.ArchitectureSection.should_render, sumd.sections.architecture.ArchitectureSection.render
 
-### sumd.sections.workflows.WorkflowsSection
-- **Methods**: 2
-- **Key Methods**: sumd.sections.workflows.WorkflowsSection.should_render, sumd.sections.workflows.WorkflowsSection.render
-
 ### sumd.sections.extras.ExtrasSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.extras.ExtrasSection.should_render, sumd.sections.extras.ExtrasSection.render
+
+### sumd.sections.workflows.WorkflowsSection
+- **Methods**: 2
+- **Key Methods**: sumd.sections.workflows.WorkflowsSection.should_render, sumd.sections.workflows.WorkflowsSection.render
 
 ### sumd.sections.api_stubs.ApiStubsSection
 - **Methods**: 2
@@ -593,8 +593,8 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_env` - 13 calls
 - `sumd.cli.validate` - 13 calls
 - `sumd.cli.extract` - 13 calls
-- `examples.mcp.mcp_client.main` - 12 calls
 - `sumd.toon_parser.extract_testql_scenarios` - 12 calls
+- `examples.mcp.mcp_client.main` - 12 calls
 - `sumd.extractor.extract_pyqual` - 12 calls
 - `sumd.extractor.extract_makefile` - 12 calls
 - `sumd.extractor.extract_source_snippets` - 12 calls

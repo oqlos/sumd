@@ -91,8 +91,8 @@ def _validate_deps_body(body: str, path: str) -> list[str]:
         line = line.strip()
         if not line or line.startswith("#"):
             continue
-        # PEP 508 lookalike: name with optional extras/version
-        if not re.match(r"^[A-Za-z0-9_\-\.]+", line):
+        # PEP 508 / npm lookalike: name with optional extras/version
+        if not re.match(r"^(?:@[A-Za-z0-9_\-\.]+\/)?[A-Za-z0-9_\-\.]+", line):
             issues.append(f"deps line {i} in {path} looks invalid: {line!r}")
     return issues
 

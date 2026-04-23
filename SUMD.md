@@ -23,7 +23,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.3.33`
+- **version**: `0.3.34`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -43,7 +43,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: sumd;
-  version: 0.3.33;
+  version: 0.3.34;
 }
 
 dependencies {
@@ -636,7 +636,7 @@ pipeline:
 ```yaml
 project:
   name: sumd
-  version: 0.3.33
+  version: 0.3.34
   env: local
 ```
 
@@ -1284,7 +1284,7 @@ def main()  # CC=1, fan=3
 
 ## Call Graph
 
-*178 nodes · 159 edges · 25 modules · CC̄=1.2*
+*171 nodes · 159 edges · 24 modules · CC̄=1.2*
 
 ### Hubs (by degree)
 
@@ -1294,14 +1294,14 @@ def main()  # CC=1, fan=3
 | `print` *(in README)* | 0 | 42 | 0 | **42** |
 | `analyze` *(in sumd.cli)* | 11 ⚠ | 0 | 33 | **33** |
 | `_collect` *(in sumd.pipeline.RenderPipeline)* | 3 | 0 | 30 | **30** |
-| `_render_call_graph` *(in sumd.sections.call_graph)* | 7 | 0 | 28 | **28** |
+| `_render_call_graph` *(in sumd.sections.call_graph)* | 7 | 1 | 28 | **29** |
+| `_render_api_stubs` *(in sumd.sections.api_stubs)* | 11 ⚠ | 1 | 27 | **28** |
 | `generate_map_toon` *(in sumd.extractor)* | 5 | 2 | 24 | **26** |
 | `_render_quality_parsed` *(in sumd.sections.quality)* | 9 | 1 | 21 | **22** |
-| `_render_deps_runtime` *(in sumd.sections.dependencies)* | 6 | 1 | 19 | **20** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/oqlos/sumd
-# nodes: 178 | edges: 159 | modules: 25
+# nodes: 171 | edges: 159 | modules: 24
 # CC̄=1.2
 
 HUBS[20]:
@@ -1314,52 +1314,41 @@ HUBS[20]:
   sumd.pipeline.RenderPipeline._collect
     CC=3  in:0  out:30  total:30
   sumd.sections.call_graph._render_call_graph
-    CC=7  in:0  out:28  total:28
+    CC=7  in:1  out:28  total:29
+  sumd.sections.api_stubs._render_api_stubs
+    CC=11  in:1  out:27  total:28
   sumd.extractor.generate_map_toon
     CC=5  in:2  out:24  total:26
   sumd.sections.quality._render_quality_parsed
     CC=9  in:1  out:21  total:22
-  sumd.sections.dependencies._render_deps_runtime
-    CC=6  in:1  out:19  total:20
   sumd.extractor._parse_doql_content
-    CC=6  in:1  out:19  total:20
-  sumd.sections.interfaces._render_interfaces_openapi
     CC=6  in:1  out:19  total:20
   sumd.cli.map_cmd
     CC=7  in:0  out:20  total:20
-  sumd.extractor._parse_doql_workflows
-    CC=7  in:1  out:18  total:19
+  sumd.sections.dependencies._render_deps_runtime
+    CC=6  in:1  out:19  total:20
+  sumd.sections.interfaces._render_interfaces_openapi
+    CC=6  in:1  out:19  total:20
   sumd.extractor.extract_pyproject
     CC=3  in:2  out:17  total:19
+  sumd.extractor._parse_doql_workflows
+    CC=7  in:1  out:18  total:19
   sumd.cli.lint
     CC=10  in:0  out:19  total:19
   sumd.validator.validate_codeblocks
+    CC=9  in:1  out:17  total:18
+  sumd.sections.environment._render_goal_section
     CC=9  in:1  out:17  total:18
   sumd.extractor.extract_package_json
     CC=3  in:3  out:15  total:18
   sumd.sections.workflows._render_workflows_taskfile
     CC=6  in:1  out:17  total:18
-  sumd.sections.extras._render_pkg_json_scripts
-    CC=7  in:1  out:16  total:17
-  sumd.toon_parser._parse_toon_file
-    CC=4  in:1  out:16  total:17
-  sumd.cli._finalize_scan
-    CC=9  in:1  out:16  total:17
+  sumd.sections.source_snippets._render_source_snippets
+    CC=8  in:1  out:16  total:17
 
 MODULES:
   README  [1 funcs]
     print  CC=0  out:0
-  SUMR  [15 funcs]
-    _inject_toc  CC=0  out:0
-    _render_api_stubs  CC=0  out:0
-    _render_architecture  CC=0  out:0
-    _render_call_graph  CC=0  out:0
-    _render_code_analysis  CC=0  out:0
-    _render_configuration_section  CC=0  out:0
-    _render_dependencies  CC=0  out:0
-    _render_deployment  CC=0  out:0
-    _render_env_section  CC=0  out:0
-    _render_extras  CC=0  out:0
   examples.llm.anthropic_example  [2 funcs]
     ask  CC=1  out:3
     main  CC=2  out:14
@@ -1404,7 +1393,7 @@ MODULES:
     _tool_validate_sumd  CC=1  out:7
   sumd.parser  [1 funcs]
     parse_file  CC=1  out:2
-  sumd.pipeline  [11 funcs]
+  sumd.pipeline  [12 funcs]
     _collect  CC=3  out:30
     run  CC=2  out:3
     _collect_infra_sources  CC=6  out:10
@@ -1413,12 +1402,14 @@ MODULES:
     _collect_tool_sources  CC=7  out:6
     _doql_sources  CC=4  out:4
     _find_tools_bin_dir  CC=3  out:1
+    _inject_toc  CC=3  out:9
     _refresh_analysis_files  CC=7  out:11
-    _refresh_map_toon  CC=3  out:3
-  sumd.sections.api_stubs  [1 funcs]
+  sumd.sections.api_stubs  [2 funcs]
     render  CC=1  out:1
-  sumd.sections.architecture  [7 funcs]
+    _render_api_stubs  CC=11  out:27
+  sumd.sections.architecture  [8 funcs]
     render  CC=1  out:1
+    _render_architecture  CC=6  out:12
     _render_architecture_doql_parsed  CC=1  out:4
     _render_architecture_doql_section  CC=6  out:14
     _render_doql_app  CC=3  out:8
@@ -1433,10 +1424,12 @@ MODULES:
     _parse_hub_stat_line  CC=2  out:9
     _process_in_hubs_line  CC=6  out:6
     _render_call_graph  CC=7  out:28
-  sumd.sections.code_analysis  [1 funcs]
+  sumd.sections.code_analysis  [2 funcs]
     render  CC=1  out:1
-  sumd.sections.configuration  [1 funcs]
+    _render_code_analysis  CC=9  out:15
+  sumd.sections.configuration  [2 funcs]
     render  CC=1  out:1
+    _render_configuration_section  CC=1  out:0
   sumd.sections.dependencies  [4 funcs]
     render  CC=1  out:1
     _render_dependencies  CC=2  out:6
@@ -1449,8 +1442,10 @@ MODULES:
     _render_deployment_install  CC=2  out:11
     _render_deployment_reqs  CC=5  out:9
     _render_dockerfile_info  CC=6  out:9
-  sumd.sections.environment  [1 funcs]
+  sumd.sections.environment  [3 funcs]
     render  CC=1  out:4
+    _render_env_section  CC=3  out:7
+    _render_goal_section  CC=9  out:17
   sumd.sections.extras  [4 funcs]
     render  CC=1  out:1
     _render_extras  CC=3  out:3
@@ -1469,8 +1464,9 @@ MODULES:
     _render_quality  CC=3  out:4
     _render_quality_parsed  CC=9  out:21
     _render_quality_raw  CC=2  out:7
-  sumd.sections.source_snippets  [1 funcs]
+  sumd.sections.source_snippets  [2 funcs]
     render  CC=1  out:1
+    _render_source_snippets  CC=8  out:16
   sumd.sections.workflows  [4 funcs]
     render  CC=1  out:1
     _render_workflows  CC=4  out:5

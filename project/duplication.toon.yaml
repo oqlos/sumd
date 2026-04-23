@@ -6,7 +6,7 @@ SUMMARY:
   dup_groups:    2
   dup_fragments: 4
   saved_lines:   25
-  scan_ms:       10169
+  scan_ms:       6832
 
 HOTSPOTS[2] (files with most duplication):
   sumd/toon_parser.py  dup=28L  groups=1  frags=2  (0.5%)

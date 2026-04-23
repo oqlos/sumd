@@ -7,11 +7,11 @@ REFACTOR[1]:
   1. break 1 circular dependencies
 
 PIPELINES[70]:
-  [1] Src [main]: main → run
+  [1] Src [main]: main → ask → parse_file
       PURITY: 100% pure
-  [2] Src [main]: main → ask → parse_file
+  [2] Src [main]: main → ask → build_context → parse_file
       PURITY: 100% pure
-  [3] Src [main]: main → ask → build_context → parse_file
+  [3] Src [main]: main → run
       PURITY: 100% pure
   [4] Src [parse]: parse
       PURITY: 100% pure

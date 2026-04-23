@@ -1,6 +1,5 @@
 flowchart TD
     README["README<br/>1 funcs"]
-    SUMR["SUMR<br/>161 funcs"]
     examples__llm["examples.llm<br/>5 funcs"]
     examples__mcp["examples.mcp<br/>2 funcs"]
     sumd__cli["sumd.cli<br/>43 funcs"]
@@ -8,17 +7,14 @@ flowchart TD
     sumd__mcp_server["sumd.mcp_server<br/>12 funcs"]
     sumd__parser["sumd.parser<br/>9 funcs"]
     sumd__pipeline["sumd.pipeline<br/>16 funcs"]
-    sumd__sections["sumd.sections<br/>76 funcs"]
     sumd__toon_parser["sumd.toon_parser<br/>8 funcs"]
     sumd__validator["sumd.validator<br/>15 funcs"]
     examples__mcp ==>|31| README
     sumd__pipeline ==>|18| sumd__extractor
-    sumd__sections ==>|14| SUMR
     examples__llm ==>|11| README
     sumd__mcp_server ==>|6| sumd__parser
     sumd__cli ==>|5| sumd__parser
     sumd__cli ==>|4| sumd__extractor
-    sumd__pipeline ==>|4| SUMR
     examples__llm -->|2| sumd__parser
     sumd__cli -->|2| sumd__validator
     sumd__pipeline -->|1| sumd__toon_parser

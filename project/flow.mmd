@@ -28,29 +28,30 @@ flowchart TD
         TODO__test_sumr_generates_sumr_md["test_sumr_generates_sumr_md"]
         TODO__test_mcp_tools_registered["test_mcp_tools_registered"]
         TODO__test_mcp_main_no_crash["test_mcp_main_no_crash"]
+        docs__USAGE__print["print"]
         sumd__validator___validate_yaml_body["_validate_yaml_body"]
         sumd__validator___validate_less_css_body["_validate_less_css_body"]
         sumd__validator___validate_mermaid_body["_validate_mermaid_body"]
         sumd__validator___validate_toon_body["_validate_toon_body"]
         sumd__validator___validate_bash_body["_validate_bash_body"]
         sumd__validator___validate_deps_body["_validate_deps_body"]
-        sumd__parser__SUMDParser__parse["parse"]
-        sumd__parser__SUMDParser___parse_header["_parse_header"]
-        sumd__parser__SUMDParser___parse_sections["_parse_sections"]
-        sumd__parser__SUMDParser__validate["validate"]
-        ...["+636 more"]
+        sumd__extractor___fan_out["_fan_out"]
+        sumd__extractor___analyse_class_methods["_analyse_class_methods"]
+        sumd__extractor___analyse_py_top_classes["_analyse_py_top_classes"]
+        ...["+607 more"]
     end
 
     subgraph Exporters
         sumd__mcp_server___tool_export_sumd["_tool_export_sumd"]
         SUMR__export["export"]
         SUMR___export_sumd_json["_export_sumd_json"]
-        SUMD__export["export"]
-        SUMD___export_sumd_json["_export_sumd_json"]
-        SUMD___tool_export_sumd["_tool_export_sumd"]
+        SUMR___tool_export_sumd["_tool_export_sumd"]
         project__map__toon__export["export"]
         project__map__toon___export_sumd_json["_export_sumd_json"]
         project__map__toon___tool_export_sumd["_tool_export_sumd"]
+        SUMD__export["export"]
+        SUMD___export_sumd_json["_export_sumd_json"]
+        SUMD___tool_export_sumd["_tool_export_sumd"]
     end
 
-    class TODO__test_sumd_scans_itself,TODO__test_sumd_scans_all_profiles,TODO__test_sumr_generates_sumr_md,TODO__test_mcp_tools_registered,TODO__test_mcp_main_no_crash,sumd__validator___validate_yaml_body,sumd__validator___validate_less_css_body,sumd__validator___validate_mermaid_body,sumd__validator___validate_toon_body,sumd__validator___validate_bash_body entry
+    class TODO__test_sumd_scans_itself,TODO__test_sumd_scans_all_profiles,TODO__test_sumr_generates_sumr_md,TODO__test_mcp_tools_registered,TODO__test_mcp_main_no_crash,docs__USAGE__print,sumd__validator___validate_yaml_body,sumd__validator___validate_less_css_body,sumd__validator___validate_mermaid_body,sumd__validator___validate_toon_body entry
