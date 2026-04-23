@@ -975,7 +975,7 @@ def _scan_one_project(
 @click.argument("workspace", type=click.Path(exists=True, path_type=Path), default=".")
 @click.option(
     "--export-json/--no-export-json",
-    default=True,
+    default=False,
     help="Also export sumd.json per project",
 )
 @click.option(

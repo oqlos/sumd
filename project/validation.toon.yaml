@@ -1,4 +1,4 @@
-# vallm batch | 96f | 0✓ 61⚠ 0✗ | 2026-04-21
+# vallm batch | 96f | 0✓ 61⚠ 0✗ | 2026-04-23
 
 SUMMARY:
   scanned: 96  passed: 0 (0.0%)  warnings: 61  errors: 0  unsupported: 0
@@ -7,7 +7,7 @@ WARNINGS[61]{path,score}:
   sumd/cli.py,0.74
     issues[2]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
-      complexity.lizard_cc,warning,_scan_one_project: CC=17 exceeds limit 15,464
+      complexity.lizard_cc,warning,_scan_one_project: CC=22 exceeds limit 15,875
   sumd/mcp_server.py,0.74
     issues[2]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",

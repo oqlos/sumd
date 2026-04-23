@@ -3,8 +3,8 @@ flowchart TD
     SUMR["SUMR<br/>138 funcs"]
     examples__llm["examples.llm<br/>5 funcs"]
     examples__mcp["examples.mcp<br/>2 funcs"]
-    project__map["project.map<br/>214 funcs"]
-    sumd__cli["sumd.cli<br/>35 funcs"]
+    project__map["project.map<br/>215 funcs"]
+    sumd__cli["sumd.cli<br/>41 funcs"]
     sumd__mcp_server["sumd.mcp_server<br/>12 funcs"]
     sumd__pipeline["sumd.pipeline<br/>10 funcs"]
     sumd__sections["sumd.sections<br/>32 funcs"]
@@ -12,7 +12,7 @@ flowchart TD
     sumd__pipeline ==>|20| SUMR
     sumd__sections ==>|14| SUMR
     examples__llm ==>|11| project__map
-    sumd__cli ==>|9| SUMR
+    sumd__cli ==>|11| SUMR
     sumd__mcp_server ==>|6| SUMR
     sumd__pipeline -->|3| SUMD
     examples__llm -->|2| SUMR

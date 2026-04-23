@@ -6,15 +6,15 @@
 - **Primary Language**: python
 - **Languages**: python: 29, md: 19, yaml: 19, json: 7, yml: 6
 - **Analysis Mode**: static
-- **Total Functions**: 769
+- **Total Functions**: 776
 - **Total Classes**: 33
 - **Modules**: 90
-- **Entry Points**: 627
+- **Entry Points**: 628
 
 ## Architecture by Module
 
 ### project.map.toon
-- **Functions**: 861
+- **Functions**: 1530
 - **File**: `map.toon.yaml`
 
 ### SUMD
@@ -31,13 +31,13 @@
 - **Functions**: 54
 - **File**: `renderer.py`
 
+### sumd.cli
+- **Functions**: 41
+- **File**: `cli.py`
+
 ### sumd.extractor
 - **Functions**: 39
 - **File**: `extractor.py`
-
-### sumd.cli
-- **Functions**: 35
-- **File**: `cli.py`
 
 ### sumd.parser
 - **Functions**: 24
@@ -109,8 +109,8 @@ Main execution flows into the system:
 ### sumd.cli.scan
 > Scan a workspace directory and generate SUMD.md for every project found.
 
-Detects projects by presence of pyproject.toml. Extracts metadata from:
-pypr
+Detects projects by the presence of a known marker file (pyproject.toml,
+pac
 - **Calls**: cli.command, click.argument, click.option, click.option, click.option, click.option, click.option, click.option
 
 ### sumd.cli.analyze
@@ -128,15 +128,15 @@ Reads openapi.yaml (if present) and generates .testql.toon.yaml scenario files
 for e
 - **Calls**: cli.command, click.argument, click.option, click.option, click.option, project.resolve, None.resolve, out_dir.mkdir
 
+### sumd.pipeline.RenderPipeline._collect
+> Extract all project data and build RenderContext.
+- **Calls**: SUMR.extract_pyproject, SUMR.extract_taskfile, SUMD.extract_testql_scenarios, SUMR.extract_openapi, SUMR.extract_doql, SUMR.extract_pyqual, SUMR.extract_python_modules, SUMR.extract_readme_title
+
 ### sumd.cli.generate
 > Generate a SUMD document from structured format.
 
 FILE: Path to the structured format file (json/yaml/toml)
 - **Calls**: cli.command, click.argument, click.option, click.option, file.read_text, lines.append, data.get, lines.append
-
-### sumd.pipeline.RenderPipeline._collect
-> Extract all project data and build RenderContext.
-- **Calls**: SUMR.extract_pyproject, SUMR.extract_taskfile, SUMD.extract_testql_scenarios, SUMR.extract_openapi, SUMR.extract_doql, SUMR.extract_pyqual, SUMR.extract_python_modules, SUMR.extract_readme_title
 
 ### sumd.renderer._render_call_graph
 > Render call graph summary from calls.toon.yaml in project_analysis.
@@ -178,15 +178,15 @@ Validates:
 ### sumd.renderer._render_goal_section
 - **Calls**: a, a, goal.get, goal.get, goal.get, goal.get, goal.get, a
 
+### sumd.renderer._render_source_snippets
+> Render top-N modules with function/class signatures for LLM orientation.
+- **Calls**: a, a, a, a, a, a, a, a
+
 ### sumd.cli.export
 > Export a SUMD document to structured format.
 
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, click.option, click.option, SUMR.parse_file, click.Path, click.Choice, click.Path
-
-### sumd.renderer._render_source_snippets
-> Render top-N modules with function/class signatures for LLM orientation.
-- **Calls**: a, a, a, a, a, a, a, a
 
 ### examples.llm.openai_example.main
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, project.map.toon.print, project.map.toon.print
@@ -223,6 +223,13 @@ Args:
 ### sumd.sections.metadata.MetadataSection.render
 - **Calls**: a, a, a, a, a, ctx.openapi.get, a, a
 
+### sumd.extractor.extract_openapi
+- **Calls**: openapi_path.exists, yaml.safe_load, data.get, list, openapi_path.read_text, data.get, None.keys, info.get
+
+### sumd.extractor.extract_env
+> Parse .env.example — return list of {key, default, comment}.
+- **Calls**: None.splitlines, env_path.exists, line.strip, line_stripped.startswith, env_path.read_text, None.strip, line_stripped.partition, val_part.strip
+
 ### sumd.cli.validate
 > Validate a SUMD document.
 
@@ -234,13 +241,6 @@ FILE: Path to the SUMD markdown file
 
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, click.option, SUMR.parse_file, click.Path, click.echo, sys.exit, click.echo
-
-### sumd.extractor.extract_openapi
-- **Calls**: openapi_path.exists, yaml.safe_load, data.get, list, openapi_path.read_text, data.get, None.keys, info.get
-
-### sumd.extractor.extract_env
-> Parse .env.example — return list of {key, default, comment}.
-- **Calls**: None.splitlines, env_path.exists, line.strip, line_stripped.startswith, env_path.read_text, None.strip, line_stripped.partition, val_part.strip
 
 ### examples.mcp.mcp_client.main
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, asyncio.run, sumd_path.exists
@@ -264,17 +264,17 @@ analyze [sumd.cli]
 scaffold [sumd.cli]
 ```
 
-### Flow 4: generate
-```
-generate [sumd.cli]
-```
-
-### Flow 5: _collect
+### Flow 4: _collect
 ```
 _collect [sumd.pipeline.RenderPipeline]
   └─ →> extract_pyproject
   └─ →> extract_taskfile
   └─ →> extract_testql_scenarios
+```
+
+### Flow 5: generate
+```
+generate [sumd.cli]
 ```
 
 ### Flow 6: _render_call_graph
@@ -481,17 +481,17 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_package_json` - 15 calls
 - `examples.llm.anthropic_example.main` - 14 calls
 - `sumd.sections.metadata.MetadataSection.render` - 14 calls
-- `sumd.cli.validate` - 13 calls
-- `sumd.cli.extract` - 13 calls
 - `sumd.extractor.extract_openapi` - 13 calls
 - `sumd.extractor.extract_env` - 13 calls
+- `sumd.cli.validate` - 13 calls
+- `sumd.cli.extract` - 13 calls
 - `examples.mcp.mcp_client.main` - 12 calls
 - `sumd.toon_parser.extract_testql_scenarios` - 12 calls
 - `sumd.extractor.extract_pyqual` - 12 calls
 - `sumd.extractor.extract_makefile` - 12 calls
 - `sumd.extractor.extract_source_snippets` - 12 calls
-- `sumd.cli.info` - 11 calls
 - `sumd.sections.refactor_analysis.RefactorAnalysisSection.render` - 11 calls
+- `sumd.cli.info` - 11 calls
 - `sumd.extractor.extract_taskfile` - 10 calls
 - `examples.llm.openai_example.build_context` - 9 calls
 - `sumd.extractor.extract_requirements` - 9 calls
@@ -521,15 +521,15 @@ graph TD
     scaffold --> command
     scaffold --> argument
     scaffold --> option
-    generate --> command
-    generate --> argument
-    generate --> option
-    generate --> read_text
     _collect --> extract_pyproject
     _collect --> extract_taskfile
     _collect --> extract_testql_scena
     _collect --> extract_openapi
     _collect --> extract_doql
+    generate --> command
+    generate --> argument
+    generate --> option
+    generate --> read_text
     _render_call_graph --> next
     _render_call_graph --> _parse_calls_toon
     _render_call_graph --> a

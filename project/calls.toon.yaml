@@ -1,6 +1,6 @@
 # code2llm call graph | /home/tom/github/oqlos/sumd
-# nodes: 174 | edges: 147 | modules: 26
-# CC̄=1.2
+# nodes: 182 | edges: 155 | modules: 26
+# CC̄=1.3
 
 HUBS[20]:
   examples.mcp.mcp_client.run
@@ -8,7 +8,7 @@ HUBS[20]:
   project.map.toon.print
     CC=0  in:42  out:0  total:42
   sumd.cli._scan_one_project
-    CC=18  in:1  out:32  total:33
+    CC=23  in:1  out:36  total:37
   sumd.cli.analyze
     CC=11  in:0  out:33  total:33
   sumd.pipeline.RenderPipeline._collect
@@ -19,35 +19,35 @@ HUBS[20]:
     CC=5  in:0  out:24  total:24
   sumd.renderer._render_quality_parsed
     CC=9  in:1  out:21  total:22
-  sumd.cli.map_cmd
-    CC=7  in:0  out:20  total:20
   sumd.extractor._parse_doql_content
     CC=6  in:1  out:19  total:20
   sumd.renderer._render_deps_runtime
     CC=6  in:1  out:19  total:20
+  sumd.cli.map_cmd
+    CC=7  in:0  out:20  total:20
   sumd.renderer._render_interfaces_openapi
     CC=6  in:1  out:19  total:20
-  sumd.cli.lint
-    CC=10  in:0  out:19  total:19
   sumd.extractor._parse_doql_workflows
     CC=7  in:1  out:18  total:19
+  sumd.cli.lint
+    CC=10  in:0  out:19  total:19
   sumd.renderer._render_workflows_taskfile
     CC=6  in:1  out:17  total:18
   sumd.parser.validate_codeblocks
     CC=9  in:1  out:17  total:18
-  sumd.renderer._render_pkg_json_scripts
-    CC=7  in:1  out:16  total:17
-  sumd.toon_parser._parse_toon_file
-    CC=4  in:1  out:16  total:17
   sumd.extractor.extract_pyproject
     CC=3  in:0  out:17  total:17
-  sumd.renderer._render_deps_dev
-    CC=6  in:1  out:15  total:16
+  sumd.toon_parser._parse_toon_file
+    CC=4  in:1  out:16  total:17
+  sumd.renderer._render_pkg_json_scripts
+    CC=7  in:1  out:16  total:17
+  sumd.cli.export
+    CC=8  in:0  out:16  total:16
 
 MODULES:
   SUMD  [1 funcs]
     extract_testql_scenarios  CC=0  out:0
-  SUMR  [28 funcs]
+  SUMR  [29 funcs]
     _inject_toc  CC=0  out:0
     _render_api_stubs  CC=0  out:0
     _render_architecture  CC=0  out:0
@@ -70,17 +70,17 @@ MODULES:
     run  CC=11  out:53
   project.map.toon  [1 funcs]
     print  CC=0  out:0
-  sumd.cli  [28 funcs]
+  sumd.cli  [35 funcs]
     _api_scenario_template  CC=1  out:3
+    _build_doql_spec  CC=3  out:4
+    _detect_project_type  CC=8  out:4
     _detect_projects  CC=1  out:1
     _echo_scan_result  CC=2  out:4
     _ensure_venv  CC=4  out:7
-    _generate_doql_less  CC=6  out:6
+    _export_sumd_json  CC=2  out:2
+    _generate_doql_less  CC=7  out:10
+    _is_project_dir  CC=8  out:4
     _lint_collect_paths  CC=6  out:7
-    _render_write_validate  CC=5  out:5
-    _run_analysis_tools  CC=5  out:5
-    _run_one_tool  CC=3  out:9
-    _scaffold_crud_scenarios  CC=5  out:7
   sumd.extractor  [25 funcs]
     _analyse_class_methods  CC=6  out:6
     _analyse_py_module  CC=2  out:6
@@ -180,34 +180,6 @@ EDGES:
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_performance
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_navigate
   sumd.toon_parser.extract_testql_scenarios → sumd.toon_parser._parse_toon_file
-  sumd.cli.validate → SUMR.parse_file
-  sumd.cli.export → SUMR.parse_file
-  sumd.cli.info → SUMR.parse_file
-  sumd.cli.extract → SUMR.parse_file
-  sumd.cli._detect_projects → sumd.cli._walk_projects
-  sumd.cli._run_one_tool → sumd.cli._tool_bin
-  sumd.cli._run_analysis_tools → sumd.cli._ensure_venv
-  sumd.cli._run_analysis_tools → sumd.cli._run_one_tool
-  sumd.cli._render_write_validate → SUMR.validate_sumd_file
-  sumd.cli._render_write_validate → SUMR.parse_file
-  sumd.cli._scan_one_project → sumd.cli._render_write_validate
-  sumd.cli._scan_one_project → sumd.cli._echo_scan_result
-  sumd.cli._scan_one_project → SUMR.extract_pyproject
-  sumd.cli._scan_one_project → sumd.cli._generate_doql_less
-  sumd.cli.lint → sumd.cli._lint_collect_paths
-  sumd.cli.lint → SUMR.validate_sumd_file
-  sumd.cli.analyze → sumd.cli._setup_tools_venv
-  sumd.cli._scaffold_smoke_scenario → sumd.cli._scaffold_write
-  sumd.cli._scaffold_smoke_scenario → sumd.cli._api_scenario_template
-  sumd.cli._scaffold_crud_scenarios → sumd.cli._scaffold_write
-  sumd.cli._scaffold_crud_scenarios → sumd.cli._api_scenario_template
-  sumd.cli._scaffold_from_openapi → sumd.cli._scaffold_smoke_scenario
-  sumd.cli._scaffold_from_openapi → sumd.cli._scaffold_crud_scenarios
-  sumd.cli._scaffold_generic → sumd.cli._api_scenario_template
-  sumd.cli._scaffold_generic → sumd.cli._scaffold_write
-  sumd.cli.map_cmd → SUMR.generate_map_toon
-  sumd.cli.main → sumd.cli.cli
-  sumd.cli.main_sumr → sumd.cli.cli
   sumd.extractor.extract_pyproject → sumd.extractor._read_toml
   sumd.extractor.extract_taskfile → sumd.extractor._first_task_cmd
   sumd.extractor._parse_doql_content → sumd.extractor._parse_doql_interfaces
@@ -216,3 +188,31 @@ EDGES:
   sumd.extractor.extract_doql → sumd.extractor._parse_doql_content
   sumd.extractor.extract_dockerfile → sumd.extractor._parse_dockerfile_line
   sumd.extractor._analyse_py_top_funcs → sumd.extractor._fan_out
+  sumd.extractor._analyse_py_top_funcs → sumd.extractor._cc_estimate
+  sumd.extractor._analyse_class_methods → sumd.extractor._fan_out
+  sumd.extractor._analyse_class_methods → sumd.extractor._cc_estimate
+  sumd.extractor._analyse_py_top_classes → sumd.extractor._analyse_class_methods
+  sumd.extractor._analyse_py_module → sumd.extractor._try_radon_cc
+  sumd.extractor._analyse_py_module → sumd.extractor._analyse_py_top_funcs
+  sumd.extractor._analyse_py_module → sumd.extractor._analyse_py_top_classes
+  sumd.extractor._collect_map_files → sumd.extractor._lang_of
+  sumd.extractor._collect_map_files → sumd.extractor._is_map_ignored_path
+  sumd.extractor._render_map_detail → sumd.extractor._analyse_py_module
+  sumd.extractor.generate_map_toon → sumd.extractor._collect_map_files
+  sumd.extractor.generate_map_toon → sumd.extractor._render_map_detail
+  sumd.extractor.generate_map_toon → sumd.extractor._map_cc_stats
+  sumd.extractor.extract_source_snippets → sumd.extractor._analyse_py_module
+  sumd.parser.validate_codeblocks → sumd.parser._validate_markpact_meta
+  sumd.parser.validate_markdown → sumd.parser._check_empty_links
+  sumd.parser.validate_markdown → sumd.parser._check_unclosed_fences
+  sumd.parser.validate_markdown → sumd.parser._check_metadata_fields
+  sumd.parser.validate_markdown → sumd.parser._check_h1
+  sumd.parser.validate_markdown → sumd.parser._check_required_sections
+  sumd.parser.validate_sumd_file → sumd.parser.validate_markdown
+  sumd.parser.validate_sumd_file → sumd.parser.validate_codeblocks
+  sumd.renderer._render_architecture_doql_section → sumd.renderer._render_architecture_doql_parsed
+  sumd.renderer._render_architecture_doql_parsed → sumd.renderer._render_doql_app
+  sumd.renderer._render_architecture_doql_parsed → sumd.renderer._render_doql_entities
+  sumd.renderer._render_architecture_doql_parsed → sumd.renderer._render_doql_interfaces
+  sumd.renderer._render_architecture_doql_parsed → sumd.renderer._render_doql_integrations
+  sumd.renderer._render_interfaces → sumd.renderer._render_interfaces_openapi

@@ -1,7 +1,7 @@
 <!-- code2docs:start --># sumd
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-770-green)
-> **770** functions | **33** classes | **91** files | CC̄ = 4.3
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-782-green)
+> **782** functions | **33** classes | **91** files | CC̄ = 4.3
 
 > Auto-generated project documentation from source code analysis.
 
@@ -155,11 +155,11 @@ sumd/
             ├── toon
                 ├── toon
     ├── prompt
-    ├── README
-        ├── toon
-        ├── toon
         ├── toon
     ├── context
+        ├── toon
+    ├── README
+        ├── toon
         ├── toon
     ├── calls
         ├── toon
@@ -520,7 +520,7 @@ sumd/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (1530 functions)
+📄 `project.map.toon` (2205 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `project.validation.toon`
@@ -528,7 +528,7 @@ sumd/
 📄 `pyqual`
 📄 `scripts.bootstrap`
 📦 `sumd`
-📄 `sumd.cli` (35 functions)
+📄 `sumd.cli` (41 functions)
 📄 `sumd.extractor` (39 functions)
 📄 `sumd.generator`
 📄 `sumd.mcp_server` (12 functions)

@@ -1,9 +1,9 @@
-# code2llm/evolution | 762 func | 30f | 2026-04-21
+# code2llm/evolution | 769 func | 30f | 2026-04-23
 
 NEXT[4] (ranked by impact):
   [1] !! SPLIT           sumd/cli.py
-      WHY: 1214L, 0 classes, max CC=18
-      EFFORT: ~4h  IMPACT: 21852
+      WHY: 1658L, 0 classes, max CC=23
+      EFFORT: ~4h  IMPACT: 38134
 
   [2] !! SPLIT           sumd/renderer.py
       WHY: 1036L, 0 classes, max CC=11
@@ -13,19 +13,19 @@ NEXT[4] (ranked by impact):
       WHY: 908L, 0 classes, max CC=12
       EFFORT: ~4h  IMPACT: 10896
 
-  [4] !  SPLIT-FUNC      _scan_one_project  CC=18  fan=16
-      WHY: CC=18 exceeds 15
-      EFFORT: ~1h  IMPACT: 288
+  [4] !  SPLIT-FUNC      _scan_one_project  CC=23  fan=19
+      WHY: CC=23 exceeds 15
+      EFFORT: ~1h  IMPACT: 437
 
 
 RISKS[3]:
-  ⚠ Splitting sumd/cli.py may break 35 import paths
+  ⚠ Splitting sumd/cli.py may break 41 import paths
   ⚠ Splitting sumd/renderer.py may break 54 import paths
   ⚠ Splitting sumd/extractor.py may break 39 import paths
 
 METRICS-TARGET:
-  CC̄:          1.2 → ≤0.8
-  max-CC:      18 → ≤9
+  CC̄:          1.3 → ≤0.9
+  max-CC:      23 → ≤11
   god-modules: 4 → 0
   high-CC(≥15): 1 → ≤0
   hub-types:   0 → ≤0
@@ -55,4 +55,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=1.2 → now CC̄=1.2
+  prev CC̄=1.2 → now CC̄=1.3

@@ -1,11 +1,11 @@
-# code2llm | 90f 18328L | python:29,md:19,yaml:19,json:7,yml:6,shell:5,toml:2,txt:1 | 2026-04-21
-# CC̄=1.2 | critical:1/769 | dups:0 | cycles:0
+# code2llm | 90f 19529L | python:29,md:19,yaml:19,json:7,yml:6,shell:5,toml:2,txt:1 | 2026-04-23
+# CC̄=1.3 | critical:1/776 | dups:0 | cycles:0
 
 HEALTH[4]:
   🔴 GOD   SUMR.md = 1235L, 5 classes, 138m, max CC=0.0
   🔴 GOD   SUMD.md = 1294L, 5 classes, 188m, max CC=0.0
   🔴 GOD   sumd/parser.py = 548L, 5 classes, 24m, max CC=9
-  🟡 CC    _scan_one_project CC=18 (limit:15)
+  🟡 CC    _scan_one_project CC=23 (limit:15)
 
 REFACTOR[4]:
   1. split SUMR.md  (god module)
@@ -22,12 +22,12 @@ PIPELINES[109]:
       PURITY: 100% pure
   [4] Src [extract_testql_scenarios]: extract_testql_scenarios → _parse_toon_file → _parse_toon_block_config
       PURITY: 100% pure
-  [5] Src [validate]: validate → parse_file
+  [5] Src [extract_pyproject]: extract_pyproject → _read_toml
       PURITY: 100% pure
 
 LAYERS:
-  sumd/                           CC̄=4.3    ←in:0  →out:38  !! split
-  │ !! cli                       1214L  0C   35m  CC=18     ←0
+  sumd/                           CC̄=4.4    ←in:0  →out:40  !! split
+  │ !! cli                       1658L  0C   41m  CC=23     ←0
   │ !! renderer                  1036L  0C   54m  CC=11     ←0
   │ !! extractor                  908L  0C   39m  CC=12     ←0
   │ !! parser                     548L  5C   24m  CC=9      ←2
@@ -91,10 +91,10 @@ LAYERS:
   ./                              CC̄=0.0    ←in:0  →out:0
   │ !! SUMD.md                   1294L  5C  188m  CC=0.0    ←1
   │ !! SUMR.md                   1235L  5C  138m  CC=0.0    ←18
-  │ !! CHANGELOG.md               570L  0C    0m  CC=0.0    ←0
+  │ !! CHANGELOG.md               624L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  511L  0C    0m  CC=0.0    ←0
   │ SPEC.md                    423L  0C    0m  CC=0.0    ←0
-  │ README.md                  249L  0C    1m  CC=0.0    ←0
+  │ README.md                  250L  0C    1m  CC=0.0    ←0
   │ Taskfile.yml               235L  0C    0m  CC=0.0    ←0
   │ TODO.md                    124L  0C    5m  CC=0.0    ←0
   │ pyproject.toml             101L  0C    0m  CC=0.0    ←0
@@ -105,9 +105,9 @@ LAYERS:
   │ mcp.json                    10L  0C    0m  CC=0.0    ←0
   │
   project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! calls.yaml                2466L  0C    0m  CC=0.0    ←0
-  │ !! map.toon.yaml             1117L  0C  214m  CC=0.0    ←3
-  │ !! context.md                 557L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                2496L  0C    0m  CC=0.0    ←0
+  │ !! map.toon.yaml             1787L  0C  215m  CC=0.0    ←3
+  │ !! context.md                 556L  0C    0m  CC=0.0    ←0
   │ README.md                  339L  0C    0m  CC=0.0    ←0
   │ calls.toon.yaml            218L  0C    0m  CC=0.0    ←0
   │ validation.toon.yaml       192L  0C    0m  CC=0.0    ←0
@@ -118,8 +118,8 @@ LAYERS:
   │ duplication.toon.yaml       43L  0C    0m  CC=0.0    ←0
   │
   docs/                           CC̄=0.0    ←in:0  →out:0
-  │ !! README.md                  596L  0C    1m  CC=0.0    ←0
-  │ USAGE.md                   486L  0C    1m  CC=0.0    ←0
+  │ !! README.md                  598L  0C    1m  CC=0.0    ←0
+  │ USAGE.md                   487L  0C    1m  CC=0.0    ←0
   │
   scripts/                        CC̄=0.0    ←in:0  →out:0
   │ bootstrap.sh                69L  0C    0m  CC=0.0    ←0
@@ -136,20 +136,20 @@ LAYERS:
 
 COUPLING:
                           SUMR    project.map           sumd   examples.mcp  sumd.sections   examples.llm           SUMD
-           SUMR             ──                           ←35                           ←14             ←2                 hub
+           SUMR             ──                           ←37                           ←14             ←2                 hub
     project.map                            ──                           ←31                           ←11                 hub
-           sumd             35                            ──                                                           3  !! fan-out
+           sumd             37                            ──                                                           3  !! fan-out
    examples.mcp                            31                            ──                                               !! fan-out
   sumd.sections             14                                                          ──                                !! fan-out
    examples.llm              2             11                                                          ──                 !! fan-out
            SUMD                                           ←3                                                          ──
   CYCLES: none
   HUB: project.map/ (fan-in=42)
-  HUB: SUMR/ (fan-in=51)
+  HUB: SUMR/ (fan-in=53)
   SMELL: examples.mcp/ fan-out=31 → split needed
-  SMELL: sumd.sections/ fan-out=14 → split needed
-  SMELL: sumd/ fan-out=38 → split needed
+  SMELL: sumd/ fan-out=40 → split needed
   SMELL: examples.llm/ fan-out=13 → split needed
+  SMELL: sumd.sections/ fan-out=14 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

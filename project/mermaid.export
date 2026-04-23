@@ -213,6 +213,11 @@ flowchart TD
         project__map__toon___cc_estimate["_cc_estimate"]
     end
     subgraph sumd__cli
+        sumd__cli___detect_project_type("_detect_project_type CC=8")
+        sumd__cli___render_doql_boilerplate["_render_doql_boilerplate"]
+        sumd__cli___node_framework["_node_framework"]
+        sumd__cli___node_spec_from_package_json["_node_spec_from_package_json"]
+        sumd__cli___build_doql_spec["_build_doql_spec"]
         sumd__cli___generate_doql_less["_generate_doql_less"]
         sumd__cli__cli["cli"]
         sumd__cli__validate["validate"]
@@ -220,6 +225,7 @@ flowchart TD
         sumd__cli__info["info"]
         sumd__cli__generate("generate CC=8")
         sumd__cli__extract["extract"]
+        sumd__cli___is_project_dir("_is_project_dir CC=8")
         sumd__cli___walk_projects("_walk_projects CC=10")
         sumd__cli___detect_projects["_detect_projects"]
         sumd__cli___ensure_venv["_ensure_venv"]
@@ -229,7 +235,7 @@ flowchart TD
         sumd__cli___export_sumd_json["_export_sumd_json"]
         sumd__cli___render_write_validate["_render_write_validate"]
         sumd__cli___echo_scan_result["_echo_scan_result"]
-        sumd__cli___scan_one_project{{_scan_one_project CC=18}}
+        sumd__cli___scan_one_project{{_scan_one_project CC=23}}
         sumd__cli__scan("scan CC=10")
         sumd__cli__lint("lint CC=10")
         sumd__cli___lint_collect_paths["_lint_collect_paths"]
@@ -246,7 +252,7 @@ flowchart TD
         sumd__cli___scaffold_generic["_scaffold_generic"]
         sumd__cli__scaffold("scaffold CC=9")
         sumd__cli__map_cmd["map_cmd"]
-        sumd__cli__main["main"]
+        sumd__cli__main("main CC=10")
         sumd__cli__main_sumr["main_sumr"]
     end
     subgraph sumd__extractor
@@ -459,40 +465,6 @@ flowchart TD
     sumd__toon_parser___parse_toon_file --> sumd__toon_parser___parse_toon_block_navigate
     sumd__toon_parser___parse_toon_file --> sumd__toon_parser___parse_toon_block_gui
     sumd__toon_parser__extract_testql_scenarios --> sumd__toon_parser___parse_toon_file
-    sumd__cli__validate --> SUMR__parse_file
-    sumd__cli__export --> SUMR__parse_file
-    sumd__cli__info --> SUMR__parse_file
-    sumd__cli__extract --> SUMR__parse_file
-    sumd__cli___detect_projects --> sumd__cli___walk_projects
-    sumd__cli___run_one_tool --> sumd__cli___tool_bin
-    sumd__cli___run_analysis_tools --> sumd__cli___ensure_venv
-    sumd__cli___run_analysis_tools --> sumd__cli___run_one_tool
-    sumd__cli___render_write_validate --> SUMR__validate_sumd_file
-    sumd__cli___render_write_validate --> SUMR__parse_file
-    sumd__cli___scan_one_project --> sumd__cli___render_write_validate
-    sumd__cli___scan_one_project --> sumd__cli___echo_scan_result
-    sumd__cli___scan_one_project --> SUMR__extract_pyproject
-    sumd__cli___scan_one_project --> sumd__cli___generate_doql_less
-    sumd__cli___scan_one_project --> sumd__cli___export_sumd_json
-    sumd__cli___scan_one_project --> sumd__cli___run_analysis_tools
-    sumd__cli__scan --> sumd__cli___detect_projects
-    sumd__cli__lint --> sumd__cli___lint_collect_paths
-    sumd__cli__lint --> SUMR__validate_sumd_file
-    sumd__cli__lint --> sumd__cli___lint_print_result
-    sumd__cli__analyze --> sumd__cli___setup_tools_venv
-    sumd__cli___scaffold_smoke_scenario --> sumd__cli___scaffold_write
-    sumd__cli___scaffold_smoke_scenario --> sumd__cli___api_scenario_template
-    sumd__cli___scaffold_crud_scenarios --> sumd__cli___scaffold_write
-    sumd__cli___scaffold_crud_scenarios --> sumd__cli___api_scenario_template
-    sumd__cli___scaffold_from_openapi --> sumd__cli___scaffold_smoke_scenario
-    sumd__cli___scaffold_from_openapi --> sumd__cli___scaffold_crud_scenarios
-    sumd__cli___scaffold_generic --> sumd__cli___api_scenario_template
-    sumd__cli___scaffold_generic --> sumd__cli___scaffold_write
-    sumd__cli__scaffold --> sumd__cli___scaffold_from_openapi
-    sumd__cli__scaffold --> sumd__cli___scaffold_generic
-    sumd__cli__map_cmd --> SUMR__generate_map_toon
-    sumd__cli__main --> sumd__cli__cli
-    sumd__cli__main_sumr --> sumd__cli__cli
     sumd__extractor__extract_pyproject --> sumd__extractor___read_toml
     sumd__extractor__extract_taskfile --> sumd__extractor___first_task_cmd
     sumd__extractor__extract_openapi --> sumd__extractor___parse_openapi_endpoints
@@ -608,8 +580,49 @@ flowchart TD
     sumd__sections__environment__EnvironmentSection__render --> SUMR___render_env_section
     sumd__sections__environment__EnvironmentSection__render --> SUMR___render_goal_section
     sumd__sections__configuration__ConfigurationSection__render --> SUMR___render_configuration_section
+    sumd__cli___node_spec_from_package_json --> sumd__cli___node_framework
+    sumd__cli___build_doql_spec --> SUMR__extract_package_json
+    sumd__cli___build_doql_spec --> sumd__cli___node_spec_from_package_json
+    sumd__cli___generate_doql_less --> sumd__cli___build_doql_spec
+    sumd__cli___generate_doql_less --> sumd__cli___render_doql_boilerplate
+    sumd__cli__validate --> SUMR__parse_file
+    sumd__cli__export --> SUMR__parse_file
+    sumd__cli__info --> SUMR__parse_file
+    sumd__cli__extract --> SUMR__parse_file
+    sumd__cli___walk_projects --> sumd__cli___is_project_dir
+    sumd__cli___detect_projects --> sumd__cli___walk_projects
+    sumd__cli___run_one_tool --> sumd__cli___tool_bin
+    sumd__cli___run_analysis_tools --> sumd__cli___ensure_venv
+    sumd__cli___run_analysis_tools --> sumd__cli___run_one_tool
+    sumd__cli___render_write_validate --> SUMR__validate_sumd_file
+    sumd__cli___render_write_validate --> SUMR__parse_file
+    sumd__cli___scan_one_project --> sumd__cli___render_write_validate
+    sumd__cli___scan_one_project --> sumd__cli___echo_scan_result
+    sumd__cli___scan_one_project --> sumd__cli___detect_project_type
+    sumd__cli___scan_one_project --> SUMR__extract_pyproject
+    sumd__cli___scan_one_project --> sumd__cli___generate_doql_less
+    sumd__cli___scan_one_project --> sumd__cli___export_sumd_json
+    sumd__cli___scan_one_project --> sumd__cli___run_analysis_tools
+    sumd__cli__scan --> sumd__cli___detect_projects
+    sumd__cli__lint --> sumd__cli___lint_collect_paths
+    sumd__cli__lint --> SUMR__validate_sumd_file
+    sumd__cli__lint --> sumd__cli___lint_print_result
+    sumd__cli__analyze --> sumd__cli___setup_tools_venv
+    sumd__cli___scaffold_smoke_scenario --> sumd__cli___scaffold_write
+    sumd__cli___scaffold_smoke_scenario --> sumd__cli___api_scenario_template
+    sumd__cli___scaffold_crud_scenarios --> sumd__cli___scaffold_write
+    sumd__cli___scaffold_crud_scenarios --> sumd__cli___api_scenario_template
+    sumd__cli___scaffold_from_openapi --> sumd__cli___scaffold_smoke_scenario
+    sumd__cli___scaffold_from_openapi --> sumd__cli___scaffold_crud_scenarios
+    sumd__cli___scaffold_generic --> sumd__cli___api_scenario_template
+    sumd__cli___scaffold_generic --> sumd__cli___scaffold_write
+    sumd__cli__scaffold --> sumd__cli___scaffold_from_openapi
+    sumd__cli__scaffold --> sumd__cli___scaffold_generic
+    sumd__cli__map_cmd --> SUMR__generate_map_toon
+    sumd__cli__main --> sumd__cli__cli
+    sumd__cli__main_sumr --> sumd__cli__cli
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
     class sumd__cli___scan_one_project highCC
-    class examples__mcp__mcp_client__run,sumd__toon_parser___parse_toon_block_config,sumd__cli__export,sumd__cli__generate,sumd__cli___walk_projects,sumd__cli__scan,sumd__cli__lint,sumd__cli___lint_print_result,sumd__cli__analyze,sumd__cli__scaffold,sumd__extractor___parse_openapi_endpoints,sumd__extractor__extract_env,sumd__extractor___parse_dockerfile_line,sumd__extractor__extract_docker_compose,sumd__extractor___map_cc_stats,sumd__parser__SUMDParser___parse_header,sumd__parser__validate_codeblocks,sumd__parser___check_metadata_fields,sumd__renderer___render_quality_parsed,sumd__renderer___render_deployment_docker,sumd__renderer___render_code_analysis,sumd__renderer___render_source_snippets,sumd__renderer___render_api_stubs,sumd__renderer___render_scenario_contract,sumd__renderer___parse_calls_hubs,sumd__renderer___render_goal_section medCC
+    class examples__mcp__mcp_client__run,sumd__toon_parser___parse_toon_block_config,sumd__extractor___parse_openapi_endpoints,sumd__extractor__extract_env,sumd__extractor___parse_dockerfile_line,sumd__extractor__extract_docker_compose,sumd__extractor___map_cc_stats,sumd__parser__SUMDParser___parse_header,sumd__parser__validate_codeblocks,sumd__parser___check_metadata_fields,sumd__renderer___render_quality_parsed,sumd__renderer___render_deployment_docker,sumd__renderer___render_code_analysis,sumd__renderer___render_source_snippets,sumd__renderer___render_api_stubs,sumd__renderer___render_scenario_contract,sumd__renderer___parse_calls_hubs,sumd__renderer___render_goal_section,sumd__cli___detect_project_type,sumd__cli__export,sumd__cli__generate,sumd__cli___is_project_dir,sumd__cli___walk_projects,sumd__cli__scan,sumd__cli__lint,sumd__cli___lint_print_result,sumd__cli__analyze,sumd__cli__scaffold,sumd__cli__main medCC
