@@ -5,7 +5,7 @@
 HUBS[20]:
   examples.mcp.mcp_client.run
     CC=11  in:1  out:53  total:54
-  project.map.toon.print
+  README.print
     CC=0  in:42  out:0  total:42
   sumd.cli._scan_one_project
     CC=23  in:1  out:36  total:37
@@ -21,11 +21,11 @@ HUBS[20]:
     CC=9  in:1  out:21  total:22
   sumd.extractor._parse_doql_content
     CC=6  in:1  out:19  total:20
-  sumd.renderer._render_deps_runtime
+  sumd.renderer._render_interfaces_openapi
     CC=6  in:1  out:19  total:20
   sumd.cli.map_cmd
     CC=7  in:0  out:20  total:20
-  sumd.renderer._render_interfaces_openapi
+  sumd.renderer._render_deps_runtime
     CC=6  in:1  out:19  total:20
   sumd.extractor._parse_doql_workflows
     CC=7  in:1  out:18  total:19
@@ -33,18 +33,20 @@ HUBS[20]:
     CC=10  in:0  out:19  total:19
   sumd.renderer._render_workflows_taskfile
     CC=6  in:1  out:17  total:18
-  sumd.parser.validate_codeblocks
+  sumd.validator.validate_codeblocks
     CC=9  in:1  out:17  total:18
-  sumd.extractor.extract_pyproject
-    CC=3  in:0  out:17  total:17
-  sumd.toon_parser._parse_toon_file
-    CC=4  in:1  out:16  total:17
   sumd.renderer._render_pkg_json_scripts
     CC=7  in:1  out:16  total:17
+  sumd.toon_parser._parse_toon_file
+    CC=4  in:1  out:16  total:17
+  sumd.extractor.extract_pyproject
+    CC=3  in:0  out:17  total:17
   sumd.cli.export
     CC=8  in:0  out:16  total:16
 
 MODULES:
+  README  [1 funcs]
+    print  CC=0  out:0
   SUMD  [1 funcs]
     extract_testql_scenarios  CC=0  out:0
   SUMR  [29 funcs]
@@ -68,8 +70,6 @@ MODULES:
   examples.mcp.mcp_client  [2 funcs]
     main  CC=3  out:12
     run  CC=11  out:53
-  project.map.toon  [1 funcs]
-    print  CC=0  out:0
   sumd.cli  [35 funcs]
     _api_scenario_template  CC=1  out:3
     _build_doql_spec  CC=3  out:4
@@ -102,16 +102,6 @@ MODULES:
     _tool_list_sections  CC=2  out:4
     _tool_parse_sumd  CC=1  out:5
     _tool_validate_sumd  CC=1  out:7
-  sumd.parser  [9 funcs]
-    _check_empty_links  CC=2  out:1
-    _check_h1  CC=3  out:2
-    _check_metadata_fields  CC=9  out:7
-    _check_required_sections  CC=7  out:6
-    _check_unclosed_fences  CC=4  out:2
-    _validate_markpact_meta  CC=5  out:9
-    validate_codeblocks  CC=9  out:17
-    validate_markdown  CC=1  out:6
-    validate_sumd_file  CC=3  out:5
   sumd.pipeline  [6 funcs]
     _collect  CC=3  out:30
     run  CC=2  out:3
@@ -164,16 +154,26 @@ MODULES:
     _parse_toon_block_performance  CC=7  out:8
     _parse_toon_file  CC=4  out:16
     extract_testql_scenarios  CC=7  out:12
+  sumd.validator  [9 funcs]
+    _check_empty_links  CC=2  out:1
+    _check_h1  CC=3  out:2
+    _check_metadata_fields  CC=9  out:7
+    _check_required_sections  CC=7  out:6
+    _check_unclosed_fences  CC=4  out:2
+    _validate_markpact_meta  CC=5  out:9
+    validate_codeblocks  CC=9  out:17
+    validate_markdown  CC=1  out:6
+    validate_sumd_file  CC=3  out:5
 
 EDGES:
   examples.llm.anthropic_example.ask → SUMR.parse_file
-  examples.llm.anthropic_example.main → project.map.toon.print
+  examples.llm.anthropic_example.main → README.print
   examples.llm.anthropic_example.main → examples.llm.anthropic_example.ask
   examples.llm.openai_example.build_context → SUMR.parse_file
   examples.llm.openai_example.ask → examples.llm.openai_example.build_context
-  examples.llm.openai_example.main → project.map.toon.print
-  examples.mcp.mcp_client.run → project.map.toon.print
-  examples.mcp.mcp_client.main → project.map.toon.print
+  examples.llm.openai_example.main → README.print
+  examples.mcp.mcp_client.run → README.print
+  examples.mcp.mcp_client.main → README.print
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_config
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_api
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_assert
@@ -202,17 +202,17 @@ EDGES:
   sumd.extractor.generate_map_toon → sumd.extractor._render_map_detail
   sumd.extractor.generate_map_toon → sumd.extractor._map_cc_stats
   sumd.extractor.extract_source_snippets → sumd.extractor._analyse_py_module
-  sumd.parser.validate_codeblocks → sumd.parser._validate_markpact_meta
-  sumd.parser.validate_markdown → sumd.parser._check_empty_links
-  sumd.parser.validate_markdown → sumd.parser._check_unclosed_fences
-  sumd.parser.validate_markdown → sumd.parser._check_metadata_fields
-  sumd.parser.validate_markdown → sumd.parser._check_h1
-  sumd.parser.validate_markdown → sumd.parser._check_required_sections
-  sumd.parser.validate_sumd_file → sumd.parser.validate_markdown
-  sumd.parser.validate_sumd_file → sumd.parser.validate_codeblocks
   sumd.renderer._render_architecture_doql_section → sumd.renderer._render_architecture_doql_parsed
   sumd.renderer._render_architecture_doql_parsed → sumd.renderer._render_doql_app
   sumd.renderer._render_architecture_doql_parsed → sumd.renderer._render_doql_entities
   sumd.renderer._render_architecture_doql_parsed → sumd.renderer._render_doql_interfaces
   sumd.renderer._render_architecture_doql_parsed → sumd.renderer._render_doql_integrations
   sumd.renderer._render_interfaces → sumd.renderer._render_interfaces_openapi
+  sumd.renderer._render_interfaces → sumd.renderer._render_interfaces_testql
+  sumd.renderer._render_testql_one_structured → sumd.renderer._render_testql_extras
+  sumd.renderer._render_interfaces_testql → sumd.renderer._render_testql_raw
+  sumd.renderer._render_interfaces_testql → sumd.renderer._render_testql_one_structured
+  sumd.renderer._render_workflows → sumd.renderer._render_workflows_doql
+  sumd.renderer._render_workflows → sumd.renderer._render_workflows_taskfile
+  sumd.renderer._render_quality → sumd.renderer._render_quality_raw
+  sumd.renderer._render_quality → sumd.renderer._render_quality_parsed

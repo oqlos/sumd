@@ -4,17 +4,17 @@
 
 - **Project**: /home/tom/github/oqlos/sumd
 - **Primary Language**: python
-- **Languages**: python: 29, md: 19, yaml: 19, json: 7, yml: 6
+- **Languages**: python: 30, md: 19, yaml: 19, json: 7, yml: 6
 - **Analysis Mode**: static
-- **Total Functions**: 776
+- **Total Functions**: 782
 - **Total Classes**: 33
-- **Modules**: 90
-- **Entry Points**: 628
+- **Modules**: 91
+- **Entry Points**: 634
 
 ## Architecture by Module
 
 ### project.map.toon
-- **Functions**: 1530
+- **Functions**: 2205
 - **File**: `map.toon.yaml`
 
 ### SUMD
@@ -39,10 +39,10 @@
 - **Functions**: 39
 - **File**: `extractor.py`
 
-### sumd.parser
-- **Functions**: 24
-- **Classes**: 5
-- **File**: `parser.py`
+### sumd.validator
+- **Functions**: 15
+- **Classes**: 1
+- **File**: `validator.py`
 
 ### sumd.mcp_server
 - **Functions**: 12
@@ -52,6 +52,11 @@
 - **Functions**: 10
 - **Classes**: 1
 - **File**: `pipeline.py`
+
+### sumd.parser
+- **Functions**: 9
+- **Classes**: 4
+- **File**: `parser.py`
 
 ### sumd.toon_parser
 - **Functions**: 8
@@ -96,11 +101,6 @@
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `quality.py`
-
-### sumd.sections.deployment
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `deployment.py`
 
 ## Key Entry Points
 
@@ -189,7 +189,7 @@ FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, click.option, click.option, SUMR.parse_file, click.Path, click.Choice, click.Path
 
 ### examples.llm.openai_example.main
-- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, project.map.toon.print, project.map.toon.print
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, README.print, README.print
 
 ### sumd.extractor.extract_package_json
 > Parse package.json — name, version, scripts, dependencies.
@@ -200,14 +200,7 @@ FILE: Path to the SUMD markdown file
 - **Calls**: a, a, set, a, a, a, a, any
 
 ### examples.llm.anthropic_example.main
-- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, project.map.toon.print, project.map.toon.print
-
-### sumd.parser.SUMDParser._parse_header
-> Parse the project header (H1).
-
-Args:
-    lines: List of document lines
-- **Calls**: enumerate, line.startswith, None.strip, header_content.split, None.strip, line.startswith, len, None.strip
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, README.print, README.print
 
 ### sumd.renderer._render_test_contracts
 > Render test scenarios as contract signatures — endpoint + key assertions.
@@ -222,6 +215,13 @@ Args:
 
 ### sumd.sections.metadata.MetadataSection.render
 - **Calls**: a, a, a, a, a, ctx.openapi.get, a, a
+
+### sumd.parser.SUMDParser._parse_header
+> Parse the project header (H1).
+
+Args:
+    lines: List of document lines
+- **Calls**: enumerate, line.startswith, None.strip, header_content.split, None.strip, line.startswith, len, None.strip
 
 ### sumd.extractor.extract_openapi
 - **Calls**: openapi_path.exists, yaml.safe_load, data.get, list, openapi_path.read_text, data.get, None.keys, info.get
@@ -310,11 +310,6 @@ extract_docker_compose [sumd.extractor]
 
 ## Key Classes
 
-### sumd.parser.SUMDParser
-> Parser for SUMD markdown documents.
-- **Methods**: 6
-- **Key Methods**: sumd.parser.SUMDParser.__init__, sumd.parser.SUMDParser.parse, sumd.parser.SUMDParser.parse_file, sumd.parser.SUMDParser._parse_header, sumd.parser.SUMDParser._parse_sections, sumd.parser.SUMDParser.validate
-
 ### sumd.pipeline.RenderPipeline
 > Collect project data → build sections → render → inject TOC.
 
@@ -322,6 +317,11 @@ Usage:
     pipeline = RenderPipeline(p
 - **Methods**: 6
 - **Key Methods**: sumd.pipeline.RenderPipeline.__init__, sumd.pipeline.RenderPipeline._collect, sumd.pipeline.RenderPipeline._build_registered_sections, sumd.pipeline.RenderPipeline._render_legacy_sections, sumd.pipeline.RenderPipeline._assemble, sumd.pipeline.RenderPipeline.run
+
+### sumd.parser.SUMDParser
+> Parser for SUMD markdown documents.
+- **Methods**: 6
+- **Key Methods**: sumd.parser.SUMDParser.__init__, sumd.parser.SUMDParser.parse, sumd.parser.SUMDParser.parse_file, sumd.parser.SUMDParser._parse_header, sumd.parser.SUMDParser._parse_sections, sumd.parser.SUMDParser.validate
 
 ### sumd.sections.base.Section
 > Protocol for all SUMD section renderers.
@@ -475,7 +475,7 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.cli.map_cmd` - 20 calls
 - `sumd.cli.lint` - 19 calls
 - `sumd.extractor.extract_pyproject` - 17 calls
-- `sumd.parser.validate_codeblocks` - 17 calls
+- `sumd.validator.validate_codeblocks` - 17 calls
 - `sumd.cli.export` - 16 calls
 - `examples.llm.openai_example.main` - 15 calls
 - `sumd.extractor.extract_package_json` - 15 calls
@@ -497,13 +497,13 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_requirements` - 9 calls
 - `sumd.mcp_server.list_tools` - 8 calls
 - `sumd.extractor.extract_project_analysis` - 7 calls
-- `sumd.parser.validate_markdown` - 6 calls
+- `sumd.validator.validate_markdown` - 6 calls
 - `sumd.extractor.extract_readme_title` - 5 calls
 - `sumd.extractor.extract_dockerfile` - 5 calls
-- `sumd.parser.validate_sumd_file` - 5 calls
 - `sumd.mcp_server.call_tool` - 5 calls
+- `sumd.validator.validate_sumd_file` - 5 calls
 - `sumd.extractor.extract_python_modules` - 4 calls
-- `sumd.parser.SUMDParser.parse` - 4 calls
+- `sumd.sections.environment.EnvironmentSection.render` - 4 calls
 
 ## System Interactions
 

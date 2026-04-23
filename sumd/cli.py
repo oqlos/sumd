@@ -872,6 +872,78 @@ def _echo_scan_result(proj_dir: Path, doc, sources: list, cb_warnings: list) -> 
     )
 
 
+def _maybe_generate_doql(proj_dir: Path, fix: bool) -> None:
+    """Generate app.doql.less BEFORE rendering SUMD so it gets included.
+
+    Pull name/version from the most specific manifest available and
+    pick language-appropriate defaults for the boilerplate.
+    """
+    project_type = _detect_project_type(proj_dir)
+    pyproj = extract_pyproject(proj_dir)
+    pkg_json = extract_package_json(proj_dir) if project_type == "node" else {}
+    project_name = (
+        pyproj.get("name")
+        or pkg_json.get("name")
+        or proj_dir.name
+    )
+    version = (
+        pyproj.get("version")
+        or pkg_json.get("version")
+        or "0.1.0"
+    )
+    doql_path = _generate_doql_less(
+        proj_dir, project_name, version,
+        force=fix, project_type=project_type,
+    )
+    if doql_path:
+        click.echo(f"   📝 Generated {doql_path.name} ({project_type})")
+
+
+def _finalize_scan(
+    proj_dir: Path,
+    doc,
+    sources: list,
+    cb_warnings: list,
+    export_json: bool,
+    run_analyze: bool,
+    tool_list: list[str],
+    doql_sync: bool,
+    sumd_path: Path,
+) -> dict:
+    """Run post-scan actions: export JSON, run analysis, DOQL sync."""
+    _echo_scan_result(proj_dir, doc, sources, cb_warnings)
+
+    if export_json:
+        _export_sumd_json(proj_dir, doc)
+
+    if run_analyze:
+        click.echo("   🔬 Running analysis...")
+        _run_analysis_tools(proj_dir, tool_list)
+        click.echo(f"   ✅ Analysis complete → {proj_dir / 'project'}/")
+
+    if doql_sync and ((proj_dir / "app.doql.less").exists() or (proj_dir / "app.doql.css").exists()):
+        click.echo("   ⚙️  Syncing DOQL...")
+        r = subprocess.run(
+            ["doql", "sync"],
+            cwd=str(proj_dir),
+            capture_output=True,
+            text=True,
+        )
+        if r.returncode == 0:
+            click.echo("   ✅ DOQL sync complete")
+        else:
+            click.echo(f"   ⚠️  DOQL sync failed: {r.stderr.strip() or r.stdout.strip()}", err=True)
+
+    return {
+        "status": "OK",
+        "project_name": doc.project_name,
+        "sections": len(doc.sections),
+        "sources": sources,
+        "path": str(sumd_path),
+        "warnings": [c.message for c in cb_warnings],
+    }
+
+
 def _scan_one_project(
     proj_dir: Path,
     fix: bool,
@@ -896,29 +968,8 @@ def _scan_one_project(
         return {"status": "SKIP", "path": str(sumd_path)}
 
     try:
-        # Generate app.doql.less BEFORE rendering SUMD so it gets included.
-        # Pull name/version from the most specific manifest available and
-        # pick language-appropriate defaults for the boilerplate.
         if generate_doql:
-            project_type = _detect_project_type(proj_dir)
-            pyproj = extract_pyproject(proj_dir)
-            pkg_json = extract_package_json(proj_dir) if project_type == "node" else {}
-            project_name = (
-                pyproj.get("name")
-                or pkg_json.get("name")
-                or proj_dir.name
-            )
-            version = (
-                pyproj.get("version")
-                or pkg_json.get("version")
-                or "0.1.0"
-            )
-            doql_path = _generate_doql_less(
-                proj_dir, project_name, version,
-                force=fix, project_type=project_type,
-            )
-            if doql_path:
-                click.echo(f"   📝 Generated {doql_path.name} ({project_type})")
+            _maybe_generate_doql(proj_dir, fix)
 
         doc, md_issues, cb_errors, cb_warnings, sources = _render_write_validate(
             proj_dir, sumd_path, raw, profile
@@ -933,37 +984,10 @@ def _scan_one_project(
                 click.echo(f"       \u2193 {e}")
             return {"status": "INVALID", "errors": all_errors, "path": str(sumd_path)}
 
-        _echo_scan_result(proj_dir, doc, sources, cb_warnings)
-
-        if export_json:
-            _export_sumd_json(proj_dir, doc)
-
-        if run_analyze:
-            click.echo("   \U0001f52c Running analysis...")
-            _run_analysis_tools(proj_dir, tool_list)
-            click.echo(f"   \u2705 Analysis complete \u2192 {proj_dir / 'project'}/")
-
-        if doql_sync and ((proj_dir / "app.doql.less").exists() or (proj_dir / "app.doql.css").exists()):
-            click.echo("   \u2699\ufe0f  Syncing DOQL...")
-            r = subprocess.run(
-                ["doql", "sync"],
-                cwd=str(proj_dir),
-                capture_output=True,
-                text=True,
-            )
-            if r.returncode == 0:
-                click.echo("   \u2705 DOQL sync complete")
-            else:
-                click.echo(f"   \u26a0\ufe0f  DOQL sync failed: {r.stderr.strip() or r.stdout.strip()}", err=True)
-
-        return {
-            "status": "OK",
-            "project_name": doc.project_name,
-            "sections": len(doc.sections),
-            "sources": sources,
-            "path": str(sumd_path),
-            "warnings": [c.message for c in cb_warnings],
-        }
+        return _finalize_scan(
+            proj_dir, doc, sources, cb_warnings,
+            export_json, run_analyze, tool_list, doql_sync, sumd_path,
+        )
 
     except Exception as exc:
         dash = "\u2013"

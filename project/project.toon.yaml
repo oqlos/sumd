@@ -1,4 +1,4 @@
-# sumd | 776 func | 33f | 21546L | python | 2026-04-23
+# sumd | 782 func | 34f | 22350L | python | 2026-04-23
 
 HEALTH:
   CC̄=1.3  critical=11 (limit:10)  dup=5  cycles=0
@@ -15,9 +15,9 @@ ALERTS[20]:
   !!  high_fan_out     extract_docker_compose = 15 (limit:10)
   !   high_fan_out     _parse_doql_workflows = 14 (limit:10)
 
-MODULES[90] (top by size):
-  M[project/calls.yaml] 2496L C:0 F:0 CC↑0 D:0 (yaml)
-  M[project/map.toon.yaml] 1787L C:0 F:215 CC↑0 D:3 (yaml)
+MODULES[91] (top by size):
+  M[project/calls.yaml] 2585L C:0 F:0 CC↑0 D:0 (yaml)
+  M[project/map.toon.yaml] 2462L C:0 F:221 CC↑0 D:0 (yaml)
   M[sumd/cli.py] 1658L C:0 F:41 CC↑23 D:0 (python)
   M[SUMD.md] 1294L C:5 F:188 CC↑0 D:1 (md)
   M[SUMR.md] 1235L C:5 F:138 CC↑0 D:18 (md)
@@ -26,12 +26,12 @@ MODULES[90] (top by size):
   M[CHANGELOG.md] 624L C:0 F:0 CC↑0 D:0 (md)
   M[docs/README.md] 598L C:0 F:1 CC↑0 D:0 (md)
   M[project/context.md] 556L C:0 F:0 CC↑0 D:0 (md)
-  M[sumd/parser.py] 548L C:5 F:24 CC↑9 D:0 (python)
   M[goal.yaml] 511L C:0 F:0 CC↑0 D:0 (yaml)
   M[docs/USAGE.md] 487L C:0 F:1 CC↑0 D:0 (md)
   M[SPEC.md] 423L C:0 F:0 CC↑0 D:0 (md)
   M[sumd/mcp_server.py] 358L C:0 F:12 CC↑5 D:0 (python)
-  LANGS: python:29/yaml:19/md:19/json:7/yml:6/shell:5/toml:2/other:2/txt:1
+  M[project/README.md] 339L C:0 F:0 CC↑0 D:0 (md)
+  LANGS: python:30/yaml:19/md:19/json:7/yml:6/shell:5/toml:2/other:2/txt:1
 
 HOTSPOTS[10]:
   ★ RenderPipeline._collect fan=22  // Extract all project data and build RenderContext.
@@ -50,8 +50,8 @@ REFACTOR[15]:
   [1] H/H Split god module sumd/cli.py (1658L, 0 classes)
   [2] H/H Split god module sumd/extractor.py (908L, 0 classes)
   [3] H/H Split god module sumd/renderer.py (1036L, 0 classes)
-  [4] H/H Split god module sumd/parser.py (548L, 5 classes)
-  [5] H/H Split god module CHANGELOG.md (624L, 0 classes)
+  [4] H/H Split god module CHANGELOG.md (624L, 0 classes)
+  [5] H/H Split god module SUMD.md (1294L, 5 classes)
 
 EVOLUTION:
-  2026-04-23 CC̄=1.3 crit=11 21546L // Automated analysis
+  2026-04-23 CC̄=1.3 crit=11 22350L // Automated analysis

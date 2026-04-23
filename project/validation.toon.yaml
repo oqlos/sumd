@@ -1,13 +1,9 @@
-# vallm batch | 96f | 0✓ 61⚠ 0✗ | 2026-04-23
+# vallm batch | 97f | 0✓ 62⚠ 0✗ | 2026-04-23
 
 SUMMARY:
-  scanned: 96  passed: 0 (0.0%)  warnings: 61  errors: 0  unsupported: 0
+  scanned: 97  passed: 0 (0.0%)  warnings: 62  errors: 0  unsupported: 0
 
-WARNINGS[61]{path,score}:
-  sumd/cli.py,0.74
-    issues[2]{rule,severity,message,line}:
-      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
-      complexity.lizard_cc,warning,_scan_one_project: CC=22 exceeds limit 15,875
+WARNINGS[62]{path,score}:
   sumd/mcp_server.py,0.74
     issues[2]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -93,6 +89,9 @@ WARNINGS[61]{path,score}:
   sumd/__init__.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  sumd/cli.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
   sumd/extractor.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
@@ -163,6 +162,9 @@ WARNINGS[61]{path,score}:
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
   sumd/toon_parser.py,0.78
+    issues[1]{rule,severity,message,line}:
+      syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
+  sumd/validator.py,0.78
     issues[1]{rule,severity,message,line}:
       syntax.unsupported,warning,"Could not parse PYTHON: Download error: Language 'PYTHON' not available for download. Available groups: [""all""]",
   tests/test_cli.py,0.78

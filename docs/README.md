@@ -1,7 +1,7 @@
 <!-- code2docs:start --># sumd
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-782-green)
-> **782** functions | **33** classes | **91** files | CC̄ = 4.3
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-784-green)
+> **784** functions | **33** classes | **92** files | CC̄ = 4.3
 
 > Auto-generated project documentation from source code analysis.
 
@@ -80,14 +80,11 @@ sumd/
     ├── guards
 ├── pyqual
 ├── sumd/
-├── pyproject
 ├── TODO
 ├── mcp
-├── CHANGELOG
 ├── Taskfile
 ├── project
 ├── SPEC
-├── README
     ├── USAGE
     ├── README
     ├── SUMD
@@ -123,7 +120,7 @@ sumd/
         ├── Dockerfile
         ├── README
     ├── toon_parser
-    ├── cli
+    ├── validator
     ├── generator
     ├── extractor
     ├── parser
@@ -154,15 +151,19 @@ sumd/
             ├── toon
             ├── toon
                 ├── toon
+├── pyproject
+    ├── context
     ├── prompt
         ├── toon
-    ├── context
+        ├── toon
+        ├── toon
         ├── toon
     ├── README
         ├── toon
-        ├── toon
+├── CHANGELOG
     ├── calls
-        ├── toon
+├── README
+    ├── cli
 ```
 
 ## API Overview
@@ -179,11 +180,11 @@ sumd/
 - **`SUMDDocument`** — —
 - **`SUMDParser`** — —
 - **`CodeBlockIssue`** — —
+- **`CodeBlockIssue`** — —
 - **`SectionType`** — SUMD section types.
 - **`Section`** — Represents a SUMD section.
 - **`SUMDDocument`** — Represents a parsed SUMD document.
 - **`SUMDParser`** — Parser for SUMD markdown documents.
-- **`CodeBlockIssue`** — —
 - **`RenderPipeline`** — Collect project data → build sections → render → inject TOC.
 - **`RenderContext`** — All extracted data for a project, passed to every Section.render().
 - **`Section`** — Protocol for all SUMD section renderers.
@@ -329,7 +330,6 @@ sumd/
 - `test_mcp_tools_registered()` — —
 - `test_mcp_main_no_crash()` — —
 - `print()` — —
-- `print()` — —
 - `generate_readme()` — —
 - `ask(sumd_path, question, model)` — —
 - `main()` — —
@@ -339,19 +339,9 @@ sumd/
 - `run(sumd_file, single_tool, tool_args)` — —
 - `main()` — —
 - `extract_testql_scenarios(proj_dir)` — Scan all *.testql.toon.yaml and testql-scenarios/*.yaml files in project.
-- `cli()` — SUMD - Structured Unified Markdown Descriptor CLI.
-- `validate(file)` — Validate a SUMD document.
-- `export(file, format, output)` — Export a SUMD document to structured format.
-- `info(file)` — Display information about a SUMD document.
-- `generate(file, format, output)` — Generate a SUMD document from structured format.
-- `extract(file, section)` — Extract content from a SUMD document.
-- `scan(workspace, export_json, report, fix)` — Scan a workspace directory and generate SUMD.md for every project found.
-- `lint(files, workspace, as_json)` — Validate SUMD.md files — check markdown structure and codeblock formats.
-- `analyze(project, tools, force)` — Run analysis tools (code2llm, redup, vallm) on a project.
-- `scaffold(project, output, force, scenario_type)` — Generate testql scenario scaffolds from OpenAPI spec or SUMD.md.
-- `map_cmd(project, output, force, stdout)` — Generate project/map.toon.yaml — static code map in toon format.
-- `main()` — Main entry point — if first arg is a path, run 'scan <path> --fix'.
-- `main_sumr()` — Entry point for `sumr` command — generates SUMR.md (refactor profile).
+- `validate_codeblocks(content, source)` — Validate all fenced code blocks in *content*.
+- `validate_markdown(content, source, profile)` — Validate SUMD markdown structure.
+- `validate_sumd_file(path, profile)` — Run all validators on a SUMD.md file.
 - `extract_pyproject(proj_dir)` — —
 - `extract_taskfile(proj_dir)` — —
 - `extract_openapi(proj_dir)` — —
@@ -373,9 +363,6 @@ sumd/
 - `parse(content)` — Parse a SUMD markdown document.
 - `parse_file(path)` — Parse a SUMD file.
 - `validate(document)` — Validate a SUMD document.
-- `validate_codeblocks(content, source)` — Validate all fenced code blocks in *content*.
-- `validate_markdown(content, source, profile)` — Validate SUMD markdown structure.
-- `validate_sumd_file(path, profile)` — Run all validators on a SUMD.md file.
 - `generate_sumd_content(proj_dir, return_sources, raw_sources, profile)` — Generate SUMD.md content from a project directory.
 - `list_tools()` — —
 - `call_tool(name, arguments)` — —
@@ -414,11 +401,11 @@ sumd/
 - `run()` — —
 - `generate_sumd_content()` — —
 - `extract_testql_scenarios()` — —
-- `parse()` — —
-- `parse_file()` — —
 - `validate_codeblocks()` — —
 - `validate_markdown()` — —
 - `validate_sumd_file()` — —
+- `parse()` — —
+- `parse_file()` — —
 - `build_context()` — —
 - `ask()` — —
 - `list_tools()` — —
@@ -463,6 +450,20 @@ sumd/
 - `test_mcp_main_no_crash()` — —
 - `print()` — —
 - `generate_readme()` — —
+- `print()` — —
+- `cli()` — SUMD - Structured Unified Markdown Descriptor CLI.
+- `validate(file)` — Validate a SUMD document.
+- `export(file, format, output)` — Export a SUMD document to structured format.
+- `info(file)` — Display information about a SUMD document.
+- `generate(file, format, output)` — Generate a SUMD document from structured format.
+- `extract(file, section)` — Extract content from a SUMD document.
+- `scan(workspace, export_json, report, fix)` — Scan a workspace directory and generate SUMD.md for every project found.
+- `lint(files, workspace, as_json)` — Validate SUMD.md files — check markdown structure and codeblock formats.
+- `analyze(project, tools, force)` — Run analysis tools (code2llm, redup, vallm) on a project.
+- `scaffold(project, output, force, scenario_type)` — Generate testql scenario scaffolds from OpenAPI spec or SUMD.md.
+- `map_cmd(project, output, force, stdout)` — Generate project/map.toon.yaml — static code map in toon format.
+- `main()` — Main entry point — if first arg is a path, run 'scan <path> --fix'.
+- `main_sumr()` — Entry point for `sumr` command — generates SUMR.md (refactor profile).
 
 
 ## Project Structure
@@ -520,7 +521,7 @@ sumd/
 📄 `project.context`
 📄 `project.duplication.toon`
 📄 `project.evolution.toon`
-📄 `project.map.toon` (2205 functions)
+📄 `project.map.toon` (2880 functions)
 📄 `project.project.toon`
 📄 `project.prompt`
 📄 `project.validation.toon`
@@ -528,11 +529,11 @@ sumd/
 📄 `pyqual`
 📄 `scripts.bootstrap`
 📦 `sumd`
-📄 `sumd.cli` (41 functions)
+📄 `sumd.cli` (43 functions)
 📄 `sumd.extractor` (39 functions)
 📄 `sumd.generator`
 📄 `sumd.mcp_server` (12 functions)
-📄 `sumd.parser` (24 functions, 5 classes)
+📄 `sumd.parser` (9 functions, 4 classes)
 📄 `sumd.pipeline` (10 functions, 1 classes)
 📄 `sumd.renderer` (54 functions)
 📦 `sumd.sections`
@@ -553,6 +554,7 @@ sumd/
 📄 `sumd.sections.source_snippets` (2 functions, 1 classes)
 📄 `sumd.sections.workflows` (2 functions, 1 classes)
 📄 `sumd.toon_parser` (8 functions)
+📄 `sumd.validator` (15 functions, 1 classes)
 📄 `testql-scenarios.generated-cli-tests.testql.toon`
 📄 `testql-scenarios.generated-from-pytests.testql.toon`
 📄 `testql-scenarios.generated.generated-cli-tests.testql.toon`
