@@ -1094,6 +1094,11 @@ def _scan_one_project(
     default=True,
     help="Generate testql scenarios via 'testql generate' if none exist (default: enabled)",
 )
+@click.option(
+    "--workspace-mode/--no-workspace-mode",
+    default=False,
+    help="Treat the workspace root as a single project; skip scanning subdirectories for separate projects",
+)
 def scan(
     workspace: Path,
     export_json: bool,
@@ -1108,6 +1113,7 @@ def scan(
     generate_doql: bool,
     doql_sync: bool,
     generate_testql: bool,
+    workspace_mode: bool,
 ):
     """Scan a workspace directory and generate SUMD.md for every project found.
 
@@ -1136,11 +1142,17 @@ def scan(
     # --recursive or --depth overrides this default.
     effective_depth = depth if depth is not None else (None if recursive else 0)
 
-    project_dirs = _detect_projects(workspace, max_depth=effective_depth)
-
-    # If workspace itself looks like a project root, include it.
-    if _is_project_dir(workspace):
-        project_dirs.insert(0, workspace)
+    if workspace_mode:
+        # Treat workspace root as a single project; do not scan subdirectories.
+        if _is_project_dir(workspace):
+            project_dirs = [workspace]
+        else:
+            project_dirs = []
+    else:
+        project_dirs = _detect_projects(workspace, max_depth=effective_depth)
+        # If workspace itself looks like a project root, include it.
+        if _is_project_dir(workspace):
+            project_dirs.insert(0, workspace)
 
     if not project_dirs:
         click.echo(
