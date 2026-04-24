@@ -899,6 +899,35 @@ def _maybe_generate_doql(proj_dir: Path, fix: bool) -> None:
         click.echo(f"   📝 Generated {doql_path.name} ({project_type})")
 
 
+def _maybe_generate_testql(proj_dir: Path) -> None:
+    """Generate testql scenarios via testql generate if none exist physically.
+
+    Only runs when no *.testql.toon.yaml files are found in the project.
+    Requires the testql CLI to be installed and available on PATH.
+    """
+    has_testql = any(
+        proj_dir.rglob("*.testql.toon.yaml")
+    )
+    if has_testql:
+        return
+
+    try:
+        result = subprocess.run(
+            ["testql", "generate", str(proj_dir)],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if result.returncode == 0:
+            click.echo(f"   🧪 Generated testql scenarios")
+        else:
+            click.echo(f"   ⚠️  testql generate failed: {result.stderr[:200]}")
+    except FileNotFoundError:
+        click.echo("   ⚠️  testql not installed — skipping testql generation")
+    except Exception as exc:
+        click.echo(f"   ⚠️  testql generate error: {exc}")
+
+
 def _finalize_scan(
     proj_dir: Path,
     doc,
@@ -955,6 +984,7 @@ def _scan_one_project(
     profile: str = "rich",
     generate_doql: bool = False,
     doql_sync: bool = False,
+    generate_testql: bool = False,
 ) -> dict:
     """Generate SUMD.md (or SUMR.md for refactor profile) for one project."""
     output_name = "SUMR.md" if profile == "refactor" else "SUMD.md"
@@ -970,6 +1000,9 @@ def _scan_one_project(
     try:
         if generate_doql:
             _maybe_generate_doql(proj_dir, fix)
+
+        if generate_testql:
+            _maybe_generate_testql(proj_dir)
 
         doc, md_issues, cb_errors, cb_warnings, sources = _render_write_validate(
             proj_dir, sumd_path, raw, profile
@@ -1056,6 +1089,11 @@ def _scan_one_project(
     default=False,
     help="Run 'doql sync' after generating SUMD.md (only in projects with app.doql.less/css)",
 )
+@click.option(
+    "--generate-testql/--no-generate-testql",
+    default=False,
+    help="Generate testql scenarios via 'testql generate' if none exist (default: disabled)",
+)
 def scan(
     workspace: Path,
     export_json: bool,
@@ -1069,6 +1107,7 @@ def scan(
     recursive: bool,
     generate_doql: bool,
     doql_sync: bool,
+    generate_testql: bool,
 ):
     """Scan a workspace directory and generate SUMD.md for every project found.
 
@@ -1119,7 +1158,7 @@ def scan(
     for proj_dir in project_dirs:
         total += 1
         result = _scan_one_project(
-            proj_dir, fix, raw, export_json, analyze, tool_list, parser_inst, profile, generate_doql, doql_sync
+            proj_dir, fix, raw, export_json, analyze, tool_list, parser_inst, profile, generate_doql, doql_sync, generate_testql
         )
         results[proj_dir.name] = result
         if result["status"] == "SKIP":

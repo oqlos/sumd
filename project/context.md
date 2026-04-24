@@ -6,7 +6,7 @@
 - **Primary Language**: python
 - **Languages**: python: 32, shell: 5
 - **Analysis Mode**: static
-- **Total Functions**: 230
+- **Total Functions**: 231
 - **Total Classes**: 24
 - **Modules**: 37
 - **Entry Points**: 80
@@ -14,7 +14,7 @@
 ## Architecture by Module
 
 ### sumd.cli
-- **Functions**: 43
+- **Functions**: 44
 - **File**: `cli.py`
 
 ### sumd.extractor
@@ -212,14 +212,14 @@ Args:
 ### sumd.mcp_server._tool_generate_sumd
 - **Calls**: arguments.get, data.get, data.get, None.join, section.get, sumd.mcp_server._resolve_path, out.write_text, types.TextContent
 
+### sumd.sections.refactor_analysis.RefactorAnalysisSection.render
+- **Calls**: a, a, a, a, None.replace, a, a, a
+
 ### sumd.cli.info
 > Display information about a SUMD document.
 
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, sumd.parser.SUMDParser.parse_file, click.echo, click.echo, click.echo, click.Path, click.echo
-
-### sumd.sections.refactor_analysis.RefactorAnalysisSection.render
-- **Calls**: a, a, a, a, None.replace, a, a, a
 
 ### sumd.mcp_server.list_tools
 - **Calls**: server.list_tools, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool
@@ -326,6 +326,10 @@ Usage:
 - **Methods**: 6
 - **Key Methods**: sumd.pipeline.RenderPipeline.__init__, sumd.pipeline.RenderPipeline._collect, sumd.pipeline.RenderPipeline._build_registered_sections, sumd.pipeline.RenderPipeline._render_legacy_sections, sumd.pipeline.RenderPipeline._assemble, sumd.pipeline.RenderPipeline.run
 
+### sumd.sections.interfaces.InterfacesSection
+- **Methods**: 2
+- **Key Methods**: sumd.sections.interfaces.InterfacesSection.should_render, sumd.sections.interfaces.InterfacesSection.render
+
 ### sumd.sections.refactor_analysis.RefactorAnalysisSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.refactor_analysis.RefactorAnalysisSection.should_render, sumd.sections.refactor_analysis.RefactorAnalysisSection.render
@@ -334,17 +338,13 @@ Usage:
 - **Methods**: 2
 - **Key Methods**: sumd.sections.quality.QualitySection.should_render, sumd.sections.quality.QualitySection.render
 
-### sumd.sections.interfaces.InterfacesSection
+### sumd.sections.deployment.DeploymentSection
 - **Methods**: 2
-- **Key Methods**: sumd.sections.interfaces.InterfacesSection.should_render, sumd.sections.interfaces.InterfacesSection.render
+- **Key Methods**: sumd.sections.deployment.DeploymentSection.should_render, sumd.sections.deployment.DeploymentSection.render
 
 ### sumd.sections.code_analysis.CodeAnalysisSection
 - **Methods**: 2
 - **Key Methods**: sumd.sections.code_analysis.CodeAnalysisSection.should_render, sumd.sections.code_analysis.CodeAnalysisSection.render
-
-### sumd.sections.deployment.DeploymentSection
-- **Methods**: 2
-- **Key Methods**: sumd.sections.deployment.DeploymentSection.should_render, sumd.sections.deployment.DeploymentSection.render
 
 ### sumd.sections.metadata.MetadataSection
 > Render ## Metadata — always present, all profiles.
@@ -572,7 +572,7 @@ Returns:
 Functions exposed as public API (no underscore prefix):
 
 - `examples.mcp.mcp_client.run` - 53 calls
-- `sumd.cli.scan` - 36 calls
+- `sumd.cli.scan` - 38 calls
 - `sumd.cli.analyze` - 33 calls
 - `sumd.cli.scaffold` - 33 calls
 - `sumd.cli.generate` - 30 calls
@@ -597,8 +597,8 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_pyqual` - 12 calls
 - `sumd.extractor.extract_makefile` - 12 calls
 - `sumd.extractor.extract_source_snippets` - 12 calls
-- `sumd.cli.info` - 11 calls
 - `sumd.sections.refactor_analysis.RefactorAnalysisSection.render` - 11 calls
+- `sumd.cli.info` - 11 calls
 - `sumd.extractor.extract_taskfile` - 10 calls
 - `examples.llm.openai_example.build_context` - 9 calls
 - `sumd.extractor.extract_requirements` - 9 calls

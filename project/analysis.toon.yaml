@@ -1,5 +1,5 @@
-# code2llm | 31f 6009L | python:29,shell:2 | 2026-04-23
-# CC̄=4.3 | critical:0/230 | dups:0 | cycles:1
+# code2llm | 31f 6058L | python:29,shell:2 | 2026-04-23
+# CC̄=4.3 | critical:0/231 | dups:0 | cycles:1
 
 HEALTH[0]: ok
 
@@ -9,9 +9,9 @@ REFACTOR[1]:
 PIPELINES[72]:
   [1] Src [main]: main → ask → parse_file
       PURITY: 100% pure
-  [2] Src [main]: main → ask → build_context → parse_file
+  [2] Src [main]: main → run
       PURITY: 100% pure
-  [3] Src [main]: main → run
+  [3] Src [main]: main → ask → build_context → parse_file
       PURITY: 100% pure
   [4] Src [parse]: parse
       PURITY: 100% pure
@@ -20,7 +20,7 @@ PIPELINES[72]:
 
 LAYERS:
   sumd/                           CC̄=4.3    ←in:0  →out:0
-  │ !! cli                       1682L  0C   43m  CC=11     ←0
+  │ !! cli                       1731L  0C   44m  CC=12     ←0
   │ !! extractor                  960L  0C   40m  CC=12     ←2
   │ pipeline                   443L  1C   16m  CC=7      ←0
   │ mcp_server                 358L  0C   12m  CC=5      ←0

@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.40] - 2026-04-24
+
+### Docs
+- Update README.md
+- Update SPEC.md
+- Update SUMD.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update testql-scenarios/generated-cli-tests.testql.toon.yaml
+- Update testql-scenarios/generated/generated-cli-tests.testql.toon.yaml
+- Update testql-scenarios/smoke-generic.testql.toon.yaml
+
+### Other
+- Update app.doql.less
+- Update project/analysis.toon.yaml
+- Update project/map.toon.yaml
+- Update sumd/cli.py
+
 ## [0.3.39] - 2026-04-23
 
 ### Docs

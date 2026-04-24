@@ -24,12 +24,12 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.3.38`
+- **version**: `0.3.39`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Taskfile.yml, testql(3), app.doql.less, pyqual.yaml, goal.yaml, .env.example, src(10 mod), project/(2 analysis files), .swop/manifests/core/commands.yml, .swop/manifests/core/queries.yml, .swop/manifests/core/events.yml
+- **generated_from**: pyproject.toml, Taskfile.yml, testql(2), app.doql.less, pyqual.yaml, goal.yaml, .env.example, src(10 mod), project/(2 analysis files), .swop/manifests/core/commands.yml, .swop/manifests/core/queries.yml, .swop/manifests/core/events.yml
 
 ## Architecture
 
@@ -44,7 +44,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: sumd;
-  version: 0.3.38;
+  version: 0.3.39;
 }
 
 dependencies {
@@ -331,7 +331,7 @@ events:
 # GENERATED: true
 
 CONFIG[2]{key, value}:
-  cli_command, python -m sumd
+  cli_command, python -msumd
   timeout_ms, 10000
 
 LOG[3]{message}:
@@ -356,29 +356,6 @@ LOG[8]{message}:
   "Test: TestExtractRequirements_test_parses_requirements_txt"
   "Test: test_captures_inline_comment"
   "Test: test_parses_requirements_txt"
-```
-
-#### `testql-scenarios/smoke-generic.testql.toon.yaml`
-
-```toon markpact:testql path=testql-scenarios/smoke-generic.testql.toon.yaml
-# SCENARIO: smoke-generic.testql.toon.yaml — smoke tests for sumd CLI
-# TYPE: smoke
-# VERSION: 1.0
-
-# ── Konfiguracja ──────────────────────────────────────
-CONFIG[2]{key, value}:
-  base_path, /api/v1
-  timeout_ms, 5000
-
-# ── Wywołania API ─────────────────────────────────────
-API[2]{method, endpoint, status}:
-  GET, /health, 200
-  GET, /, 200
-
-# ── Asercje ───────────────────────────────────────────
-ASSERT[2]{field, operator, expected}:
-  status, <, 500
-  content_type, contains, application/json
 ```
 
 ## Workflows
@@ -700,7 +677,7 @@ pipeline:
 ```yaml
 project:
   name: sumd
-  version: 0.3.38
+  version: 0.3.39
   env: local
 ```
 
@@ -770,9 +747,9 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# sumd | 48f 8398L | python:41,shell:5,less:2 | 2026-04-23
-# stats: 225 func | 64 cls | 48 mod | CC̄=4.6 | critical:10 | cycles:0
-# alerts[5]: CC _map_cc_stats=12; CC run=11; CC analyze=11; CC _render_api_stubs=11; CC _walk_projects=10
+# sumd | 48f 8471L | python:41,shell:5,less:2 | 2026-04-23
+# stats: 226 func | 64 cls | 48 mod | CC̄=4.6 | critical:11 | cycles:0
+# alerts[5]: CC scan=12; CC _map_cc_stats=12; CC run=11; CC analyze=11; CC _render_api_stubs=11
 # hotspots[5]: scan fan=18; scaffold fan=18; analyze fan=17; generate fan=15; _parse_doql_content fan=14
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
@@ -788,7 +765,7 @@ M[48]:
   project.sh,41
   scripts/bootstrap.sh,70
   sumd/__init__.py,36
-  sumd/cli.py,1683
+  sumd/cli.py,1732
   sumd/extractor.py,961
   sumd/generator.py,16
   sumd/mcp_server.py,359
@@ -817,7 +794,7 @@ M[48]:
   sumd/sections/workflows.py,87
   sumd/toon_parser.py,174
   sumd/validator.py,332
-  tests/test_cli.py,324
+  tests/test_cli.py,348
   tests/test_dogfood.py,148
   tests/test_extractor.py,313
   tests/test_mcp_server.py,234
@@ -841,7 +818,7 @@ D:
     main()
   sumd/__init__.py:
   sumd/cli.py:
-    e: _detect_project_type,_render_doql_boilerplate,_node_framework,_node_spec_from_package_json,_build_doql_spec,_generate_doql_less,cli,validate,export,info,generate,extract,_is_project_dir,_walk_projects,_detect_projects,_ensure_venv,_tool_bin,_run_one_tool,_run_analysis_tools,_export_sumd_json,_render_write_validate,_echo_scan_result,_maybe_generate_doql,_finalize_scan,_scan_one_project,scan,lint,_lint_collect_paths,_lint_print_result,_setup_tools_venv,_run_code2llm_formats,_run_tool_subprocess,analyze,_api_scenario_template,_scaffold_write,_scaffold_smoke_scenario,_scaffold_crud_scenarios,_scaffold_from_openapi,_scaffold_generic,scaffold,map_cmd,main,main_sumr
+    e: _detect_project_type,_render_doql_boilerplate,_node_framework,_node_spec_from_package_json,_build_doql_spec,_generate_doql_less,cli,validate,export,info,generate,extract,_is_project_dir,_walk_projects,_detect_projects,_ensure_venv,_tool_bin,_run_one_tool,_run_analysis_tools,_export_sumd_json,_render_write_validate,_echo_scan_result,_maybe_generate_doql,_maybe_generate_testql,_finalize_scan,_scan_one_project,scan,lint,_lint_collect_paths,_lint_print_result,_setup_tools_venv,_run_code2llm_formats,_run_tool_subprocess,analyze,_api_scenario_template,_scaffold_write,_scaffold_smoke_scenario,_scaffold_crud_scenarios,_scaffold_from_openapi,_scaffold_generic,scaffold,map_cmd,main,main_sumr
     _detect_project_type(proj_dir)
     _render_doql_boilerplate(project_name;spec;extra_workflows)
     _node_framework(deps)
@@ -865,9 +842,10 @@ D:
     _render_write_validate(proj_dir;sumd_path;raw;profile)
     _echo_scan_result(proj_dir;doc;sources;cb_warnings)
     _maybe_generate_doql(proj_dir;fix)
+    _maybe_generate_testql(proj_dir)
     _finalize_scan(proj_dir;doc;sources;cb_warnings;export_json;run_analyze;tool_list;doql_sync;sumd_path)
-    _scan_one_project(proj_dir;fix;raw;export_json;run_analyze;tool_list;parser_inst;profile;generate_doql;doql_sync)
-    scan(workspace;export_json;report;fix;raw;analyze;tools;profile;depth;generate_doql;doql_sync)
+    _scan_one_project(proj_dir;fix;raw;export_json;run_analyze;tool_list;parser_inst;profile;generate_doql;doql_sync;generate_testql)
+    scan(workspace;export_json;report;fix;raw;analyze;tools;profile;depth;recursive;generate_doql;doql_sync;generate_testql)
     lint(files;workspace;as_json)
     _lint_collect_paths(files;workspace)
     _lint_print_result(path;r)
@@ -1107,7 +1085,7 @@ D:
     TestExportCommand: test_export_json(1),test_export_to_output_file(2),test_export_markdown(1)
     TestCliVersion: test_version_option(0)
     TestCliHelp: test_help(0),test_validate_help(0),test_export_help(0),test_scan_help(0)
-    TestProjectDetection: test_is_project_dir_accepts_language_marker(3),test_is_project_dir_accepts_glob_markers(3),test_empty_dir_is_not_project(1),test_detect_projects_finds_mixed_languages(1)  # Detection must work across all supported languages/project t
+    TestProjectDetection: test_is_project_dir_accepts_language_marker(3),test_is_project_dir_accepts_glob_markers(3),test_empty_dir_is_not_project(1),test_detect_projects_finds_mixed_languages(1),test_detect_projects_non_recursive_skips_nested(1),test_detect_projects_recursive_finds_nested(1)  # Detection must work across all supported languages/project t
     TestNodeSpecFromPackageJson: test_framework_detection(2),test_spec_uses_real_scripts_and_extras(0),test_spec_falls_back_without_scripts(0)  # Node DOQL spec must mirror real package.json (scripts + fram
     TestGenerateDoqlLess: _pkg(1),test_fresh_generation_for_node_uses_real_scripts(1),test_force_regenerates_autogen_file_without_duplicating(1),test_force_preserves_user_authored_file(1),test_no_force_skips_existing(1)  # Refresh behaviour for app.doql.less generation.
     sumd_file(tmp_path)
@@ -1226,9 +1204,10 @@ def _export_sumd_json(proj_dir, doc)  # CC=2, fan=2
 def _render_write_validate(proj_dir, sumd_path, raw, profile)  # CC=5, fan=5
 def _echo_scan_result(proj_dir, doc, sources, cb_warnings)  # CC=2, fan=3
 def _maybe_generate_doql(proj_dir, fix)  # CC=7, fan=6
+def _maybe_generate_testql(proj_dir)  # CC=5, fan=5
 def _finalize_scan(proj_dir, doc, sources, cb_warnings, export_json, run_analyze, tool_list, doql_sync, sumd_path)  # CC=9, fan=9
-def _scan_one_project(proj_dir, fix, raw, export_json, run_analyze, tool_list, parser_inst, profile, generate_doql, doql_sync)  # CC=9, fan=8
-def scan(workspace, export_json, report, fix, raw, analyze, tools, profile, depth, generate_doql, doql_sync)  # CC=10, fan=18 ⚠
+def _scan_one_project(proj_dir, fix, raw, export_json, run_analyze, tool_list, parser_inst, profile, generate_doql, doql_sync, generate_testql)  # CC=10, fan=9 ⚠
+def scan(workspace, export_json, report, fix, raw, analyze, tools, profile, depth, recursive, generate_doql, doql_sync, generate_testql)  # CC=12, fan=18 ⚠
 def lint(files, workspace, as_json)  # CC=10, fan=12 ⚠
 def _lint_collect_paths(files, workspace)  # CC=6, fan=7
 def _lint_print_result(path, r)  # CC=9, fan=2
@@ -1629,12 +1608,6 @@ EDGES:
 ### Integration (1)
 
 **`Auto-generated from Python Tests`**
-
-### Smoke (1)
-
-**`smoke-generic.testql.toon.yaml — smoke tests for sumd CLI`**
-- `GET /health` → `200`
-- assert `status < 500`
 
 ## Intent
 

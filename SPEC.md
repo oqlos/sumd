@@ -10,27 +10,27 @@ SUMD is part of a four-layer system:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     SUMD (opis)                              │
-│              Structured Unified Markdown Descriptor          │
-│         Project description, intent, architecture            │
+│                     SUMD (opis)                             │
+│              Structured Unified Markdown Descriptor         │
+│         Project description, intent, architecture           │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                    DOQL (wykonanie)                          │
-│              Declarative Object Query Language               │
-│              Data manipulation and execution                 │
+│                    DOQL (wykonanie)                         │
+│              Declarative Object Query Language              │
+│              Data manipulation and execution                │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                  Taskfile (runtime)                          │
-│              Task runner and workflow execution              │
+│                  Taskfile (runtime)                         │
+│              Task runner and workflow execution             │
 │              Automation and orchestration                   │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                   TESTQL (weryfikacja)                       │
-│              Test Query Language - Token-Oriented            │
-│              API contracts, integration & E2E tests            │
+│                   TESTQL (weryfikacja)                      │
+│              Test Query Language - Token-Oriented           │
+│              API contracts, integration & E2E tests         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
