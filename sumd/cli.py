@@ -1091,8 +1091,8 @@ def _scan_one_project(
 )
 @click.option(
     "--generate-testql/--no-generate-testql",
-    default=False,
-    help="Generate testql scenarios via 'testql generate' if none exist (default: disabled)",
+    default=True,
+    help="Generate testql scenarios via 'testql generate' if none exist (default: enabled)",
 )
 def scan(
     workspace: Path,
