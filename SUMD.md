@@ -24,7 +24,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project documentation
 ## Metadata
 
 - **name**: `sumd`
-- **version**: `0.3.39`
+- **version**: `0.3.45`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -44,7 +44,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: sumd;
-  version: 0.3.39;
+  version: 0.3.45;
 }
 
 dependencies {
@@ -677,7 +677,7 @@ pipeline:
 ```yaml
 project:
   name: sumd
-  version: 0.3.39
+  version: 0.3.45
   env: local
 ```
 
