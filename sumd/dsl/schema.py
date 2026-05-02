@@ -159,6 +159,18 @@ class DSLContext(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Context metadata")
     
     model_config = {"arbitrary_types_allowed": True}
+    
+    def set_variable(self, name: str, value: Any) -> None:
+        """Set a variable in the context."""
+        self.variables[name] = value
+    
+    def get_variable(self, name: str) -> Any:
+        """Get a variable from the context."""
+        return self.variables.get(name)
+    
+    def register_function(self, name: str, func: Any) -> None:
+        """Register a function in the context."""
+        self.functions[name] = func
 
 
 class DSLCommandResult(BaseModel):

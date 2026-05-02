@@ -4,28 +4,14 @@
 
 - **Project**: /home/tom/github/oqlos/sumd
 - **Primary Language**: python
-- **Languages**: python: 49, md: 23, yaml: 19, json: 7, yml: 6
+- **Languages**: python: 49, shell: 5
 - **Analysis Mode**: static
-- **Total Functions**: 1057
-- **Total Classes**: 101
-- **Modules**: 120
-- **Entry Points**: 911
+- **Total Functions**: 466
+- **Total Classes**: 97
+- **Modules**: 54
+- **Entry Points**: 321
 
 ## Architecture by Module
-
-### SUMD
-- **Functions**: 353
-- **Classes**: 2
-- **File**: `SUMD.md`
-
-### project.map.toon
-- **Functions**: 226
-- **File**: `map.toon.yaml`
-
-### SUMR
-- **Functions**: 126
-- **Classes**: 2
-- **File**: `SUMR.md`
 
 ### sumd.cli
 - **Functions**: 47
@@ -36,7 +22,7 @@
 - **File**: `extractor.py`
 
 ### sumd.dsl.engine
-- **Functions**: 40
+- **Functions**: 38
 - **Classes**: 2
 - **File**: `engine.py`
 
@@ -45,15 +31,15 @@
 - **Classes**: 2
 - **File**: `schema_commands.py`
 
+### sumd.dsl.commands
+- **Functions**: 30
+- **Classes**: 2
+- **File**: `commands.py`
+
 ### sumd.dsl.parser
 - **Functions**: 29
 - **Classes**: 6
 - **File**: `parser.py`
-
-### sumd.dsl.commands
-- **Functions**: 28
-- **Classes**: 2
-- **File**: `commands.py`
 
 ### sumd.cqrs.aggregates
 - **Functions**: 23
@@ -65,22 +51,14 @@
 - **Classes**: 3
 - **File**: `nlp.py`
 
-### script
-- **Functions**: 19
-- **File**: `script.dsl`
+### sumd.mcp_server
+- **Functions**: 18
+- **File**: `mcp_server.py`
 
 ### sumd.cqrs.sumd_aggregate
 - **Functions**: 18
 - **Classes**: 3
 - **File**: `sumd_aggregate.py`
-
-### sumd.mcp_server
-- **Functions**: 18
-- **File**: `mcp_server.py`
-
-### simple_script
-- **Functions**: 17
-- **File**: `simple_script.dsl`
 
 ### sumd.cqrs.queries
 - **Functions**: 17
@@ -102,9 +80,34 @@
 - **Classes**: 2
 - **File**: `shell.py`
 
-### working_script
-- **Functions**: 12
-- **File**: `working_script.dsl`
+### sumd.parser
+- **Functions**: 9
+- **Classes**: 1
+- **File**: `parser.py`
+
+### sumd.toon_parser
+- **Functions**: 8
+- **File**: `toon_parser.py`
+
+### sumd.sections.interfaces
+- **Functions**: 8
+- **Classes**: 1
+- **File**: `interfaces.py`
+
+### sumd.sections.architecture
+- **Functions**: 8
+- **Classes**: 1
+- **File**: `architecture.py`
+
+### sumd.cqrs.events
+- **Functions**: 8
+- **Classes**: 8
+- **File**: `events.py`
+
+### sumd.cqrs.commands
+- **Functions**: 8
+- **Classes**: 12
+- **File**: `commands.py`
 
 ## Key Entry Points
 
@@ -142,7 +145,7 @@ for e
 
 ### sumd.pipeline.RenderPipeline._collect
 > Extract all project data and build RenderContext.
-- **Calls**: SUMR.extract_pyproject, SUMR.extract_taskfile, sumd.toon_parser.extract_testql_scenarios, SUMR.extract_openapi, SUMR.extract_doql, SUMR.extract_pyqual, SUMR.extract_python_modules, SUMR.extract_readme_title
+- **Calls**: sumd.extractor.extract_pyproject, sumd.extractor.extract_taskfile, sumd.toon_parser.extract_testql_scenarios, sumd.extractor.extract_openapi, sumd.extractor.extract_doql, sumd.extractor.extract_pyqual, sumd.extractor.extract_python_modules, sumd.extractor.extract_readme_title
 
 ### sumd.cli.generate
 > Generate a SUMD document from structured format.
@@ -172,21 +175,9 @@ Examples:
 > Render SWOP manifest section.
 - **Calls**: swop.get, a, a, a, a, swop.get, sorted, sorted
 
-### sumd.extractor.extract_goal
-> Parse goal.yaml — versioning strategy, git conventions, build strategies.
-- **Calls**: goal_path.exists, yaml.safe_load, data.get, data.get, data.get, data.get, data.get, goal_path.read_text
-
-### sumd.extractor.generate_map_toon
-> Generate project/map.toon.yaml content for proj_dir.
-- **Calls**: proj_dir.resolve, None.isoformat, sumd.extractor._collect_map_files, len, sum, sumd.extractor._render_map_detail, len, len
-
 ### sumd.dsl.shell.DSLShell._handle_shell_command
 > Handle shell commands (prefixed with !).
-- **Calls**: command.strip, os.system, test.print, test.print, test.print, test.print, test.print, test.print
-
-### sumd.extractor.extract_docker_compose
-> Parse docker-compose*.yml — services with images, ports, environment.
-- **Calls**: sorted, yaml.safe_load, services_raw.items, list, list, path.read_text, data.get, svc.get
+- **Calls**: command.strip, os.system, print, print, print, print, print, print
 
 ### sumd.cli.dsl
 > SUMD DSL Shell - Domain Specific Language for SUMD operations.
@@ -195,20 +186,20 @@ Provides an interactive shell and scripting interface for SUMD operations
 with CQRS ES
 - **Calls**: cli.command, click.option, click.option, click.option, click.option, asyncio.run, DSLShell, run_dsl
 
-### sumd.cqrs.commands.SumdCommandHandler.handle
-> Handle SUMD commands.
-- **Calls**: SumdCommandExecuted, events.append, SumdDocumentCreated, events.append, SumdDocumentUpdated, events.append, SumdSectionAdded, events.append
-
 ### sumd.dsl.shell.main
 > Main entry point for DSL shell.
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, DSLShell, Path
+
+### sumd.cqrs.commands.SumdCommandHandler.handle
+> Handle SUMD commands.
+- **Calls**: SumdCommandExecuted, events.append, SumdDocumentCreated, events.append, SumdDocumentUpdated, events.append, SumdSectionAdded, events.append
 
 ### sumd.cli.map_cmd
 > Generate project/map.toon.yaml — static code map in toon format.
 
 Analyses all source files in the project and produces a map.toon.yaml
 with module in
-- **Calls**: cli.command, click.argument, click.option, click.option, click.option, project.resolve, click.echo, SUMR.generate_map_toon
+- **Calls**: cli.command, click.argument, click.option, click.option, click.option, project.resolve, click.echo, sumd.extractor.generate_map_toon
 
 ### sumd.cli.lint
 > Validate SUMD.md files — check markdown structure and codeblock formats.
@@ -216,9 +207,6 @@ with module in
 Validates:
   - Markdown structure (H1, required H2 sections, metadata fields
 - **Calls**: cli.command, click.argument, click.option, click.option, sumd.cli._lint_collect_paths, sys.exit, click.echo, sys.exit
-
-### sumd.extractor.extract_pyproject
-- **Calls**: toml_path.exists, sumd.extractor._read_toml, data.get, project.get, optional.get, None.get, project.get, project.get
 
 ### sumd.cqrs.queries.SumdQueryHandler._handle_search_documents
 > Handle search documents query.
@@ -230,11 +218,7 @@ Validates:
 
 ### sumd.dsl.shell.DSLShell.execute_script
 > Execute a DSL script file.
-- **Calls**: test.print, script_path.exists, ValueError, script_path.read_text, content.splitlines, enumerate, line.strip, test.print
-
-### sumd.sections.source_snippets._render_source_snippets
-> Render top-N modules with function/class signatures for LLM orientation.
-- **Calls**: a, a, a, a, a, a, a, a
+- **Calls**: print, script_path.exists, ValueError, script_path.read_text, content.splitlines, enumerate, line.strip, print
 
 ### sumd.cli.export
 > Export a SUMD document to structured format.
@@ -242,20 +226,40 @@ Validates:
 FILE: Path to the SUMD markdown file
 - **Calls**: cli.command, click.argument, click.option, click.option, sumd.parser.SUMDParser.parse_file, click.Path, click.Choice, click.Path
 
-### examples.llm.openai_example.main
-- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, test.print, test.print
+### sumd.sections.source_snippets._render_source_snippets
+> Render top-N modules with function/class signatures for LLM orientation.
+- **Calls**: a, a, a, a, a, a, a, a
 
-### sumd.extractor.extract_package_json
-> Parse package.json — name, version, scripts, dependencies.
-- **Calls**: pkg.exists, json.loads, pkg.read_text, data.get, data.get, data.get, data.get, data.get
+### examples.llm.openai_example.main
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, print, print
+
+### sumd.dsl.shell.DSLShell.run
+> Run the interactive shell.
+- **Calls**: print, print, print, print, print, self._get_prompt, None.strip, line.startswith
 
 ### sumd.dsl.schema_commands.SchemaBasedCommands.execute_command
 > Execute a schema-based command.
 - **Calls**: time.time, self.registry.validate_command_call, self.registry.get_command, DSLCommandResult, DSLCommandResult, time.time, DSLCommandResult, self._execute_sumd_command
 
-### sumd.dsl.shell.DSLShell.run
-> Run the interactive shell.
-- **Calls**: test.print, test.print, test.print, test.print, test.print, self._get_prompt, None.strip, line.startswith
+### examples.llm.anthropic_example.main
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, Path, print, print
+
+### sumd.parser.SUMDParser._parse_header
+> Parse the project header (H1).
+
+Args:
+    lines: List of document lines
+- **Calls**: enumerate, line.startswith, None.strip, header_content.split, None.strip, line.startswith, len, None.strip
+
+### sumd.pipeline.RenderPipeline._assemble
+> Assemble all section lines into final markdown.
+- **Calls**: a, a, a, self._build_registered_sections, a, a, a, a
+
+### sumd.mcp_server.list_tools
+- **Calls**: server.list_tools, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool, types.Tool
+
+### sumd.sections.metadata.MetadataSection.render
+- **Calls**: a, a, a, a, a, ctx.openapi.get, a, a
 
 ## Process Flows
 
@@ -290,6 +294,7 @@ _parse_primary [sumd.dsl.parser.DSLParser]
 ```
 _collect [sumd.pipeline.RenderPipeline]
   └─ →> extract_pyproject
+      └─> _read_toml
   └─ →> extract_taskfile
   └─ →> extract_testql_scenarios
 ```
@@ -322,7 +327,7 @@ _render_api_stubs [sumd.sections.api_stubs]
 
 ### sumd.dsl.engine.DSLEngine
 > Engine for executing DSL expressions.
-- **Methods**: 35
+- **Methods**: 33
 - **Key Methods**: sumd.dsl.engine.DSLEngine.__init__, sumd.dsl.engine.DSLEngine.execute, sumd.dsl.engine.DSLEngine.execute_text, sumd.dsl.engine.DSLEngine._is_natural_language, sumd.dsl.engine.DSLEngine.process_natural_language, sumd.dsl.engine.DSLEngine.get_suggestions, sumd.dsl.engine.DSLEngine._execute_expression, sumd.dsl.engine.DSLEngine._execute_assignment, sumd.dsl.engine.DSLEngine._execute_command, sumd.dsl.engine.DSLEngine._execute_function_call
 
 ### sumd.dsl.schema_commands.SchemaBasedCommands
@@ -347,16 +352,16 @@ _render_api_stubs [sumd.sections.api_stubs]
 - **Key Methods**: sumd.cqrs.queries.SumdQueryHandler.__init__, sumd.cqrs.queries.SumdQueryHandler.can_handle, sumd.cqrs.queries.SumdQueryHandler.handle, sumd.cqrs.queries.SumdQueryHandler._handle_get_sumd_document, sumd.cqrs.queries.SumdQueryHandler._handle_list_sumd_sections, sumd.cqrs.queries.SumdQueryHandler._handle_get_sumd_section, sumd.cqrs.queries.SumdQueryHandler._handle_get_project_info, sumd.cqrs.queries.SumdQueryHandler._handle_get_event_history, sumd.cqrs.queries.SumdQueryHandler._handle_get_all_events, sumd.cqrs.queries.SumdQueryHandler._handle_search_documents
 - **Inherits**: QueryHandler
 
-### sumd.dsl.nlp.NLPProcessor
-> Natural Language Processor for DSL commands.
-- **Methods**: 11
-- **Key Methods**: sumd.dsl.nlp.NLPProcessor.__init__, sumd.dsl.nlp.NLPProcessor._initialize_default_intents, sumd.dsl.nlp.NLPProcessor._initialize_default_entities, sumd.dsl.nlp.NLPProcessor.parse_natural_language, sumd.dsl.nlp.NLPProcessor._text_matches_intent, sumd.dsl.nlp.NLPProcessor._extract_entities, sumd.dsl.nlp.NLPProcessor._extract_entity_value, sumd.dsl.nlp.NLPProcessor._extract_command_fallback, sumd.dsl.nlp.NLPProcessor._extract_entities_fallback, sumd.dsl.nlp.NLPProcessor.generate_dsl_command
-
 ### sumd.cqrs.aggregates.AggregateRoot
 > Base aggregate root for event sourcing.
 - **Methods**: 11
 - **Key Methods**: sumd.cqrs.aggregates.AggregateRoot.__init__, sumd.cqrs.aggregates.AggregateRoot.aggregate_id, sumd.cqrs.aggregates.AggregateRoot.version, sumd.cqrs.aggregates.AggregateRoot.uncommitted_events, sumd.cqrs.aggregates.AggregateRoot.set_event_store, sumd.cqrs.aggregates.AggregateRoot.apply_event, sumd.cqrs.aggregates.AggregateRoot.mark_events_as_committed, sumd.cqrs.aggregates.AggregateRoot.load_from_history, sumd.cqrs.aggregates.AggregateRoot._when, sumd.cqrs.aggregates.AggregateRoot.commit
 - **Inherits**: ABC
+
+### sumd.dsl.nlp.NLPProcessor
+> Natural Language Processor for DSL commands.
+- **Methods**: 11
+- **Key Methods**: sumd.dsl.nlp.NLPProcessor.__init__, sumd.dsl.nlp.NLPProcessor._initialize_default_intents, sumd.dsl.nlp.NLPProcessor._initialize_default_entities, sumd.dsl.nlp.NLPProcessor.parse_natural_language, sumd.dsl.nlp.NLPProcessor._text_matches_intent, sumd.dsl.nlp.NLPProcessor._extract_entities, sumd.dsl.nlp.NLPProcessor._extract_entity_value, sumd.dsl.nlp.NLPProcessor._extract_command_fallback, sumd.dsl.nlp.NLPProcessor._extract_entities_fallback, sumd.dsl.nlp.NLPProcessor.generate_dsl_command
 
 ### sumd.dsl.shell.DSLShell
 > Interactive shell for SUMD DSL.
@@ -386,6 +391,11 @@ Usage:
 - **Methods**: 6
 - **Key Methods**: sumd.pipeline.RenderPipeline.__init__, sumd.pipeline.RenderPipeline._collect, sumd.pipeline.RenderPipeline._build_registered_sections, sumd.pipeline.RenderPipeline._render_legacy_sections, sumd.pipeline.RenderPipeline._assemble, sumd.pipeline.RenderPipeline.run
 
+### sumd.cqrs.events.EventStore
+> In-memory event store with optional file persistence.
+- **Methods**: 6
+- **Key Methods**: sumd.cqrs.events.EventStore.__init__, sumd.cqrs.events.EventStore.save_event, sumd.cqrs.events.EventStore.get_events, sumd.cqrs.events.EventStore.get_all_events, sumd.cqrs.events.EventStore._persist_event, sumd.cqrs.events.EventStore._load_events
+
 ### sumd.cqrs.aggregates.Entity
 > Base entity for domain objects.
 - **Methods**: 6
@@ -396,11 +406,6 @@ Usage:
 > Registry for DSL commands.
 - **Methods**: 6
 - **Key Methods**: sumd.dsl.commands.DSLCommandRegistry.__init__, sumd.dsl.commands.DSLCommandRegistry.register, sumd.dsl.commands.DSLCommandRegistry.get_command, sumd.dsl.commands.DSLCommandRegistry.list_commands, sumd.dsl.commands.DSLCommandRegistry.list_categories, sumd.dsl.commands.DSLCommandRegistry.get_help
-
-### sumd.cqrs.events.EventStore
-> In-memory event store with optional file persistence.
-- **Methods**: 6
-- **Key Methods**: sumd.cqrs.events.EventStore.__init__, sumd.cqrs.events.EventStore.save_event, sumd.cqrs.events.EventStore.get_events, sumd.cqrs.events.EventStore.get_all_events, sumd.cqrs.events.EventStore._persist_event, sumd.cqrs.events.EventStore._load_events
 
 ### sumd.cqrs.aggregates.EventSourcedRepository
 > Event-sourced repository implementation.
@@ -413,11 +418,6 @@ Usage:
 - **Methods**: 5
 - **Key Methods**: sumd.dsl.engine.DSLContext.__init__, sumd.dsl.engine.DSLContext.set_variable, sumd.dsl.engine.DSLContext.get_variable, sumd.dsl.engine.DSLContext.register_function, sumd.dsl.engine.DSLContext.get_function
 
-### sumd.dsl.nlp.SimpleNLPModel
-> Simple NLP model implementation for basic functionality.
-- **Methods**: 3
-- **Key Methods**: sumd.dsl.nlp.SimpleNLPModel.__init__, sumd.dsl.nlp.SimpleNLPModel.predict_intent, sumd.dsl.nlp.SimpleNLPModel.extract_entities
-
 ### sumd.cqrs.aggregates.ValueObject
 > Base value object.
 - **Methods**: 3
@@ -429,6 +429,11 @@ Usage:
 - **Methods**: 3
 - **Key Methods**: sumd.cqrs.aggregates.Repository.get_by_id, sumd.cqrs.aggregates.Repository.save, sumd.cqrs.aggregates.Repository.delete
 - **Inherits**: ABC
+
+### sumd.cqrs.queries.QueryBus
+> Query bus for dispatching queries to appropriate handlers.
+- **Methods**: 3
+- **Key Methods**: sumd.cqrs.queries.QueryBus.__init__, sumd.cqrs.queries.QueryBus.register_handler, sumd.cqrs.queries.QueryBus.dispatch
 
 ## Data Transformation Functions
 
@@ -461,58 +466,6 @@ Key functions that process and transform data:
 ### sumd.toon_parser._parse_toon_file
 > Parse a single *.testql.toon.yaml file into a scenario dict.
 - **Output to**: f.read_text, content.splitlines, re.search, str, sumd.dsl.parser.DSLParser._match
-
-### sumd.validator._validate_yaml_body
-> Check YAML body is parseable.
-- **Output to**: yaml.safe_load
-
-### sumd.validator._validate_less_css_body
-> Basic sanity: balanced braces.
-- **Output to**: body.count, body.count
-
-### sumd.validator._validate_mermaid_body
-> Check mermaid block starts with a valid diagram type.
-- **Output to**: None.strip, any, None.split, first.startswith, body.strip
-
-### sumd.validator._validate_toon_body
-> Check toon block has at least one recognised section header.
-- **Output to**: re.findall
-
-### sumd.validator._validate_bash_body
-> Check bash block is non-empty and doesn't contain obvious placeholders.
-- **Output to**: body.strip
-
-### sumd.validator._validate_deps_body
-> Each line of a deps block should be a valid pip requirement or empty.
-- **Output to**: enumerate, body.splitlines, line.strip, line.startswith, re.match
-
-### sumd.validator._validate_markpact_meta
-> Check markpact annotation kind and required attributes.
-- **Output to**: mp.group, _MARKPACT_REQUIRED_ATTRS.get, mp.group, issues.append, issues.append
-
-### sumd.validator.validate_codeblocks
-> Validate all fenced code blocks in *content*.
-
-Checks:
-- markpact annotation syntax (kind, required 
-- **Output to**: _CODEBLOCK_RE.finditer, None.strip, None.strip, None.strip, _MARKPACT_META_RE.search
-
-### sumd.validator.validate_markdown
-> Validate SUMD markdown structure.
-
-Checks:
-- H1 title present
-- Required H2 sections present (profil
-- **Output to**: content.splitlines, sumd.validator._check_empty_links, sumd.validator._check_unclosed_fences, sumd.validator._check_metadata_fields, sumd.validator._check_h1
-
-### sumd.validator.validate_sumd_file
-> Run all validators on a SUMD.md file.
-
-Returns:
-    {
-      "source": str,
-      "markdown": list[st
-- **Output to**: path.read_text, sumd.validator.validate_markdown, sumd.validator.validate_codeblocks, str, any
 
 ### sumd.parser.SUMDParser.parse
 > Parse a SUMD markdown document.
@@ -587,6 +540,58 @@ Returns:
     List of valida
 - **Output to**: SUMDParser, parser.validate
 
+### sumd.validator._validate_yaml_body
+> Check YAML body is parseable.
+- **Output to**: yaml.safe_load
+
+### sumd.validator._validate_less_css_body
+> Basic sanity: balanced braces.
+- **Output to**: body.count, body.count
+
+### sumd.validator._validate_mermaid_body
+> Check mermaid block starts with a valid diagram type.
+- **Output to**: None.strip, any, None.split, first.startswith, body.strip
+
+### sumd.validator._validate_toon_body
+> Check toon block has at least one recognised section header.
+- **Output to**: re.findall
+
+### sumd.validator._validate_bash_body
+> Check bash block is non-empty and doesn't contain obvious placeholders.
+- **Output to**: body.strip
+
+### sumd.validator._validate_deps_body
+> Each line of a deps block should be a valid pip requirement or empty.
+- **Output to**: enumerate, body.splitlines, line.strip, line.startswith, re.match
+
+### sumd.validator._validate_markpact_meta
+> Check markpact annotation kind and required attributes.
+- **Output to**: mp.group, _MARKPACT_REQUIRED_ATTRS.get, mp.group, issues.append, issues.append
+
+### sumd.validator.validate_codeblocks
+> Validate all fenced code blocks in *content*.
+
+Checks:
+- markpact annotation syntax (kind, required 
+- **Output to**: _CODEBLOCK_RE.finditer, None.strip, None.strip, None.strip, _MARKPACT_META_RE.search
+
+### sumd.validator.validate_markdown
+> Validate SUMD markdown structure.
+
+Checks:
+- H1 title present
+- Required H2 sections present (profil
+- **Output to**: content.splitlines, sumd.validator._check_empty_links, sumd.validator._check_unclosed_fences, sumd.validator._check_metadata_fields, sumd.validator._check_h1
+
+### sumd.validator.validate_sumd_file
+> Run all validators on a SUMD.md file.
+
+Returns:
+    {
+      "source": str,
+      "markdown": list[st
+- **Output to**: path.read_text, sumd.validator.validate_markdown, sumd.validator.validate_codeblocks, str, any
+
 ## Behavioral Patterns
 
 ### recursion__walk_projects
@@ -604,7 +609,7 @@ Returns:
 Functions exposed as public API (no underscore prefix):
 
 - `examples.mcp.mcp_client.run` - 53 calls
-- `sumd.dsl.commands.create_builtin_registry` - 41 calls
+- `sumd.dsl.commands.create_builtin_registry` - 45 calls
 - `sumd.cli.scan` - 40 calls
 - `sumd.cli.analyze` - 33 calls
 - `sumd.cli.scaffold` - 33 calls
@@ -615,8 +620,8 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.generate_map_toon` - 24 calls
 - `sumd.extractor.extract_docker_compose` - 22 calls
 - `sumd.cli.dsl` - 21 calls
-- `sumd.cqrs.commands.SumdCommandHandler.handle` - 21 calls
 - `sumd.dsl.shell.main` - 21 calls
+- `sumd.cqrs.commands.SumdCommandHandler.handle` - 21 calls
 - `sumd.cli.map_cmd` - 20 calls
 - `sumd.cli.lint` - 19 calls
 - `sumd.validator.validate_codeblocks` - 17 calls
@@ -625,11 +630,11 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.cli.export` - 16 calls
 - `examples.llm.openai_example.main` - 15 calls
 - `sumd.extractor.extract_package_json` - 15 calls
-- `sumd.dsl.schema_commands.SchemaBasedCommands.execute_command` - 15 calls
 - `sumd.dsl.shell.DSLShell.run` - 15 calls
+- `sumd.dsl.schema_commands.SchemaBasedCommands.execute_command` - 15 calls
 - `examples.llm.anthropic_example.main` - 14 calls
-- `sumd.sections.metadata.MetadataSection.render` - 14 calls
 - `sumd.mcp_server.list_tools` - 14 calls
+- `sumd.sections.metadata.MetadataSection.render` - 14 calls
 - `sumd.extractor.extract_openapi` - 13 calls
 - `sumd.extractor.extract_env` - 13 calls
 - `sumd.cli.validate` - 13 calls
@@ -640,8 +645,8 @@ Functions exposed as public API (no underscore prefix):
 - `sumd.extractor.extract_makefile` - 12 calls
 - `sumd.extractor.extract_source_snippets` - 12 calls
 - `sumd.cqrs.sumd_aggregate.SumdAggregate.create_from_file` - 12 calls
-- `sumd.sections.refactor_analysis.RefactorAnalysisSection.render` - 11 calls
 - `sumd.cli.info` - 11 calls
+- `sumd.sections.refactor_analysis.RefactorAnalysisSection.render` - 11 calls
 - `sumd.dsl.parser.DSLLexer.tokenize` - 11 calls
 
 ## System Interactions

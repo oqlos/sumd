@@ -243,7 +243,7 @@ class DSLParser:
         if self._check(DSLTokenType.IDENTIFIER) and self._check_next(DSLTokenType.OPERATOR, "="):
             identifier = self._advance()
             self._advance()  # Skip '='
-            value = self._parse_assignment()
+            value = self._parse_logical_or()
             
             return DSLExpression(
                 type=DSLExpressionType.ASSIGNMENT,
@@ -384,9 +384,30 @@ class DSLParser:
         if self._check(DSLTokenType.IDENTIFIER) and self._check_next(DSLTokenType.DOT):
             return self._parse_property_access()
         
-        # Command
+        # Command (check if it's a standalone identifier)
         if self._check(DSLTokenType.IDENTIFIER):
-            return self._parse_command()
+            # Look ahead to see if this is a command (end of expression or followed by operator)
+            current_pos = self.current
+            identifier = self._advance()
+            
+            # If this is the end of the expression or followed by operators, it's a command
+            if (self._is_at_end() or 
+                self._check(DSLTokenType.NEWLINE) or 
+                self._check(DSLTokenType.EOF) or
+                self._check(DSLTokenType.SEMICOLON) or
+                self._check(DSLTokenType.PIPE)):
+                
+                return DSLExpression(
+                    type=DSLExpressionType.COMMAND,
+                    value=identifier.value,
+                    children=[],
+                )
+            
+            # Otherwise, treat as variable/identifier
+            return DSLExpression(
+                type=DSLExpressionType.IDENTIFIER,
+                value=identifier.value,
+            )
         
         # Literal
         if self._match(DSLTokenType.STRING):

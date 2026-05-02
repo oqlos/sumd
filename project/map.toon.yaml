@@ -1,4 +1,4 @@
-# sumd | 69f 15744L | python:61,shell:6,less:2 | 2026-05-02
+# sumd | 69f 15732L | python:61,shell:6,less:2 | 2026-05-02
 # stats: 266 func | 153 cls | 69 mod | CC̄=4.4 | critical:13 | cycles:0
 # alerts[5]: CC _path_matches_pattern=18; CC scan=14; CC _map_cc_stats=12; CC run=11; CC analyze=11
 # hotspots[5]: cqrs_command fan=19; scan fan=18; scaffold fan=18; analyze fan=17; generate fan=15
@@ -26,7 +26,7 @@ M[69]:
   sumd/cqrs/sumd_aggregate.py,345
   sumd/dsl/__init__.py,15
   sumd/dsl/commands.py,657
-  sumd/dsl/engine.py,569
+  sumd/dsl/engine.py,557
   sumd/dsl/nlp.py,448
   sumd/dsl/parser.py,587
   sumd/dsl/schema.py,340
@@ -222,7 +222,7 @@ D:
   sumd/dsl/engine.py:
     e: DSLContext,DSLEngine
     DSLContext: __init__(1),set_variable(2),get_variable(1),register_function(2),get_function(1)  # Execution context for DSL expressions.
-    DSLEngine: __init__(3),execute(2),execute_text(2),_is_natural_language(1),process_natural_language(1),get_suggestions(1),_execute_expression(2),_execute_assignment(2),_execute_command(2),_execute_function_call(2),_execute_property_access(2),_execute_comparison(2),_execute_logical(2),_execute_arithmetic(2),_execute_pipeline(2),_execute_list(2),_execute_dict(2),_execute_block(2),_execute_sumd_command(3),_call_function(3),_initialize_builtin_functions(0),_builtin_print(1),_builtin_len(2),_builtin_str(2),_builtin_int(2),_builtin_float(2),_builtin_bool(2),_builtin_type(2),_builtin_exists(2),_builtin_read_file(2),_builtin_write_file(3),_builtin_list_files(2),_builtin_cwd(1),_builtin_cd(2),_builtin_help(1)  # Engine for executing DSL expressions.
+    DSLEngine: __init__(3),execute(2),execute_text(2),_is_natural_language(1),process_natural_language(1),get_suggestions(1),_execute_expression(2),_execute_assignment(2),_execute_command(2),_execute_function_call(2),_execute_property_access(2),_execute_comparison(2),_execute_logical(2),_execute_arithmetic(2),_execute_pipeline(2),_execute_list(2),_execute_dict(2),_execute_block(2),_execute_sumd_command(3),_call_function(3),_initialize_builtin_functions(0),_builtin_print(1),_builtin_len(2),_builtin_str(2),_builtin_int(2),_builtin_float(2),_builtin_bool(2),_builtin_type(2),_builtin_write_file(3),_builtin_list_files(2),_builtin_cwd(1),_builtin_cd(2),_builtin_help(1)  # Engine for executing DSL expressions.
   sumd/dsl/nlp.py:
     e: NLPProcessor,NLPIntegration,SimpleNLPModel
     NLPProcessor: __init__(1),_initialize_default_intents(0),_initialize_default_entities(0),parse_natural_language(1),_text_matches_intent(2),_extract_entities(2),_extract_entity_value(2),_extract_command_fallback(1),_extract_entities_fallback(1),generate_dsl_command(2),suggest_commands(1)  # Natural Language Processor for DSL commands.

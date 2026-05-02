@@ -1,15 +1,33 @@
-# vallm batch | 102f | 57✓ 0⚠ 7✗ | 2026-04-23
+# vallm batch | 132f | 75✓ 5⚠ 10✗ | 2026-05-02
 
 SUMMARY:
-  scanned: 102  passed: 57 (55.9%)  warnings: 0  errors: 7  unsupported: 38
+  scanned: 132  passed: 75 (56.8%)  warnings: 5  errors: 10  unsupported: 47
 
-ERRORS[7]{path,score}:
-  /home/tom/github/oqlos/sumd/sumd/mcp_server.py,0.86
+WARNINGS[5]{path,score}:
+  /home/tom/github/oqlos/sumd/sumd/dsl/commands.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,create_builtin_registry: 177 lines exceeds limit 100,104
+  /home/tom/github/oqlos/sumd/sumd/dsl/nlp.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,_initialize_default_intents: 106 lines exceeds limit 100,32
+  /home/tom/github/oqlos/sumd/sumd/dsl/parser.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,_parse_primary has cyclomatic complexity 19 (max: 15),363
+      complexity.lizard_cc,warning,_parse_primary: CC=19 exceeds limit 15,363
+  /home/tom/github/oqlos/sumd/sumd/dsl/engine.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 20.0 (threshold: 20),
+  /home/tom/github/oqlos/sumd/sumd/dsl/schema_commands.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 19.3 (threshold: 20),
+
+ERRORS[10]{path,score}:
+  /home/tom/github/oqlos/sumd/sumd/mcp_server.py,0.91
     issues[4]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'mcp.server.stdio' not found,20
-      python.import.resolvable,error,Module 'mcp.types' not found,21
-      python.import.resolvable,error,Module 'mcp.server' not found,22
-      python.import.resolvable,error,Module 'toml' not found,227
+      python.import.resolvable,error,Module 'mcp.server.stdio' not found,30
+      python.import.resolvable,error,Module 'mcp.types' not found,31
+      python.import.resolvable,error,Module 'mcp.server' not found,32
+      python.import.resolvable,error,Module 'toml' not found,417
   /home/tom/github/oqlos/sumd/tests/test_cli.py,0.93
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,7
@@ -19,20 +37,29 @@ ERRORS[7]{path,score}:
   /home/tom/github/oqlos/sumd/tests/test_pipeline.py,0.93
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,7
-  /home/tom/github/oqlos/sumd/sumd/cli.py,0.96
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'toml' not found,589
-      python.import.resolvable,error,Module 'toml' not found,527
+  /home/tom/github/oqlos/sumd/tests/test_dsl.py,0.94
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
+  /home/tom/github/oqlos/sumd/tests/test_cqrs_es.py,0.95
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
   /home/tom/github/oqlos/sumd/sumd/extractor.py,0.96
     issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'toml' not found,25
+      python.import.resolvable,error,Module 'toml' not found,26
   /home/tom/github/oqlos/sumd/tests/test_mcp_server.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,8
+  /home/tom/github/oqlos/sumd/sumd/cli.py,0.97
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'toml' not found,589
+      python.import.resolvable,error,Module 'toml' not found,527
+  /home/tom/github/oqlos/sumd/tests/test_mcp_cqrs_dsl.py,0.97
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,20
+  *.md,23
   Dockerfile*,1
   *.txt,1
   *.yml,6
-  other,10
+  other,16

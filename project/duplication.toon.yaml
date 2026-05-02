@@ -1,53 +1,53 @@
-# redup/duplication | 5 groups | 27f 5973L | 2026-04-25
+# redup/duplication | 3 groups | 48f 11859L | 2026-05-02
 
 SUMMARY:
-  files_scanned: 27
-  total_lines:   5973
-  dup_groups:    5
-  dup_fragments: 16
-  saved_lines:   48
-  scan_ms:       6199
+  files_scanned: 48
+  total_lines:   11859
+  dup_groups:    3
+  dup_fragments: 6
+  saved_lines:   35
+  scan_ms:       11252
 
-DUPLICATES[5] (ranked by impact):
-  [4bcab28372172a7b]   EXAC  should_render  L=4 N=4 saved=12 sim=1.00
-      sumd/sections/metadata.py:0-3  (should_render)
-      sumd/sections/deployment.py:0-3  (should_render)
-      sumd/sections/configuration.py:0-3  (should_render)
-      sumd/sections/architecture.py:0-3  (should_render)
-  [ca13365657022053]   STRU  render  L=6 N=3 saved=12 sim=1.00
-      sumd/sections/deployment.py:0-5  (render)
-      sumd/sections/interfaces.py:0-5  (render)
-      sumd/sections/architecture.py:0-5  (render)
-  [8cd2eeb38bd7d38c]   STRU  should_render  L=4 N=3 saved=8 sim=1.00
-      sumd/sections/refactor_analysis.py:0-3  (should_render)
-      sumd/sections/quality.py:0-3  (should_render)
-      sumd/sections/source_snippets.py:0-3  (should_render)
-  [85f3f43c6eb3aea1]   STRU  render  L=4 N=3 saved=8 sim=1.00
-      sumd/sections/extras.py:0-3  (render)
-      sumd/sections/swop.py:0-3  (render)
-      sumd/sections/configuration.py:0-3  (render)
-  [3f223d7a34a7b82f]   STRU  render  L=4 N=3 saved=8 sim=1.00
-      sumd/sections/source_snippets.py:0-3  (render)
-      sumd/sections/api_stubs.py:0-3  (render)
-      sumd/sections/call_graph.py:0-3  (render)
+HOTSPOTS[3] (files with most duplication):
+  sumd/toon_parser.py  dup=28L  groups=1  frags=2  (0.2%)
+  sumd/parser.py  dup=22L  groups=1  frags=2  (0.2%)
+  sumd/dsl/commands.py  dup=20L  groups=1  frags=2  (0.2%)
 
-REFACTOR[5] (ranked by priority):
-  [1] ○ extract_function   → sumd/sections/utils/should_render.py
-      WHY: 4 occurrences of 4-line block across 4 files — saves 12 lines
-      FILES: sumd/sections/architecture.py, sumd/sections/configuration.py, sumd/sections/deployment.py, sumd/sections/metadata.py
-  [2] ○ extract_function   → sumd/sections/utils/render.py
-      WHY: 3 occurrences of 6-line block across 3 files — saves 12 lines
-      FILES: sumd/sections/architecture.py, sumd/sections/deployment.py, sumd/sections/interfaces.py
-  [3] ○ extract_function   → sumd/sections/utils/should_render.py
-      WHY: 3 occurrences of 4-line block across 3 files — saves 8 lines
-      FILES: sumd/sections/quality.py, sumd/sections/refactor_analysis.py, sumd/sections/source_snippets.py
-  [4] ○ extract_function   → sumd/sections/utils/render.py
-      WHY: 3 occurrences of 4-line block across 3 files — saves 8 lines
-      FILES: sumd/sections/configuration.py, sumd/sections/extras.py, sumd/sections/swop.py
-  [5] ○ extract_function   → sumd/sections/utils/render.py
-      WHY: 3 occurrences of 4-line block across 3 files — saves 8 lines
-      FILES: sumd/sections/api_stubs.py, sumd/sections/call_graph.py, sumd/sections/source_snippets.py
+DUPLICATES[3] (ranked by impact):
+  [ec6388d8055c3e57]   STRU  _parse_toon_block_performance  L=14 N=2 saved=14 sim=1.00
+      sumd/toon_parser.py:70-83  (_parse_toon_block_performance)
+      sumd/toon_parser.py:102-115  (_parse_toon_block_gui)
+  [d1ab1a804f1b435b]   STRU  parse  L=11 N=2 saved=11 sim=1.00
+      sumd/parser.py:150-160  (parse)
+      sumd/parser.py:163-173  (parse_file)
+  [a73c4e5f2b96ddaa]   STRU  _cmd_cat  L=10 N=2 saved=10 sim=1.00
+      sumd/dsl/commands.py:313-322  (_cmd_cat)
+      sumd/dsl/commands.py:647-656  (_cmd_read_file)
+
+REFACTOR[3] (ranked by priority):
+  [1] ○ extract_function   → sumd/utils/_parse_toon_block_performance.py
+      WHY: 2 occurrences of 14-line block across 1 files — saves 14 lines
+      FILES: sumd/toon_parser.py
+  [2] ○ extract_function   → sumd/utils/parse.py
+      WHY: 2 occurrences of 11-line block across 1 files — saves 11 lines
+      FILES: sumd/parser.py
+  [3] ○ extract_function   → sumd/dsl/utils/_cmd_cat.py
+      WHY: 2 occurrences of 10-line block across 1 files — saves 10 lines
+      FILES: sumd/dsl/commands.py
+
+QUICK_WINS[3] (low risk, high savings — do first):
+  [1] extract_function   saved=14L  → sumd/utils/_parse_toon_block_performance.py
+      FILES: toon_parser.py
+  [2] extract_function   saved=11L  → sumd/utils/parse.py
+      FILES: parser.py
+  [3] extract_function   saved=10L  → sumd/dsl/utils/_cmd_cat.py
+      FILES: commands.py
+
+EFFORT_ESTIMATE (total ≈ 1.2h):
+  easy   _parse_toon_block_performance       saved=14L  ~28min
+  easy   parse                               saved=11L  ~22min
+  easy   _cmd_cat                            saved=10L  ~20min
 
 METRICS-TARGET:
-  dup_groups:  5 → 0
-  saved_lines: 48 lines recoverable
+  dup_groups:  3 → 0
+  saved_lines: 35 lines recoverable

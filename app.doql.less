@@ -2,12 +2,12 @@
 
 app {
   name: sumd;
-  version: 0.3.39;
+  version: 0.3.46;
 }
 
 dependencies {
   runtime: "click>=8.3.3, pyyaml>=6.0.3, toml>=0.10.2, goal>=2.1.190, costs>=0.1.50, pfix>=0.1.72";
-  dev: "pytest>=9.0.3, pytest-cov>=7.1.0, ruff>=0.15.11, build>=1.4.4, twine>=6.2.0, pyqual>=0.1.143, goal>=2.1.190, costs>=0.1.50, pfix>=0.1.72, mcp>=1.27.0";
+  dev: "pytest>=9.0.3, pytest-asyncio>=0.21.0, pytest-cov>=7.1.0, ruff>=0.15.11, build>=1.4.4, twine>=6.2.0, pyqual>=0.1.143, goal>=2.1.190, costs>=0.1.50, pfix>=0.1.72, mcp>=1.27.0";
 }
 
 interface[type="cli"] {
@@ -19,7 +19,92 @@ interface[type="cli"] page[name="sumd"] {
 
 workflow[name="install"] {
   trigger: manual;
-  step-1: run cmd={{.VENV_PIP}} install -e .[dev];
+  step-1: run cmd=echo "📦 Installing sumd...";
+  step-2: run cmd=if command -v uv > /dev/null 2>&1; then \;
+  step-3: run cmd=uv pip install -e .; \;
+  step-4: run cmd=else \;
+  step-5: run cmd=pip install -e .; \;
+  step-6: run cmd=fi;
+  step-7: run cmd=echo "✅ Installation completed!";
+}
+
+workflow[name="install-dev"] {
+  trigger: manual;
+  step-1: run cmd=echo "📦 Installing sumd with dev dependencies...";
+  step-2: run cmd=if command -v uv > /dev/null 2>&1; then \;
+  step-3: run cmd=uv pip install -e ".[dev]"; \;
+  step-4: run cmd=else \;
+  step-5: run cmd=pip install -e ".[dev]"; \;
+  step-6: run cmd=fi;
+  step-7: run cmd=echo "✅ Dev installation completed!";
+}
+
+workflow[name="test"] {
+  trigger: manual;
+  step-1: run cmd=echo "🧪 Running tests...";
+  step-2: run cmd=.venv/bin/python -m pytest tests/ -v --tb=short;
+}
+
+workflow[name="test-cov"] {
+  trigger: manual;
+  step-1: run cmd=echo "🧪 Running tests with coverage...";
+  step-2: run cmd=.venv/bin/python -m pytest tests/ -v --cov=sumd --cov-report=term-missing --cov-report=json;
+}
+
+workflow[name="lint"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔍 Running linting with ruff...";
+  step-2: run cmd=.venv/bin/python -m ruff check sumd/;
+  step-3: run cmd=.venv/bin/python -m ruff check tests/;
+}
+
+workflow[name="format"] {
+  trigger: manual;
+  step-1: run cmd=echo "📝 Formatting code with ruff...";
+  step-2: run cmd=.venv/bin/python -m ruff format sumd/;
+  step-3: run cmd=.venv/bin/python -m ruff format tests/;
+}
+
+workflow[name="clean"] {
+  trigger: manual;
+  step-1: run cmd=echo "🧹 Cleaning temporary files...";
+  step-2: run cmd=find . -type f -name "*.pyc" -delete;
+  step-3: run cmd=find . -type d -name "__pycache__" -delete;
+  step-4: run cmd=find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true;
+  step-5: run cmd=rm -rf build/ dist/ .coverage htmlcov/ coverage.json;
+  step-6: run cmd=echo "✅ Clean completed!";
+}
+
+workflow[name="publish"] {
+  trigger: manual;
+  step-1: run cmd=echo "📦 Publishing to PyPI...";
+  step-2: run cmd=command -v .venv/bin/twine > /dev/null 2>&1 || (.venv/bin/pip install --upgrade twine build);
+  step-3: run cmd=rm -rf dist/ build/ *.egg-info/;
+  step-4: run cmd=.venv/bin/python -m build;
+  step-5: run cmd=.venv/bin/twine check dist/*;
+  step-6: run cmd=echo "⚡ Ready to upload. Run: make publish-confirm to upload to PyPI";
+}
+
+workflow[name="publish-confirm"] {
+  trigger: manual;
+  step-1: run cmd=echo "🚀 Uploading to PyPI...";
+  step-2: run cmd=.venv/bin/twine upload dist/*;
+}
+
+workflow[name="publish-test"] {
+  trigger: manual;
+  step-1: run cmd=echo "📦 Publishing to TestPyPI...";
+  step-2: run cmd=command -v .venv/bin/twine > /dev/null 2>&1 || (.venv/bin/pip install --upgrade twine build);
+  step-3: run cmd=rm -rf dist/ build/ *.egg-info/;
+  step-4: run cmd=.venv/bin/python -m build;
+  step-5: run cmd=.venv/bin/twine upload --repository testpypi dist/*;
+}
+
+workflow[name="version"] {
+  trigger: manual;
+  step-1: run cmd=echo "📦 Version information...";
+  step-2: run cmd=cat VERSION;
+  step-3: run cmd=.venv/bin/python -c "from importlib.metadata import version; print(f'Installed version: {version(\"sumd\")}')";
 }
 
 workflow[name="deps:update"] {
@@ -51,11 +136,6 @@ workflow[name="quality:report"] {
   step-1: run cmd={{.VENV_PY}} -m pyqual report;
 }
 
-workflow[name="test"] {
-  trigger: manual;
-  step-1: run cmd={{.VENV_PY}} -m pytest -q;
-}
-
 workflow[name="test:report"] {
   trigger: manual;
   step-1: run cmd={{.VENV_PY}} -m pytest --json-report --json-report-file=test-results.json -q;
@@ -67,11 +147,6 @@ workflow[name="test:report:example"] {
   step-1: run cmd={{.VENV_PY}} -m testql report --example -o report.html;
 }
 
-workflow[name="lint"] {
-  trigger: manual;
-  step-1: run cmd=ruff check .;
-}
-
 workflow[name="fmt"] {
   trigger: manual;
   step-1: run cmd=ruff format .;
@@ -80,11 +155,6 @@ workflow[name="fmt"] {
 workflow[name="build"] {
   trigger: manual;
   step-1: run cmd={{.VENV_PY}} -m build;
-}
-
-workflow[name="clean"] {
-  trigger: manual;
-  step-1: run cmd=rm -rf build/ dist/ *.egg-info;
 }
 
 workflow[name="structure"] {
@@ -154,11 +224,6 @@ workflow[name="version:bump"] {
   step-1: run cmd=hatch version patch;
   step-2: run cmd=echo "✅ Version bumped:";
   step-3: run cmd=hatch version;
-}
-
-workflow[name="publish"] {
-  trigger: manual;
-  step-1: run cmd={{.VENV_PY}} -m twine upload dist/*;
 }
 
 workflow[name="doctor"] {

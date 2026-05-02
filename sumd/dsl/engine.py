@@ -352,8 +352,30 @@ class DSLEngine:
         """Execute pipeline expression."""
         result = None
         
-        for child in expression.children:
-            result = await self._execute_expression(child, context)
+        for i, child in enumerate(expression.children):
+            if i == 0:
+                # First stage: execute normally
+                result = await self._execute_expression(child, context)
+            else:
+                # Subsequent stages: treat as function call with previous result
+                if child.type == DSLExpressionType.IDENTIFIER:
+                    # Treat identifier as function call
+                    func_name = child.value
+                    
+                    # Check built-in functions
+                    if func_name in self.built_in_functions:
+                        func = self.built_in_functions[func_name]
+                        result = await self._call_function(func, [result], context)
+                    # Check context functions
+                    elif func_name in context.functions:
+                        func = context.functions[func_name]
+                        result = await self._call_function(func, [result], context)
+                    else:
+                        # Not a function, just return the identifier
+                        result = func_name
+                else:
+                    # Execute other expression types normally
+                    result = await self._execute_expression(child, context)
             
             # Set the result as a special variable for the next stage
             context.set_variable("_", result)
@@ -465,36 +487,48 @@ class DSLEngine:
         }
     
     # Built-in function implementations
-    async def _builtin_print(self, context: DSLContext, *args) -> None:
+    async def _builtin_print(self, context: DSLContext, args: List[Any]) -> None:
         """Print arguments to console."""
         print(*args)
     
-    def _builtin_len(self, context: DSLContext, obj: Any) -> int:
+    def _builtin_len(self, context: DSLContext, args: List[Any]) -> int:
         """Get length of object."""
-        return len(obj)
+        if not args:
+            raise ValueError("len() requires an argument")
+        return len(args[0])
     
-    def _builtin_str(self, context: DSLContext, obj: Any = None) -> str:
+    def _builtin_str(self, context: DSLContext, args: List[Any]) -> str:
         """Convert object to string."""
-        if obj is None:
+        if not args:
             # Use the last result from context (pipeline variable)
             obj = context.variables.get('_', '')
+        else:
+            obj = args[0]
         return str(obj)
     
-    def _builtin_int(self, context: DSLContext, obj: Any) -> int:
+    def _builtin_int(self, context: DSLContext, args: List[Any]) -> int:
         """Convert object to int."""
-        return int(obj)
+        if not args:
+            raise ValueError("int() requires an argument")
+        return int(args[0])
     
-    def _builtin_float(self, context: DSLContext, obj: Any) -> float:
+    def _builtin_float(self, context: DSLContext, args: List[Any]) -> float:
         """Convert object to float."""
-        return float(obj)
+        if not args:
+            raise ValueError("float() requires an argument")
+        return float(args[0])
     
-    def _builtin_bool(self, context: DSLContext, obj: Any) -> bool:
+    def _builtin_bool(self, context: DSLContext, args: List[Any]) -> bool:
         """Convert object to bool."""
-        return bool(obj)
+        if not args:
+            raise ValueError("bool() requires an argument")
+        return bool(args[0])
     
-    def _builtin_type(self, context: DSLContext, obj: Any) -> str:
+    def _builtin_type(self, context: DSLContext, args: List[Any]) -> str:
         """Get type of object."""
-        return type(obj).__name__
+        if not args:
+            raise ValueError("type() requires an argument")
+        return type(args[0]).__name__
     
     async def _builtin_write_file(self, context: DSLContext, path: str, content: str) -> None:
         """Write content to file."""
