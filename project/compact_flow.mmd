@@ -1,20 +1,30 @@
 flowchart TD
-    docs__USAGE["docs.USAGE<br/>1 funcs"]
+    SUMR["SUMR<br/>125 funcs"]
     examples__llm["examples.llm<br/>5 funcs"]
     examples__mcp["examples.mcp<br/>2 funcs"]
-    sumd__cli["sumd.cli<br/>43 funcs"]
-    sumd__extractor["sumd.extractor<br/>40 funcs"]
-    sumd__mcp_server["sumd.mcp_server<br/>12 funcs"]
+    sumd__cli["sumd.cli<br/>47 funcs"]
+    sumd__cqrs["sumd.cqrs<br/>74 funcs"]
+    sumd__dsl["sumd.dsl<br/>165 funcs"]
+    sumd__mcp_server["sumd.mcp_server<br/>18 funcs"]
     sumd__parser["sumd.parser<br/>9 funcs"]
     sumd__pipeline["sumd.pipeline<br/>16 funcs"]
     sumd__toon_parser["sumd.toon_parser<br/>8 funcs"]
     sumd__validator["sumd.validator<br/>15 funcs"]
-    examples__mcp ==>|31| docs__USAGE
-    sumd__pipeline ==>|19| sumd__extractor
-    examples__llm ==>|11| docs__USAGE
+    test["test<br/>1 funcs"]
+    sumd__dsl ==>|42| test
+    examples__mcp ==>|31| test
+    sumd__pipeline ==>|19| SUMR
+    examples__llm ==>|11| test
     sumd__mcp_server ==>|6| sumd__parser
     sumd__cli ==>|5| sumd__parser
-    sumd__cli ==>|4| sumd__extractor
+    sumd__toon_parser ==>|4| sumd__dsl
+    sumd__cli ==>|4| SUMR
+    sumd__cqrs ==>|4| sumd__parser
+    sumd__cqrs ==>|4| SUMR
+    sumd__dsl -->|3| sumd__parser
     examples__llm -->|2| sumd__parser
     sumd__cli -->|2| sumd__validator
+    sumd__cqrs -->|2| sumd__validator
     sumd__pipeline -->|1| sumd__toon_parser
+    sumd__dsl -->|1| SUMR
+    sumd__dsl -->|1| sumd__validator

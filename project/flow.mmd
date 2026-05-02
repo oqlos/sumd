@@ -19,7 +19,7 @@ flowchart TD
         sumd__cli___is_project_dir["_is_project_dir"]
         sumd__cli___walk_projects["_walk_projects"]
         sumd__cli___detect_projects["_detect_projects"]
-        ...["+28 more"]
+        ...["+32 more"]
     end
 
     subgraph Core
@@ -34,15 +34,14 @@ flowchart TD
         sumd__validator___validate_toon_body["_validate_toon_body"]
         sumd__validator___validate_bash_body["_validate_bash_body"]
         sumd__validator___validate_deps_body["_validate_deps_body"]
-        sumd__extractor___fan_out["_fan_out"]
-        sumd__extractor___analyse_class_methods["_analyse_class_methods"]
-        sumd__extractor___analyse_py_top_classes["_analyse_py_top_classes"]
-        sumd__extractor___analyse_py_module["_analyse_py_module"]
-        ...["+614 more"]
+        sumd__parser__SUMDParser__parse["parse"]
+        sumd__parser__SUMDParser___parse_header["_parse_header"]
+        sumd__parser__SUMDParser___parse_sections["_parse_sections"]
+        sumd__parser__SUMDParser__validate["validate"]
+        ...["+834 more"]
     end
 
     subgraph Exporters
-        sumd__mcp_server___tool_export_sumd["_tool_export_sumd"]
         SUMR__export["export"]
         SUMR___export_sumd_json["_export_sumd_json"]
         SUMR___tool_export_sumd["_tool_export_sumd"]
@@ -52,6 +51,7 @@ flowchart TD
         project__map__toon__export["export"]
         project__map__toon___export_sumd_json["_export_sumd_json"]
         project__map__toon___tool_export_sumd["_tool_export_sumd"]
+        sumd__mcp_server___tool_export_sumd["_tool_export_sumd"]
     end
 
     class TODO__test_sumd_scans_itself,TODO__test_sumd_scans_all_profiles,TODO__test_sumr_generates_sumr_md,TODO__test_mcp_tools_registered,TODO__test_mcp_main_no_crash,sumd__validator___validate_yaml_body,sumd__validator___validate_less_css_body,sumd__validator___validate_mermaid_body,sumd__validator___validate_toon_body,sumd__validator___validate_bash_body entry

@@ -1,52 +1,61 @@
 # code2llm call graph | /home/tom/github/oqlos/sumd
-# nodes: 173 | edges: 160 | modules: 25
-# CC̄=1.2
+# nodes: 188 | edges: 178 | modules: 29
+# CC̄=1.7
 
 HUBS[20]:
+  test.print
+    CC=0  in:84  out:0  total:84
   examples.mcp.mcp_client.run
     CC=11  in:1  out:53  total:54
-  docs.USAGE.print
-    CC=0  in:42  out:0  total:42
+  sumd.dsl.commands.create_builtin_registry
+    CC=1  in:2  out:41  total:43
   sumd.cli.analyze
     CC=11  in:0  out:33  total:33
   sumd.pipeline.RenderPipeline._collect
     CC=3  in:0  out:31  total:31
   sumd.sections.call_graph._render_call_graph
-    CC=7  in:1  out:28  total:29
-  sumd.sections.api_stubs._render_api_stubs
-    CC=11  in:1  out:27  total:28
+    CC=7  in:0  out:28  total:28
+  sumd.dsl.shell.DSLShell._handle_shell_command
+    CC=14  in:0  out:24  total:24
   sumd.extractor.generate_map_toon
-    CC=5  in:2  out:24  total:26
-  sumd.sections.swop._render_swop_section
-    CC=9  in:1  out:24  total:25
+    CC=5  in:0  out:24  total:24
   sumd.sections.quality._render_quality_parsed
     CC=9  in:1  out:21  total:22
-  sumd.cli.map_cmd
-    CC=7  in:0  out:20  total:20
+  sumd.parser.SUMDParser.parse_file
+    CC=1  in:20  out:2  total:22
   sumd.sections.interfaces._render_interfaces_openapi
     CC=6  in:1  out:19  total:20
   sumd.sections.dependencies._render_deps_runtime
     CC=6  in:1  out:19  total:20
   sumd.extractor._parse_doql_content
     CC=6  in:1  out:19  total:20
-  sumd.extractor.extract_pyproject
-    CC=3  in:2  out:17  total:19
-  sumd.cli.lint
-    CC=10  in:0  out:19  total:19
+  sumd.extractor._path_matches_pattern
+    CC=18  in:2  out:18  total:20
+  sumd.cli.map_cmd
+    CC=7  in:0  out:20  total:20
   sumd.extractor._parse_doql_workflows
     CC=7  in:1  out:18  total:19
-  sumd.validator.validate_codeblocks
-    CC=9  in:1  out:17  total:18
+  sumd.cli.lint
+    CC=10  in:0  out:19  total:19
   sumd.sections.environment._render_goal_section
     CC=9  in:1  out:17  total:18
-  sumd.extractor.extract_package_json
-    CC=3  in:3  out:15  total:18
+  sumd.validator.validate_codeblocks
+    CC=9  in:1  out:17  total:18
   sumd.sections.workflows._render_workflows_taskfile
     CC=6  in:1  out:17  total:18
 
 MODULES:
-  docs.USAGE  [1 funcs]
-    print  CC=0  out:0
+  SUMR  [12 funcs]
+    extract_doql  CC=0  out:0
+    extract_makefile  CC=0  out:0
+    extract_openapi  CC=0  out:0
+    extract_package_json  CC=0  out:0
+    extract_pyproject  CC=0  out:0
+    extract_pyqual  CC=0  out:0
+    extract_python_modules  CC=0  out:0
+    extract_readme_title  CC=0  out:0
+    extract_requirements  CC=0  out:0
+    extract_taskfile  CC=0  out:0
   examples.llm.anthropic_example  [2 funcs]
     ask  CC=1  out:3
     main  CC=2  out:14
@@ -57,7 +66,7 @@ MODULES:
   examples.mcp.mcp_client  [2 funcs]
     main  CC=3  out:12
     run  CC=11  out:53
-  sumd.cli  [37 funcs]
+  sumd.cli  [38 funcs]
     _api_scenario_template  CC=1  out:3
     _build_doql_spec  CC=3  out:4
     _detect_project_type  CC=8  out:4
@@ -68,17 +77,48 @@ MODULES:
     _finalize_scan  CC=9  out:16
     _generate_doql_less  CC=7  out:10
     _is_project_dir  CC=8  out:4
-  sumd.extractor  [33 funcs]
+  sumd.cqrs.queries  [5 funcs]
+    _handle_get_project_info  CC=3  out:11
+    _handle_get_sumd_document  CC=3  out:3
+    _handle_get_sumd_section  CC=4  out:6
+    _handle_get_validation_results  CC=4  out:8
+    _handle_list_sumd_sections  CC=3  out:3
+  sumd.cqrs.sumd_aggregate  [1 funcs]
+    create_from_file  CC=6  out:12
+  sumd.dsl.commands  [5 funcs]
+    _cmd_help  CC=2  out:3
+    _cmd_sumd_info  CC=3  out:3
+    _cmd_sumd_map  CC=6  out:7
+    _cmd_sumd_validate  CC=2  out:7
+    create_builtin_registry  CC=1  out:41
+  sumd.dsl.engine  [2 funcs]
+    _builtin_print  CC=1  out:1
+    execute_text  CC=3  out:5
+  sumd.dsl.parser  [2 funcs]
+    _match  CC=2  out:2
+    parse_dsl  CC=1  out:4
+  sumd.dsl.schema_commands  [2 funcs]
+    _cmd_sumd_info  CC=3  out:3
+    _cmd_sumd_validate  CC=2  out:6
+  sumd.dsl.shell  [7 funcs]
+    __init__  CC=4  out:6
+    _execute_line  CC=9  out:12
+    _handle_shell_command  CC=14  out:24
+    execute_command  CC=2  out:3
+    execute_script  CC=9  out:17
+    run  CC=9  out:15
+    execute_dsl  CC=4  out:7
+  sumd.extractor  [28 funcs]
     _analyse_class_methods  CC=6  out:6
     _analyse_py_module  CC=2  out:6
     _analyse_py_top_classes  CC=5  out:8
     _analyse_py_top_funcs  CC=5  out:7
     _cc_estimate  CC=4  out:4
-    _collect_map_files  CC=7  out:11
+    _collect_map_files  CC=8  out:13
     _fan_out  CC=5  out:8
     _first_task_cmd  CC=4  out:4
     _is_map_ignored_path  CC=4  out:1
-    _lang_of  CC=1  out:2
+    _is_path_ignored  CC=7  out:4
   sumd.mcp_server  [9 funcs]
     _doc_to_dict  CC=2  out:0
     _resolve_path  CC=2  out:4
@@ -102,20 +142,14 @@ MODULES:
     _find_tools_bin_dir  CC=3  out:1
     _inject_toc  CC=3  out:9
     _refresh_analysis_files  CC=7  out:11
-  sumd.sections.api_stubs  [2 funcs]
-    render  CC=1  out:1
-    _render_api_stubs  CC=11  out:27
-  sumd.sections.architecture  [8 funcs]
-    render  CC=1  out:1
-    _render_architecture  CC=6  out:12
+  sumd.sections.architecture  [6 funcs]
     _render_architecture_doql_parsed  CC=1  out:4
     _render_architecture_doql_section  CC=6  out:14
     _render_doql_app  CC=3  out:8
     _render_doql_entities  CC=6  out:9
     _render_doql_integrations  CC=5  out:9
     _render_doql_interfaces  CC=6  out:10
-  sumd.sections.call_graph  [7 funcs]
-    render  CC=1  out:1
+  sumd.sections.call_graph  [6 funcs]
     _parse_calls_header  CC=6  out:12
     _parse_calls_hubs  CC=8  out:4
     _parse_calls_toon  CC=1  out:3
@@ -125,16 +159,11 @@ MODULES:
   sumd.sections.code_analysis  [2 funcs]
     render  CC=1  out:1
     _render_code_analysis  CC=9  out:15
-  sumd.sections.configuration  [2 funcs]
-    render  CC=1  out:1
-    _render_configuration_section  CC=1  out:0
-  sumd.sections.dependencies  [4 funcs]
-    render  CC=1  out:1
+  sumd.sections.dependencies  [3 funcs]
     _render_dependencies  CC=2  out:6
     _render_deps_dev  CC=6  out:15
     _render_deps_runtime  CC=6  out:19
-  sumd.sections.deployment  [6 funcs]
-    render  CC=1  out:1
+  sumd.sections.deployment  [5 funcs]
     _render_deployment  CC=1  out:5
     _render_deployment_docker  CC=8  out:7
     _render_deployment_install  CC=2  out:11
@@ -144,32 +173,22 @@ MODULES:
     render  CC=1  out:4
     _render_env_section  CC=3  out:7
     _render_goal_section  CC=9  out:17
-  sumd.sections.extras  [4 funcs]
-    render  CC=1  out:1
+  sumd.sections.extras  [3 funcs]
     _render_extras  CC=3  out:3
     _render_makefile_targets  CC=3  out:4
     _render_pkg_json_scripts  CC=7  out:16
-  sumd.sections.interfaces  [7 funcs]
-    render  CC=1  out:1
+  sumd.sections.interfaces  [6 funcs]
     _render_interfaces  CC=5  out:9
     _render_interfaces_openapi  CC=6  out:19
     _render_interfaces_testql  CC=3  out:4
     _render_testql_extras  CC=7  out:9
     _render_testql_one_structured  CC=7  out:13
     _render_testql_raw  CC=4  out:12
-  sumd.sections.quality  [4 funcs]
-    render  CC=1  out:1
+  sumd.sections.quality  [3 funcs]
     _render_quality  CC=3  out:4
     _render_quality_parsed  CC=9  out:21
     _render_quality_raw  CC=2  out:7
-  sumd.sections.source_snippets  [2 funcs]
-    render  CC=1  out:1
-    _render_source_snippets  CC=8  out:16
-  sumd.sections.swop  [2 funcs]
-    render  CC=1  out:1
-    _render_swop_section  CC=9  out:24
-  sumd.sections.workflows  [4 funcs]
-    render  CC=1  out:1
+  sumd.sections.workflows  [3 funcs]
     _render_workflows  CC=4  out:5
     _render_workflows_doql  CC=4  out:7
     _render_workflows_taskfile  CC=6  out:17
@@ -191,16 +210,19 @@ MODULES:
     validate_codeblocks  CC=9  out:17
     validate_markdown  CC=1  out:6
     validate_sumd_file  CC=3  out:5
+  test  [1 funcs]
+    print  CC=0  out:0
 
 EDGES:
   examples.llm.anthropic_example.ask → sumd.parser.SUMDParser.parse_file
-  examples.llm.anthropic_example.main → docs.USAGE.print
+  examples.llm.anthropic_example.main → test.print
   examples.llm.anthropic_example.main → examples.llm.anthropic_example.ask
   examples.llm.openai_example.build_context → sumd.parser.SUMDParser.parse_file
   examples.llm.openai_example.ask → examples.llm.openai_example.build_context
-  examples.llm.openai_example.main → docs.USAGE.print
-  examples.mcp.mcp_client.run → docs.USAGE.print
-  examples.mcp.mcp_client.main → docs.USAGE.print
+  examples.llm.openai_example.main → test.print
+  examples.mcp.mcp_client.run → test.print
+  examples.mcp.mcp_client.main → test.print
+  sumd.toon_parser._parse_toon_file → sumd.dsl.parser.DSLParser._match
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_config
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_api
   sumd.toon_parser._parse_toon_file → sumd.toon_parser._parse_toon_block_assert
@@ -215,31 +237,30 @@ EDGES:
   sumd.validator.validate_markdown → sumd.validator._check_required_sections
   sumd.validator.validate_sumd_file → sumd.validator.validate_markdown
   sumd.validator.validate_sumd_file → sumd.validator.validate_codeblocks
-  sumd.cli._node_spec_from_package_json → sumd.cli._node_framework
-  sumd.cli._build_doql_spec → sumd.extractor.extract_package_json
-  sumd.cli._build_doql_spec → sumd.cli._node_spec_from_package_json
-  sumd.cli._generate_doql_less → sumd.cli._build_doql_spec
-  sumd.cli._generate_doql_less → sumd.cli._render_doql_boilerplate
-  sumd.cli.validate → sumd.parser.SUMDParser.parse_file
-  sumd.cli.export → sumd.parser.SUMDParser.parse_file
-  sumd.cli.info → sumd.parser.SUMDParser.parse_file
-  sumd.cli.extract → sumd.parser.SUMDParser.parse_file
-  sumd.cli._walk_projects → sumd.cli._is_project_dir
-  sumd.cli._detect_projects → sumd.cli._walk_projects
-  sumd.cli._run_one_tool → sumd.cli._tool_bin
-  sumd.cli._run_analysis_tools → sumd.cli._ensure_venv
-  sumd.cli._run_analysis_tools → sumd.cli._run_one_tool
-  sumd.cli._render_write_validate → sumd.validator.validate_sumd_file
-  sumd.cli._render_write_validate → sumd.parser.SUMDParser.parse_file
-  sumd.cli._maybe_generate_doql → sumd.cli._detect_project_type
-  sumd.cli._maybe_generate_doql → sumd.extractor.extract_pyproject
-  sumd.cli._maybe_generate_doql → sumd.cli._generate_doql_less
-  sumd.cli._maybe_generate_doql → sumd.extractor.extract_package_json
-  sumd.cli._finalize_scan → sumd.cli._echo_scan_result
-  sumd.cli._finalize_scan → sumd.cli._export_sumd_json
-  sumd.cli._finalize_scan → sumd.cli._run_analysis_tools
-  sumd.cli._scan_one_project → sumd.cli._render_write_validate
-  sumd.cli._scan_one_project → sumd.cli._finalize_scan
-  sumd.cli._scan_one_project → sumd.cli._maybe_generate_doql
-  sumd.cli.lint → sumd.cli._lint_collect_paths
-  sumd.cli.lint → sumd.validator.validate_sumd_file
+  sumd.pipeline._refresh_map_toon → SUMR.generate_map_toon
+  sumd.pipeline._refresh_analysis_files → SUMR.required_tools_for_profile
+  sumd.pipeline._refresh_analysis_files → sumd.pipeline._find_tools_bin_dir
+  sumd.pipeline._refresh_analysis_files → sumd.pipeline._run_tool_if_present
+  sumd.pipeline._collect_pkg_sources → sumd.pipeline._collect_tool_sources
+  sumd.pipeline._collect_pkg_sources → sumd.pipeline._doql_sources
+  sumd.pipeline._collect_sources → sumd.pipeline._collect_pkg_sources
+  sumd.pipeline._collect_sources → sumd.pipeline._collect_infra_sources
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_pyproject
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_taskfile
+  sumd.pipeline.RenderPipeline._collect → sumd.toon_parser.extract_testql_scenarios
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_openapi
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_doql
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_pyqual
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_python_modules
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_readme_title
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_requirements
+  sumd.pipeline.RenderPipeline._collect → SUMR.extract_makefile
+  sumd.pipeline.RenderPipeline.run → sumd.pipeline._inject_toc
+  sumd.sections.code_analysis.CodeAnalysisSection.render → sumd.sections.code_analysis._render_code_analysis
+  sumd.sections.environment.EnvironmentSection.render → sumd.sections.environment._render_env_section
+  sumd.sections.environment.EnvironmentSection.render → sumd.sections.environment._render_goal_section
+  sumd.sections.dependencies._render_dependencies → sumd.sections.dependencies._render_deps_runtime
+  sumd.sections.dependencies._render_dependencies → sumd.sections.dependencies._render_deps_dev
+  sumd.extractor.extract_pyproject → sumd.extractor._read_toml
+  sumd.extractor.extract_taskfile → sumd.extractor._first_task_cmd
+  sumd.extractor._parse_doql_content → sumd.extractor._parse_doql_interfaces

@@ -443,9 +443,9 @@ class DSLEngine:
     async def _call_function(self, func: Callable, args: List[Any], context: DSLContext) -> Any:
         """Call a function with arguments."""
         if asyncio.iscoroutinefunction(func):
-            return await func(context, *args)
+            return await func(context, args)
         else:
-            return func(context, *args)
+            return func(context, args)
     
     def _initialize_builtin_functions(self) -> Dict[str, Callable]:
         """Initialize built-in functions."""
@@ -457,8 +457,6 @@ class DSLEngine:
             "float": self._builtin_float,
             "bool": self._builtin_bool,
             "type": self._builtin_type,
-            "exists": self._builtin_exists,
-            "read_file": self._builtin_read_file,
             "write_file": self._builtin_write_file,
             "list_files": self._builtin_list_files,
             "cwd": self._builtin_cwd,
@@ -497,16 +495,6 @@ class DSLEngine:
     def _builtin_type(self, context: DSLContext, obj: Any) -> str:
         """Get type of object."""
         return type(obj).__name__
-    
-    def _builtin_exists(self, context: DSLContext, path: str) -> bool:
-        """Check if file or directory exists."""
-        full_path = context.working_directory / path
-        return full_path.exists()
-    
-    async def _builtin_read_file(self, context: DSLContext, path: str) -> str:
-        """Read file contents."""
-        full_path = context.working_directory / path
-        return full_path.read_text(encoding="utf-8")
     
     async def _builtin_write_file(self, context: DSLContext, path: str, content: str) -> None:
         """Write content to file."""

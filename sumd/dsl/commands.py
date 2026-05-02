@@ -290,6 +290,22 @@ def create_builtin_registry() -> DSLCommandRegistry:
         category="variables"
     ))
     
+    registry.register(DSLCommand(
+        name="exists",
+        description="Check if file exists",
+        usage="exists <file_path>",
+        function=_cmd_exists,
+        category="files"
+    ))
+    
+    registry.register(DSLCommand(
+        name="read_file",
+        description="Read file contents",
+        usage="read_file <file_path>",
+        function=_cmd_read_file,
+        category="files"
+    ))
+    
     return registry
 
 
@@ -617,3 +633,24 @@ async def _cmd_vars(context: DSLContext, args: List[str]) -> List[str]:
         variables.append(f"{name} = {value}")
     
     return sorted(variables)
+
+
+async def _cmd_exists(context: DSLContext, args: List[str]) -> bool:
+    """Check if file exists."""
+    if not args:
+        raise ValueError("Usage: exists <file_path>")
+    
+    file_path = context.working_directory / args[0]
+    return file_path.exists()
+
+
+async def _cmd_read_file(context: DSLContext, args: List[str]) -> str:
+    """Read file contents."""
+    if not args:
+        raise ValueError("Usage: read_file <file_path>")
+    
+    file_path = context.working_directory / args[0]
+    if not file_path.exists():
+        raise ValueError(f"File not found: {args[0]}")
+    
+    return file_path.read_text(encoding="utf-8")

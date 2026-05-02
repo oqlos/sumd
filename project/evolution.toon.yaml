@@ -1,24 +1,33 @@
-# code2llm/evolution | 795 func | 32f | 2026-04-23
+# code2llm/evolution | 1040 func | 48f | 2026-05-02
 
-NEXT[2] (ranked by impact):
+NEXT[4] (ranked by impact):
   [1] !! SPLIT           sumd/cli.py
-      WHY: 1682L, 0 classes, max CC=11
-      EFFORT: ~4h  IMPACT: 18502
+      WHY: 1984L, 0 classes, max CC=14
+      EFFORT: ~4h  IMPACT: 27776
 
   [2] !! SPLIT           sumd/extractor.py
-      WHY: 960L, 0 classes, max CC=12
-      EFFORT: ~4h  IMPACT: 11520
+      WHY: 1077L, 0 classes, max CC=18
+      EFFORT: ~4h  IMPACT: 19386
+
+  [3] !! SPLIT           sumd/mcp_server.py
+      WHY: 714L, 0 classes, max CC=5
+      EFFORT: ~4h  IMPACT: 3570
+
+  [4] !  SPLIT-FUNC      DSLEngine._execute_expression  CC=15  fan=13
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 195
 
 
-RISKS[2]:
-  ⚠ Splitting sumd/cli.py may break 43 import paths
-  ⚠ Splitting sumd/extractor.py may break 40 import paths
+RISKS[3]:
+  ⚠ Splitting sumd/cli.py may break 47 import paths
+  ⚠ Splitting sumd/extractor.py may break 43 import paths
+  ⚠ Splitting sumd/mcp_server.py may break 18 import paths
 
 METRICS-TARGET:
-  CC̄:          1.2 → ≤0.8
-  max-CC:      12 → ≤6
-  god-modules: 2 → 0
-  high-CC(≥15): 0 → ≤0
+  CC̄:          1.7 → ≤1.2
+  max-CC:      18 → ≤9
+  god-modules: 7 → 0
+  high-CC(≥15): 2 → ≤1
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -46,4 +55,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=1.2 → now CC̄=1.2
+  prev CC̄=1.2 → now CC̄=1.7
