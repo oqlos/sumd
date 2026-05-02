@@ -475,8 +475,11 @@ class DSLEngine:
         """Get length of object."""
         return len(obj)
     
-    def _builtin_str(self, context: DSLContext, obj: Any) -> str:
+    def _builtin_str(self, context: DSLContext, obj: Any = None) -> str:
         """Convert object to string."""
+        if obj is None:
+            # Use the last result from context (pipeline variable)
+            obj = context.variables.get('_', '')
         return str(obj)
     
     def _builtin_int(self, context: DSLContext, obj: Any) -> int:

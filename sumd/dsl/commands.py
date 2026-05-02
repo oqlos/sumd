@@ -294,7 +294,7 @@ def create_builtin_registry() -> DSLCommandRegistry:
 
 
 # Command implementations
-async def _cmd_cat(args: List[str], context: DSLContext) -> str:
+async def _cmd_cat(context: DSLContext, args: List[str]) -> str:
     """Display file contents."""
     if not args:
         raise ValueError("Usage: cat <file_path>")
@@ -306,7 +306,7 @@ async def _cmd_cat(args: List[str], context: DSLContext) -> str:
     return file_path.read_text(encoding="utf-8")
 
 
-async def _cmd_ls(args: List[str], context: DSLContext) -> List[str]:
+async def _cmd_ls(context: DSLContext, args: List[str]) -> List[str]:
     """List directory contents."""
     path = context.working_directory
     pattern = "*"
@@ -337,7 +337,7 @@ async def _cmd_ls(args: List[str], context: DSLContext) -> List[str]:
     return items
 
 
-async def _cmd_edit(args: List[str], context: DSLContext) -> str:
+async def _cmd_edit(context: DSLContext, args: List[str]) -> str:
     """Edit a file."""
     if len(args) < 2:
         raise ValueError("Usage: edit <file_path> <content>")
@@ -351,7 +351,7 @@ async def _cmd_edit(args: List[str], context: DSLContext) -> str:
     return f"Updated {args[0]}"
 
 
-async def _cmd_mkdir(args: List[str], context: DSLContext) -> str:
+async def _cmd_mkdir(context: DSLContext, args: List[str]) -> str:
     """Create directory."""
     if not args:
         raise ValueError("Usage: mkdir <dir_path>")
@@ -362,7 +362,7 @@ async def _cmd_mkdir(args: List[str], context: DSLContext) -> str:
     return f"Created directory: {args[0]}"
 
 
-async def _cmd_rm(args: List[str], context: DSLContext) -> str:
+async def _cmd_rm(context: DSLContext, args: List[str]) -> str:
     """Remove file or directory."""
     if not args:
         raise ValueError("Usage: rm <path>")
@@ -381,7 +381,7 @@ async def _cmd_rm(args: List[str], context: DSLContext) -> str:
     return f"Removed: {args[0]}"
 
 
-async def _cmd_sumd_scan(args: List[str], context: DSLContext) -> Dict[str, Any]:
+async def _cmd_sumd_scan(context: DSLContext, args: List[str]) -> Dict[str, Any]:
     """Scan project and generate SUMD."""
     from ..pipeline import RenderPipeline
     
@@ -409,7 +409,7 @@ async def _cmd_sumd_scan(args: List[str], context: DSLContext) -> Dict[str, Any]
         return {"action": "generated", "content": content, "sources": sources}
 
 
-async def _cmd_sumd_map(args: List[str], context: DSLContext) -> Dict[str, Any]:
+async def _cmd_sumd_map(context: DSLContext, args: List[str]) -> Dict[str, Any]:
     """Generate project map."""
     from ..extractor import generate_map_toon
     
@@ -435,7 +435,7 @@ async def _cmd_sumd_map(args: List[str], context: DSLContext) -> Dict[str, Any]:
         return {"action": "exists", "file": str(output_file), "content": content}
 
 
-async def _cmd_sumd_validate(args: List[str], context: DSLContext) -> Dict[str, Any]:
+async def _cmd_sumd_validate(context: DSLContext, args: List[str]) -> Dict[str, Any]:
     """Validate SUMD document."""
     from ..parser import validate_sumd_file
     
@@ -453,7 +453,7 @@ async def _cmd_sumd_validate(args: List[str], context: DSLContext) -> Dict[str, 
     }
 
 
-async def _cmd_sumd_info(args: List[str], context: DSLContext) -> Dict[str, Any]:
+async def _cmd_sumd_info(context: DSLContext, args: List[str]) -> Dict[str, Any]:
     """Show SUMD document info."""
     from ..parser import parse_file
     
@@ -471,7 +471,7 @@ async def _cmd_sumd_info(args: List[str], context: DSLContext) -> Dict[str, Any]
     }
 
 
-async def _cmd_find(args: List[str], context: DSLContext) -> List[str]:
+async def _cmd_find(context: DSLContext, args: List[str]) -> List[str]:
     """Find files matching pattern."""
     if not args:
         raise ValueError("Usage: find <pattern> [path]")
@@ -494,7 +494,7 @@ async def _cmd_find(args: List[str], context: DSLContext) -> List[str]:
     return sorted(files)
 
 
-async def _cmd_grep(args: List[str], context: DSLContext) -> List[Dict[str, Any]]:
+async def _cmd_grep(context: DSLContext, args: List[str]) -> List[Dict[str, Any]]:
     """Search for text in files."""
     if not args:
         raise ValueError("Usage: grep <pattern> [files]")
@@ -524,17 +524,17 @@ async def _cmd_grep(args: List[str], context: DSLContext) -> List[Dict[str, Any]
     return results
 
 
-async def _cmd_echo(args: List[str], context: DSLContext) -> str:
+async def _cmd_echo(context: DSLContext, args: List[str]) -> str:
     """Display message."""
     return " ".join(args)
 
 
-async def _cmd_pwd(args: List[str], context: DSLContext) -> str:
+async def _cmd_pwd(context: DSLContext, args: List[str]) -> str:
     """Print working directory."""
     return str(context.working_directory)
 
 
-async def _cmd_cd(args: List[str], context: DSLContext) -> str:
+async def _cmd_cd(context: DSLContext, args: List[str]) -> str:
     """Change directory."""
     if not args:
         raise ValueError("Usage: cd <path>")
@@ -550,7 +550,7 @@ async def _cmd_cd(args: List[str], context: DSLContext) -> str:
     return str(context.working_directory)
 
 
-async def _cmd_help(args: List[str], context: DSLContext) -> str:
+async def _cmd_help(context: DSLContext, args: List[str]) -> str:
     """Show help information."""
     registry = create_builtin_registry()
     
@@ -560,14 +560,14 @@ async def _cmd_help(args: List[str], context: DSLContext) -> str:
         return registry.get_help()
 
 
-async def _cmd_clear(args: List[str], context: DSLContext) -> str:
+async def _cmd_clear(context: DSLContext, args: List[str]) -> str:
     """Clear screen."""
     import os
     os.system("clear" if os.name != "nt" else "cls")
     return ""
 
 
-async def _cmd_set(args: List[str], context: DSLContext) -> str:
+async def _cmd_set(context: DSLContext, args: List[str]) -> str:
     """Set variable."""
     if len(args) < 2:
         raise ValueError("Usage: set <name> <value>")
@@ -586,7 +586,7 @@ async def _cmd_set(args: List[str], context: DSLContext) -> str:
     return f"Set {name} = {value}"
 
 
-async def _cmd_get(args: List[str], context: DSLContext) -> str:
+async def _cmd_get(context: DSLContext, args: List[str]) -> str:
     """Get variable value."""
     if not args:
         raise ValueError("Usage: get <name>")
@@ -598,7 +598,7 @@ async def _cmd_get(args: List[str], context: DSLContext) -> str:
     return f"{args[0]} = {value}"
 
 
-async def _cmd_unset(args: List[str], context: DSLContext) -> str:
+async def _cmd_unset(context: DSLContext, args: List[str]) -> str:
     """Remove variable."""
     if not args:
         raise ValueError("Usage: unset <name>")
@@ -610,7 +610,7 @@ async def _cmd_unset(args: List[str], context: DSLContext) -> str:
         return f"Variable '{args[0]}' not set"
 
 
-async def _cmd_vars(args: List[str], context: DSLContext) -> List[str]:
+async def _cmd_vars(context: DSLContext, args: List[str]) -> List[str]:
     """List all variables."""
     variables = []
     for name, value in context.variables.items():

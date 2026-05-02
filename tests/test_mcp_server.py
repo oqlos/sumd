@@ -100,16 +100,21 @@ class TestResolvePath:
 
 
 class TestListTools:
-    def test_returns_seven_tools(self):
+    def test_returns_thirteen_tools(self):
         tools = run(list_tools())
-        assert len(tools) == 7
+        assert len(tools) == 13
 
     def test_tool_names(self):
         tools = run(list_tools())
         names = {t.name for t in tools}
         expected = {
+            # Original SUMD tools
             "parse_sumd", "validate_sumd", "export_sumd",
             "list_sections", "get_section", "info_sumd", "generate_sumd",
+            # New CQRS ES tools
+            "execute_command", "execute_query", "get_events", "get_aggregate",
+            # New DSL tools
+            "execute_dsl", "dsl_shell_info",
         }
         assert names == expected
 

@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, ConfigDict
 
 
 class DSLDataType(str, Enum):
@@ -97,8 +97,7 @@ class DSLExpression(BaseModel):
     children: List["DSLExpression"] = Field(default_factory=list, description="Child expressions")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Expression metadata")
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class DSLStatement(BaseModel):
@@ -159,8 +158,7 @@ class DSLContext(BaseModel):
     nlp_model: Optional[NLPModel] = Field(None, description="NLP model")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Context metadata")
     
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = {"arbitrary_types_allowed": True}
 
 
 class DSLCommandResult(BaseModel):
