@@ -130,6 +130,22 @@ def test_refresh_map_toon_writes_file(tmp_path: Path):
     assert True  # no exception = pass
 
 
+def test_refresh_map_toon_preserves_code2llm_owned_artifact(tmp_path: Path):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    map_path = project_dir / "map.toon.yaml"
+    canonical = (
+        "# demo | 2f 10L | python:2 | 2026-07-18\n"
+        "# producer: code2llm | artifact: map.toon.yaml | schema: 1\n"
+        "M[2]:\n  app.py,5\n  lib.py,5\nD:\n  app.py:\n    main()\n"
+    )
+    map_path.write_text(canonical, encoding="utf-8")
+
+    _refresh_map_toon(tmp_path)
+
+    assert map_path.read_text(encoding="utf-8") == canonical
+
+
 def test_refresh_analysis_files_noop_without_tools(tmp_path: Path):
     # No .sumd-tools/venv → must complete without raising
     _refresh_analysis_files(tmp_path, "refactor")

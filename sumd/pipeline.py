@@ -60,6 +60,11 @@ def _map_module_count(text: str) -> int:
     return int(m.group(1)) if m else -1
 
 
+def _is_code2llm_owned_map(text: str) -> bool:
+    """Return whether the canonical map declares code2llm ownership."""
+    return "# producer: code2llm | artifact: map.toon.yaml" in text[:2048]
+
+
 def _refresh_map_toon(proj_dir: Path) -> None:
     """Regenerate project/map.toon.yaml and project/logic.pl from current source before embedding.
 
@@ -82,7 +87,9 @@ def _refresh_map_toon(proj_dir: Path) -> None:
             regresses = False
             if map_path.exists():
                 existing = map_path.read_text(encoding="utf-8", errors="ignore")
-                regresses = _map_module_count(existing) > _map_module_count(content)
+                regresses = _is_code2llm_owned_map(existing) or (
+                    _map_module_count(existing) > _map_module_count(content)
+                )
             if not regresses:
                 map_path.parent.mkdir(parents=True, exist_ok=True)
                 map_path.write_text(content, encoding="utf-8")
