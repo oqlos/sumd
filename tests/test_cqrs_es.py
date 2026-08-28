@@ -76,6 +76,24 @@ class TestEventStore:
             
             assert len(events) == 1
             assert events[0].data["project_name"] == "Test Project"
+
+    def test_aggregate_id_cannot_escape_storage_directory(self, tmp_path):
+        storage_path = tmp_path / "events"
+        event_store = EventStore(storage_path)
+        event_store.save_event(
+            SumdDocumentCreated(
+                aggregate_id="../escaped",
+                data={"project_name": "Test Project"},
+            )
+        )
+
+        assert not (tmp_path / "escaped.jsonl").exists()
+        persisted = list(storage_path.glob("*.jsonl"))
+        assert len(persisted) == 1
+        assert persisted[0].parent == storage_path
+
+        reloaded = EventStore(storage_path)
+        assert len(reloaded.get_events("../escaped")) == 1
     
     def test_get_events_from_version(self):
         """Test retrieving events from specific version."""

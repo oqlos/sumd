@@ -16,6 +16,11 @@ from sumd.mcp_server import (
 )
 
 
+@pytest.fixture(autouse=True)
+def allow_mcp_mutations(monkeypatch):
+    monkeypatch.setenv("SUMD_MCP_ALLOW_MUTATION", "1")
+
+
 class TestMCPCQRSCommands:
     """Test MCP CQRS command tools."""
     

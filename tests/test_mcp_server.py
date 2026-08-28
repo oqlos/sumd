@@ -9,10 +9,16 @@ import pytest
 
 from sumd.mcp_server import (
     _doc_to_dict,
+    _require_mutation,
     _resolve_path,
     _TOOL_HANDLERS,
     list_tools,
 )
+
+
+@pytest.fixture(autouse=True)
+def allow_mcp_mutations(monkeypatch):
+    monkeypatch.setenv("SUMD_MCP_ALLOW_MUTATION", "1")
 
 
 # ---------------------------------------------------------------------------
@@ -92,6 +98,13 @@ class TestResolvePath:
         result = _resolve_path("SUMD.md")
         assert result.is_absolute()
         assert result.name == "SUMD.md"
+
+
+class TestMutationCapability:
+    def test_disabled_by_default(self, monkeypatch):
+        monkeypatch.delenv("SUMD_MCP_ALLOW_MUTATION", raising=False)
+        with pytest.raises(PermissionError, match="SUMD_MCP_ALLOW_MUTATION"):
+            _require_mutation("generate_sumd")
 
 
 # ---------------------------------------------------------------------------

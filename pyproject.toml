@@ -19,7 +19,7 @@ dependencies = [
     "goal>=2.1.190",
     "costs>=0.1.51",
     "pfix>=0.1.73",
-    "mcp>=1.27.1",
+    "mcp>=1.27.1,<2.0.0",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -33,7 +33,7 @@ license = "Apache-2.0"
 
 [project.optional-dependencies]
 mcp = [
-    "mcp>=1.27.1",
+    "mcp>=1.27.1,<2.0.0",
 ]
 dev = [
     "pytest>=9.0.3",
@@ -46,7 +46,7 @@ dev = [
     "goal>=2.1.190",
     "costs>=0.1.51",
     "pfix>=0.1.73",
-    "mcp>=1.27.1",
+    "mcp>=1.27.1,<2.0.0",
 ]
 
 [tool.pytest.ini_options]

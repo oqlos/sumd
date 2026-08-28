@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import json
 import uuid
 from datetime import datetime, timezone
@@ -88,7 +89,8 @@ class EventStore:
             return
         
         self._storage_path.mkdir(parents=True, exist_ok=True)
-        event_file = self._storage_path / f"{event.aggregate_id}.jsonl"
+        aggregate_key = hashlib.sha256(event.aggregate_id.encode("utf-8")).hexdigest()
+        event_file = self._storage_path / f"{aggregate_key}.jsonl"
         
         with open(event_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(event.to_dict()) + "\n")
@@ -109,14 +111,20 @@ class EventStore:
             return
 
         for event_file in self._storage_path.glob("*.jsonl"):
-            aggregate_id = event_file.stem
             try:
                 lines = event_file.read_text(encoding="utf-8").splitlines()
             except Exception:
                 continue
-            self._events[aggregate_id] = [
-                ev for line in lines if (ev := self._parse_event_line(line)) is not None
-            ]
+            for line in lines:
+                event = self._parse_event_line(line)
+                if event is None:
+                    continue
+                events = self._events.setdefault(event.aggregate_id, [])
+                if all(existing.event_id != event.event_id for existing in events):
+                    events.append(event)
+
+        for events in self._events.values():
+            events.sort(key=lambda event: (event.version, event.timestamp))
 
 
 # SUMD-specific events
