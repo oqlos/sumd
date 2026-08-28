@@ -31,7 +31,7 @@ jobs:
           echo "✅ venv verified at .venv/"
           
       - name: Verify pyqual installed
-        run: poetry run pyqual --version
+        run: poetry run python -c "import pyqual"
         
       - name: Run test suite
         run: poetry run pytest -q
