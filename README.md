@@ -230,6 +230,11 @@ The MCP server exposes CQRS ES tools:
 - `get_events` - Retrieve event history
 - `get_aggregate` - Get current aggregate state
 
+MCP file exports, document generation, CQRS commands and DSL execution are
+disabled by default. Start the server with `SUMD_MCP_ALLOW_MUTATION=1` only when
+trusted MCP clients should be allowed to write files or persistent events.
+Read-only parsing, validation and query tools remain available.
+
 ## DSL (Domain Specific Language)
 
 SUMD provides a powerful DSL for interactive operations and scripting:

@@ -97,6 +97,16 @@ server = Server("sumd-mcp")
 # Helper
 # ---------------------------------------------------------------------------
 
+_MUTATION_ENV = "SUMD_MCP_ALLOW_MUTATION"
+
+
+def _require_mutation(action: str) -> None:
+    enabled = os.getenv(_MUTATION_ENV, "").strip().lower() in {"1", "true", "yes", "on"}
+    if not enabled:
+        raise PermissionError(
+            f"MCP mutation '{action}' is disabled; start the server with {_MUTATION_ENV}=1"
+        )
+
 
 def _doc_to_dict(doc) -> dict[str, Any]:
     return {
@@ -420,6 +430,7 @@ async def _tool_export_sumd(arguments: dict) -> list[types.TextContent]:
     else:
         content = json.dumps(data, indent=2, ensure_ascii=False)
     if output_path:
+        _require_mutation("export_sumd")
         out = _resolve_path(output_path)
         out.write_text(content, encoding="utf-8")
         return [types.TextContent(type="text", text=f"Exported to {out}")]
@@ -495,6 +506,7 @@ async def _tool_generate_sumd(arguments: dict) -> list[types.TextContent]:
             lines += [section["content"], ""]
     content = "\n".join(lines)
     if output_path:
+        _require_mutation("generate_sumd")
         out = _resolve_path(output_path)
         out.write_text(content, encoding="utf-8")
         return [types.TextContent(type="text", text=f"Generated {out}")]
@@ -507,6 +519,7 @@ async def _tool_generate_sumd(arguments: dict) -> list[types.TextContent]:
 
 async def _tool_execute_command(arguments: dict) -> list[types.TextContent]:
     """Execute CQRS command."""
+    _require_mutation("execute_command")
     from sumd.cqrs.commands import (
         CreateSumdDocument,
         UpdateSumdDocument,
@@ -635,6 +648,7 @@ async def _tool_get_aggregate(arguments: dict) -> list[types.TextContent]:
 
 async def _tool_execute_dsl(arguments: dict) -> list[types.TextContent]:
     """Execute DSL expression."""
+    _require_mutation("execute_dsl")
     dsl_expression = arguments["dsl_expression"]
     context_vars = arguments.get("context_vars", {})
     working_directory = arguments.get("working_directory")
