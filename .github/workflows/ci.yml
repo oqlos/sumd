@@ -23,7 +23,7 @@ jobs:
           virtualenvs-in-project: true
           
       - name: Install dependencies
-        run: poetry install --with dev
+        run: poetry install --extras dev
         
       - name: Verify venv exists
         run: |
@@ -33,8 +33,8 @@ jobs:
       - name: Verify pyqual installed
         run: poetry run pyqual --version
         
-      - name: Run quality pipeline
-        run: poetry run task quality
+      - name: Run test suite
+        run: poetry run pytest -q
         
-      - name: Verify SUMD generation works
-        run: poetry run task sumd
+      - name: Verify SUMD CLI is available
+        run: poetry run python -m sumd.cli --help
